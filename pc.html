@@ -2143,12 +2143,21 @@ function ch1_askResolve(pick){
     });
     return;
   }
-  const q = pick==='where' ? '"…여기가 어딥니까?"' : '"저는… 어느 부대였습니까?"';
-  say('나', q, ()=>{
+  if(pick==='where'){
+    say('나', '"…여기가 어딥니까?"', ()=>{
+      say(nm('jono'), '"복양성 밖이오. 저기 연기 오르는 데가 어젯밤까지 우리가 있던 군영이고."', ()=>{
+        say('나', '"우리… 라면요?"', ()=>{
+          say(nm('jono'), '"허. 머리를 단단히 찧었구려."\n\n그가 어이없다는 듯 웃었다.\n\n"조공 군영 말이오. 조공(曹公). 연주목 어른."', ()=>ch1_realize());
+        });
+      });
+    });
+    return;
+  }
+  say('나', '"저는… 어느 부대였습니까?"', ()=>{
     say('', '그가 내 가슴께를 흘끗 보더니 어이없다는 듯 웃었다.', ()=>{
       say(nm('jono'), '"허. 머리를 단단히 찧었구려."\n\n"목패를 버젓이 달고 있으면서 제 소속을 묻소?"', ()=>{
         say('', '고개를 숙여 봤다.\n\n피가 말라붙은 나무패가 가슴에 매달려 있었다. 처음 보는 글자인데 이상하게도 읽혔다.\n\n**연주 징집 보병**', ()=>{
-          say(nm('jono'), (pick==='where'?'"여긴 복양성 밖이오.\n\n':'"')+'연주에서 여포랑 싸우는 군대가 조공 말고 또 있소?"', ()=>{
+          say(nm('jono'), '"연주에서 끌려온 보병이란 소리요. 조공 밑에서 여포랑 싸우던."', ()=>{
             say('나', '"…조공이요?"', ()=>{
               say(nm('jono'), '"조공(曹公). 연주목 어른 말이오."', ()=>ch1_realize());
             });
@@ -2170,7 +2179,7 @@ function ch1_realize(){
 /* ── 갈증 ── */
 function ch1_thirst(){
   say('', '이튿날 해가 머리 위로 올라오자 목이 타들어 가기 시작했다.\n\n도랑 바닥에 고인 물은 재와 핏물이 섞인 흙탕이었다.', ()=>{
-    say(nm('jono'), '"그 물은 쳐다보지도 마시오. 입술도 핥지 말고. 침이나 삼키며 버티면 밤에 이슬이라도 내리오."\n\n그렇게 말하는 조노의 입술도 갈라져 피가 맺혀 있었다.', ()=>{
+    say(nm('jono'), '"그 물은 쳐다보지도 마시오. 입술도 핥지 말고. 침이나 삼키며 버티시오. 밤이 되면 풀잎에 맺힌 이슬이라도 받아 마실 수 있소."\n\n그렇게 말하는 조노의 입술도 갈라져 피가 맺혀 있었다.', ()=>{
       say('', '도랑 위쪽 흙벽에 손가락을 찔러 봤다.\n\n바닥에 고인 물보다 벽 쪽 흙이 훨씬 차갑고 축축했다.', ()=>{
         say('나(독백)', '벽에서 물이 배어 나오고 있었다.\n\n언젠가 다큐멘터리에서 본 장면이 떠올랐다. 고인 웅덩이 물을 마시느니 그 옆 흙을 파라. 흙을 거쳐 스며든 물이 그나마 깨끗하다.\n\n그걸 볼 때는 내가 써먹을 날이 올 줄 몰랐다.', ()=>{
           const hurt = state.wounds.length>0;
@@ -14061,7 +14070,7 @@ portrait85=function(key){
   img85(cand85('portrait',[key]),p=>{
     if(!p) return;
     const sil=dom.actor&&dom.actor.querySelector('.sil'); if(!sil) return;
-    if(sil.dataset.p85===p) return;
+    if(sil.dataset.p85===p){ dom.actor.classList.add('p86','show'); return; }   // 잠깐 내려갔던 같은 인물은 다시 세운다
     sil.dataset.p85=p;
     const hero=!SEEN86[key]; SEEN86[key]=1;
     sil.innerHTML=`<img class="${hero?'hero':'in'}" src="${p}" alt="" style="width:100%;height:100%;object-fit:contain;object-position:50% 100%">`;
@@ -14121,6 +14130,69 @@ setInterval(()=>{ const v=document.getElementById('visual'); if(v&&typeof state!
 const BGALIAS87={ ch1_night:'ch1_ditch_night' };
 const cand87=cand85;
 cand85=function(dir,names){ if(dir==='bg') names=names.flatMap(n=>BGALIAS87[n]?[BGALIAS87[n],n]:[n]); return cand87(dir,names); };
+
+/* ==========================================================
+   v88 · 말하는 사람과 그림을 맞춘다 / 장 이동 창
+   - 초상 그림이 없는 사람(군관, 병졸 등)이 말하면 직전 인물 그림을 내린다.
+     서술('')과 '나'의 말은 듣는 상대를 그대로 둔다.
+   - 화면 오른쪽 아래 '장 이동' 버튼(또는 J 키) → A선·B선 1~12장 바로가기
+   ========================================================== */
+const say88=say;
+say=function(who){
+  try{
+    const raw=String(who||'').trim();
+    if(raw && !/^나/.test(raw)){
+      const n=raw.replace(/\(.*$/,'').replace(/[^가-힣]/g,'');
+      if(!NAME85[n]) dom.actor.classList.remove('show');
+    }
+  }catch(e){}
+  return say88.apply(this,arguments);
+};
+const CH88=[
+  [1,'복양 야습','복양 야습'],[2,'연주 군영','연주 군영'],[3,'완성','완성'],[4,'하비','하비'],
+  [5,'출정 전','출정 전'],[6,'백마','백마'],[7,'토산','토산'],[8,'땅굴','땅굴'],
+  [9,'허유','허유'],[10,'동쪽 목책','목책 위'],[11,'원소군 본영','관도 본영'],[12,'원소군 본진','관도 결전']
+];
+(function(){
+  const st=document.createElement('style');
+  st.textContent=`#jumpBtn88{position:fixed;right:14px;bottom:14px;z-index:9998;padding:8px 12px;border:1px solid var(--bronze-lo);border-radius:3px;
+    background:rgba(10,9,8,.86);color:var(--silk);font-size:13px;letter-spacing:.08em;cursor:pointer;}
+  body.dev #jumpBtn88{bottom:124px;}
+  #jumpBtn88:hover{border-color:var(--bronze);}
+  #jump88{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:16px;}
+  #jump88[hidden]{display:none;}
+  #jump88 .p{width:100%;max-width:760px;max-height:100%;overflow:auto;background:#12100e;border:1px solid var(--bronze-lo);border-radius:4px;padding:18px;}
+  #jump88 h2{font-size:16px;color:var(--bronze);letter-spacing:.2em;margin-bottom:4px;font-weight:700;}
+  #jump88 .note{font-size:12px;color:var(--silk-dim);margin-bottom:14px;line-height:1.6;}
+  #jump88 h3{font-size:13px;color:var(--silk);margin:12px 0 8px;font-weight:700;}
+  #jump88 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;}
+  #jump88 button{padding:8px 6px;text-align:left;border:1px solid #3a3226;border-radius:3px;background:#1a1714;color:var(--silk);cursor:pointer;font-size:13px;line-height:1.35;}
+  #jump88 button:hover{border-color:var(--bronze);background:#221d17;}
+  #jump88 button b{display:block;color:var(--bronze);font-size:12px;}
+  #jump88 .x{float:right;text-align:center;width:auto;padding:4px 10px;}`;
+  document.head.appendChild(st);
+  const btn=document.createElement('button'); btn.id='jumpBtn88'; btn.type='button'; btn.textContent='장 이동';
+  const box=document.createElement('div'); box.id='jump88'; box.hidden=true; box.setAttribute('role','dialog'); box.setAttribute('aria-label','장 이동');
+  const row=r=>CH88.map(([n,a,b])=>`<button type="button" data-r="${r}" data-c="${n}"><b>${n}장</b>${r==='A'?a:b}</button>`).join('');
+  box.innerHTML=`<div class="p"><button type="button" class="x" data-close>닫기</button><h2>장 이동</h2>
+    <div class="note">원래 14장 중 2·3장과 9·10장이 합쳐져서 화면에서는 12장입니다. 1~5장은 A·B선이 같습니다.</div>
+    <h3>A선 · 역사대로</h3><div class="g">${row('A')}</div><h3>B선 · 여포 생존</h3><div class="g">${row('B')}</div></div>`;
+  document.body.appendChild(btn); document.body.appendChild(box);
+  ['pointerdown','mousedown','touchstart'].forEach(ev=>{ btn.addEventListener(ev,e=>e.stopPropagation()); box.addEventListener(ev,e=>e.stopPropagation()); });
+  const open=v=>{ box.hidden=!v; };
+  btn.addEventListener('click',e=>{ e.stopPropagation(); open(box.hidden); });
+  box.addEventListener('click',e=>{
+    e.stopPropagation();
+    const t=e.target.closest('button'); if(!t){ if(e.target===box) open(false); return; }
+    if(t.hasAttribute('data-close')){ open(false); return; }
+    open(false); dev75Go(t.dataset.r, Number(t.dataset.c));
+  });
+  window.addEventListener('keydown',e=>{
+    if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName)) return;
+    if(e.key==='j'||e.key==='J'){ open(box.hidden); e.preventDefault(); }
+    else if(e.key==='Escape'&&!box.hidden){ open(false); }
+  },true);
+})();
 </script>
 </body>
 </html>
