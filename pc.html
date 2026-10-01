@@ -945,6 +945,45 @@ body.pc75 #save82List{grid-template-columns:1fr 1fr;}
 .bond82{display:inline-block;font-style:normal;font-family:var(--serif);font-size:.78em;font-weight:700;color:var(--gold-hi);border:1px solid rgba(217,181,106,.55);border-radius:2px;padding:0 4px;margin-right:8px;line-height:1.5;vertical-align:1px;}
 .bond82.off{color:var(--faint);border-color:rgba(255,255,255,.15);}
 </style>
+<style>
+/* ===== v86 · 인물 연출: 땅에 발 딛고 선 인물, 첫 등장은 강하게 ===== */
+#actor.p86{height:97%;width:72%;}
+body.pc75 #actor.p86{width:58%;height:97%;}
+#actor.p86::before{display:none;}
+#actor.p86 .nameplate{display:none;}
+#actor.p86 .sil{filter:drop-shadow(0 20px 28px rgba(0,0,0,.85)) drop-shadow(0 0 2px rgba(0,0,0,.6));}
+#actor.p86 .sil img{filter:brightness(.93) contrast(1.07) saturate(.9);transform-origin:50% 100%;}
+#actor.p86 .sil img.in{animation:in86 .6s cubic-bezier(.2,.7,.2,1) both;}
+#actor.p86 .sil img.hero{animation:hero86 1.5s cubic-bezier(.2,.7,.2,1) both;}
+@keyframes in86{from{opacity:0;transform:translateX(-2.5%) scale(1.025);}to{opacity:1;transform:none;}}
+@keyframes hero86{0%{opacity:0;transform:scale(1.16) translateY(3%);filter:brightness(2.2) contrast(1.3) saturate(.6) blur(8px);}
+  30%{opacity:1;filter:brightness(1.3) contrast(1.15) saturate(.8) blur(0);}
+  100%{opacity:1;transform:none;filter:brightness(.93) contrast(1.07) saturate(.9);}}
+/* 인물이 서 있으면 배경은 한 걸음 물러나고, 발밑은 어둠에 묻힌다 */
+#bg{transition:opacity 1s ease,filter .8s ease;}
+#visual:has(#actor.show.p86) #bg{filter:brightness(.66) saturate(.8) blur(1.5px);}
+#floor86{position:absolute;left:0;right:0;bottom:0;height:30%;z-index:5;pointer-events:none;opacity:0;transition:opacity .8s;
+  background:linear-gradient(180deg,rgba(9,8,7,0),rgba(9,8,7,.6) 55%,rgba(9,8,7,.94));}
+#visual:has(#actor.show.p86) #floor86{opacity:1;}
+#flash86{position:absolute;inset:0;z-index:20;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse at 50% 40%,rgba(255,232,190,.5),rgba(255,232,190,0) 62%);}
+#flash86.go{animation:flash86 1s ease-out;}
+@keyframes flash86{0%{opacity:0;}10%{opacity:1;}100%{opacity:0;}}
+#visual.shake86{animation:shake86 .42s ease-out;}
+@keyframes shake86{0%,100%{transform:none;}20%{transform:translate(-5px,3px);}40%{transform:translate(4px,-3px);}60%{transform:translate(-3px,1px);}80%{transform:translate(2px,-1px);}}
+#card86{position:absolute;left:7%;bottom:16%;z-index:21;pointer-events:none;opacity:0;font-family:'Noto Serif KR',serif;}
+#card86 .hz{font-size:clamp(40px,7vw,68px);font-weight:900;letter-spacing:.14em;color:var(--silk);text-shadow:0 0 28px rgba(0,0,0,.95),0 2px 4px #000;line-height:1;}
+#card86 .ln{height:2px;width:0;background:var(--cinnabar);margin:12px 0 10px;}
+#card86 .kr{font-size:clamp(14px,1.6vw,18px);font-weight:700;letter-spacing:.5em;color:var(--silk);text-shadow:0 2px 8px #000;}
+#card86 .sub{margin-top:6px;font-size:12px;letter-spacing:.22em;color:var(--bronze);text-shadow:0 2px 8px #000;}
+#card86.go{animation:card86 3.4s ease both;}
+#card86.go .ln{animation:ln86 .9s .35s cubic-bezier(.2,.7,.2,1) forwards;}
+@keyframes card86{0%{opacity:0;transform:translateX(-18px);}14%{opacity:1;transform:none;}80%{opacity:1;}100%{opacity:0;}}
+@keyframes ln86{to{width:min(220px,40vw);}}
+body:not(.pc75) #card86{left:5%;top:8%;bottom:auto;}
+body:not(.pc75) #card86 .hz{font-size:34px;}
+@media(prefers-reduced-motion:reduce){#actor.p86 .sil img.hero,#actor.p86 .sil img.in{animation-duration:.01s;}#visual.shake86{animation:none;}}
+</style>
 </head>
 <body>
 <div id="stage">
@@ -13945,6 +13984,81 @@ function wake85(){ if(!bgmNow85) bgm85('title'); else if(bgmEl85&&bgmEl85.paused
 document.addEventListener('pointerdown',wake85); document.addEventListener('keydown',wake85);
 window.addEventListener('keydown',e=>{ if((e.key==='m'||e.key==='M') && bgmEl85){ bgmEl85.muted=!bgmEl85.muted; } });
 
+
+/* ==========================================================
+   v86 · 인물 연출과 음악 흐름
+   - 인물: 화면 아래에 발을 딛고 서고, 처음 나올 때는 이름패와 함께 강하게 등장
+   - 음악: 곡은 최소 1분은 이어서 틀고, 3.5초에 걸쳐 겹쳐 넘긴다.
+           다시 돌아온 곡은 처음부터가 아니라 듣던 자리에서 이어진다.
+   ========================================================== */
+(function(){
+  const v=document.getElementById('visual');
+  v.insertAdjacentHTML('beforeend','<div id="floor86"></div><div id="flash86"></div><div id="card86"><div class="hz"></div><div class="ln"></div><div class="kr"></div><div class="sub"></div></div>');
+})();
+const HERO86={ jono:{hz:'趙老',kr:'조노',sub:'연주 징집병 · 도랑의 늙은 병졸'} };
+const SEEN86={};
+function hero86(key){
+  const h=HERO86[key]||{}; const book=(typeof NAMEBOOK!=='undefined'&&NAMEBOOK[key])||[];
+  const m=String(book[2]||'').match(/^(.+?)\((.+)\)$/);
+  const hz=h.hz||(m&&m[2])||''; const kr=h.kr||(m&&m[1])||book[1]||'';
+  const c=document.getElementById('card86'), f=document.getElementById('flash86'), v=document.getElementById('visual');
+  if(hz||kr){
+    c.querySelector('.hz').textContent=hz||kr; c.querySelector('.kr').textContent=hz?kr:'';
+    c.querySelector('.sub').textContent=h.sub||'';
+    c.classList.remove('go'); void c.offsetWidth; c.classList.add('go');
+  }
+  f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
+  v.classList.remove('shake86'); void v.offsetWidth; v.classList.add('shake86');
+}
+portrait85=function(key){
+  if(!key||key==='me') return;
+  img85(cand85('portrait',[key]),p=>{
+    if(!p) return;
+    const sil=dom.actor&&dom.actor.querySelector('.sil'); if(!sil) return;
+    if(sil.dataset.p85===p) return;
+    sil.dataset.p85=p;
+    const hero=!SEEN86[key]; SEEN86[key]=1;
+    sil.innerHTML=`<img class="${hero?'hero':'in'}" src="${p}" alt="" style="width:100%;height:100%;object-fit:contain;object-position:50% 100%">`;
+    dom.actor.classList.add('p86','show');
+    if(hero) hero86(key);
+  });
+};
+const setActor86=setActor;
+setActor=function(){ dom.actor.classList.remove('p86'); return setActor86.apply(this,arguments); };
+
+/* 음악 */
+const BGMCACHE86={}, URGENT86={ ch1_raid:1 };   // 급한 곡(장면이 확 바뀌는 곳)은 기다리지 않는다
+const DWELL86=60000, XF86=3500;
+let bgmStart86=0, bgmPend86=null, bgmTimer86=null;
+function fade86(a,to,ms,done){
+  clearInterval(a._f86); const v0=a.volume, t0=Date.now();
+  a._f86=setInterval(()=>{ const r=Math.min(1,(Date.now()-t0)/ms); a.volume=Math.max(0,Math.min(1,v0+(to-v0)*r)); if(r>=1){ clearInterval(a._f86); done&&done(); } },50);
+}
+function track86(name){
+  if(BGMCACHE86[name]) return BGMCACHE86[name];
+  const a=new Audio(); a.loop=true; a.volume=0; a.preload='auto';
+  const srcs=['m4a','ogg','mp3'].map(e=>ASSET85+'bgm/'+name+'.'+e); let i=0;
+  a.onerror=()=>{ i++; if(i<srcs.length){ a.src=srcs[i]; if(a._want) a.play().catch(()=>{}); } };
+  a.addEventListener('playing',()=>{ if(a._want&&bgmEl85===a) fade86(a,bgmVol85,XF86); });
+  a.src=srcs[0];
+  return BGMCACHE86[name]=a;
+}
+function switch86(name){
+  bgmPend86=null; clearTimeout(bgmTimer86);
+  const old=bgmEl85; bgmNow85=name;
+  if(old){ old._want=false; fade86(old,0,XF86,()=>{ if(!old._want) old.pause(); }); }
+  if(!name){ bgmEl85=null; return; }
+  const a=track86(name); bgmEl85=a; a._want=true; bgmStart86=Date.now();
+  a.play().catch(()=>{});
+}
+bgm85=function(name){
+  if(name===bgmNow85){ bgmPend86=null; clearTimeout(bgmTimer86); return; }
+  if(name===bgmPend86) return;
+  const since=Date.now()-bgmStart86;
+  if(!bgmEl85||bgmEl85.paused||URGENT86[name]||since>=DWELL86) return switch86(name);
+  bgmPend86=name; clearTimeout(bgmTimer86);
+  bgmTimer86=setTimeout(()=>{ if(bgmPend86===name) switch86(name); }, DWELL86-since);
+};
 </script>
 </body>
 </html>
