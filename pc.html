@@ -983,6 +983,12 @@ body.pc75 #actor.p86{width:58%;height:97%;}
 body:not(.pc75) #card86{left:5%;top:8%;bottom:auto;}
 body:not(.pc75) #card86 .hz{font-size:34px;}
 @media(prefers-reduced-motion:reduce){#actor.p86 .sil img.hero,#actor.p86 .sil img.in{animation-duration:.01s;}#visual.shake86{animation:none;}}
+/* v87 · 1인칭: '나'는 그리지 않는다. 다치면 시야 가장자리가 붉게 물든다 */
+#hurt87{position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;transition:opacity 2s ease;
+  background:radial-gradient(ellipse at 50% 45%,rgba(90,8,8,0) 52%,rgba(90,8,8,.38) 82%,rgba(40,0,0,.7) 100%);}
+#visual.hurt87 #hurt87{opacity:1;animation:pulse87 4.2s ease-in-out infinite;}
+@keyframes pulse87{0%,100%{opacity:.75;}50%{opacity:1;}}
+@media(prefers-reduced-motion:reduce){#visual.hurt87 #hurt87{animation:none;}}
 </style>
 </head>
 <body>
@@ -14059,6 +14065,22 @@ bgm85=function(name){
   bgmPend86=name; clearTimeout(bgmTimer86);
   bgmTimer86=setTimeout(()=>{ if(bgmPend86===name) switch86(name); }, DWELL86-since);
 };
+
+/* ==========================================================
+   v87 · 1인칭 시점
+   - '나'와 초상 그림이 없는 인물은 실루엣으로 세우지 않는다. 화면은 곧 내 눈이다.
+     내가 말할 때는 듣는 상대(직전 인물)가 그대로 남는다.
+   - 상처가 있으면 시야 가장자리가 붉게 맥동한다.
+   - 1장 'night' 배경은 도랑 밤 그림을 쓴다.
+   ========================================================== */
+document.getElementById('visual').insertAdjacentHTML('beforeend','<div id="hurt87"></div>');
+const setActor87=setActor;
+// 초상 그림이 없는 인물(검은 실루엣)도 세우지 않는다. 그림이 있으면 portrait85가 다시 띄운다
+setActor=function(key){ const r=setActor87.apply(this,arguments); dom.actor.classList.remove('show'); return r; };
+setInterval(()=>{ const v=document.getElementById('visual'); if(v&&typeof state!=='undefined') v.classList.toggle('hurt87', !!(state.wounds&&state.wounds.length)); },800);
+const BGALIAS87={ ch1_night:'ch1_ditch_night' };
+const cand87=cand85;
+cand85=function(dir,names){ if(dir==='bg') names=names.flatMap(n=>BGALIAS87[n]?[BGALIAS87[n],n]:[n]); return cand87(dir,names); };
 </script>
 </body>
 </html>

@@ -19,6 +19,10 @@
 |---|---|
 | `portrait/jono.webp` | 조노 |
 | `bg/ch9_camp.webp` | 9장 · 관도 본영 (목책) |
+| `bg/ch1_fire.webp` | 1장 · 복양 야습 |
+| `bg/ch1_ditch_night.webp` | 1장 · 도랑 밤 (첫날 밤 포함) |
+| `bg/ch1_ditch_day.webp` | 1장 · 도랑 낮 |
+| `bg/ch1_ditch_dawn.webp` | 1장 · 도랑 새벽 |
 | `bg/ch2_camp.webp` | 2장 · 연주 군영 겨울 |
 | `bg/ch2_camp_spring.webp` | 2장 · 건안 원년 봄 (신병 소칠 ~ 편성 개편) |
 | `bg/ch2_camp_dusk.webp` | 2장 · 마무리 |
@@ -39,3 +43,9 @@
 
 처음 나오는 인물은 섬광 + 화면 흔들림 + 이름패(한자 · 한글 · 한 줄 소개)로 등장한다.
 한 줄 소개는 `index.html`의 `HERO86`에 적는다.
+
+### 1인칭 시점
+
+- 주인공 '나'는 화면에 그리지 않는다. 내가 말할 때는 듣는 상대가 화면에 남는다.
+- 초상 그림이 없는 인물도 실루엣으로 세우지 않는다. `assets/portrait/`에 그림을 넣으면 그때부터 나온다.
+- 다친 상태(`state.wounds`)면 시야 가장자리가 붉게 천천히 맥동한다.
