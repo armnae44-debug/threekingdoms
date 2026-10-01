@@ -14344,14 +14344,14 @@ setBg=function(k){ if(bgPrev90!==null && k!==bgPrev90) dom.actor.classList.remov
 /* ==========================================================
    v91 · 3장(완성) 배경·음악·인물 연결
    - 새 배경 키: smithy(대장간 뒤), stable(마구간), campfire(강가 화톳불). 그림이 없으면 기본 색
-   - 음악: 입성·연회·준비 ch4_feast / 습격 ch1_raid(기습 곡 재사용) / 육수 ch4_river / 새벽·조조·마무리 ch4_dawn
+   - 음악(공통곡 방식): 입성·연회·준비 ch4_feast / 습격·육수 ch1_raid / 새벽·조조·마무리 ch4_dawn(애도 공통곡)
    ========================================================== */
 Object.assign(BG,{ smithy:BG.night, stable:BG.camp, campfire:BG.night });
 Object.assign(BGM85,{
   ch4_camp:'ch4_feast', ch4_feast:'ch4_feast', ch4_smithy:'ch4_feast', ch4_stable:'ch4_feast', ch4_night:'ch4_feast',
-  ch4_fire:'ch1_raid', ch4_river:'ch4_river', ch4_dawn:'ch4_dawn', ch4_tent:'ch4_dawn', ch4_campfire:'ch4_dawn'
+  ch4_fire:'ch1_raid', ch4_river:'ch1_raid', ch4_dawn:'ch4_dawn', ch4_tent:'ch4_dawn', ch4_campfire:'ch4_dawn'
 });
-Object.assign(URGENT86,{ ch4_river:1, ch4_dawn:1 });
+Object.assign(URGENT86,{ ch4_dawn:1 });   // 퇴각은 습격 곡을 이어서 쓰고(공통곡), 새벽부터는 바로 애도 곡
 Object.assign(NAME85,{ '호거아':'hujuer' });
 Object.assign(HERO86,{
   caocao:{hz:'曹操',kr:'조조',sub:'사공(司空) · 조공'},

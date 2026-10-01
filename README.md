@@ -59,23 +59,25 @@
 
 인물 화면 키는 `index.html`의 `SIZE90`에서 조정한다 (왕삼 100 · 백부장 97 · 조노 96 · 위림 95 · 소칠 90).
 
-### 3장(원래 4장, 완성)에 필요한 것
+### 3장(원래 4장, 완성)
 
-| 종류 | 파일 | 장면 |
-|---|---|---|
-| 배경 | `bg/ch4_camp.webp` | 완성 성 밖 진영 낮, 성루에 장수 깃발 |
-| 배경 | `bg/ch4_feast.webp` | 연회장 밤 |
-| 배경 | `bg/ch4_smithy.webp` | 성 서편 대장간 뒤 장작더미 (선택) |
-| 배경 | `bg/ch4_stable.webp` | 마구간 (선택) |
-| 배경 | `bg/ch4_night.webp` | 습격 직전의 고요한 밤 |
-| 배경 | `bg/ch4_fire.webp` | 불타는 완성 진영 |
-| 배경 | `bg/ch4_river.webp` | 육수 밤, 강 건너는 퇴각 |
-| 배경 | `bg/ch4_dawn.webp` | 강가 새벽 |
-| 배경 | `bg/ch4_tent.webp` | 조조의 막사 |
-| 배경 | `bg/ch4_campfire.webp` | 강가 화톳불 밤 |
-| 초상 | `portrait/caocao.webp` · `dianwei.webp` · `caoang.webp` · `hujuer.webp` | 조조 · 전위 · 조앙 · 호거아 |
-| 음악 | `bgm/ch4_feast.m4a` | 입성·연회·준비 |
-| 음악 | `bgm/ch4_river.m4a` | 육수 퇴각 |
-| 음악 | `bgm/ch4_dawn.m4a` | 새벽·조조·마무리 |
+들어 있음: 배경 `ch4_camp`, `ch4_feast`, `ch4_smithy`, `ch4_stable`, `ch4_night`, `ch4_fire`, `ch4_river`, `ch4_dawn`, `ch4_tent`, `ch4_campfire` /
+초상 `caocao`, `dianwei`, `caoang`, `hujuer` / 음악 `ch4_feast`(연회), `ch4_dawn`(애도)
 
-습격 장면은 1장 기습 곡(`ch1_raid`)을 다시 쓴다. 따로 만들면 `ch4_raid.m4a`로 넣고 `BGM85.ch4_fire`를 바꾼다.
+### 음악은 공통곡으로
+
+장마다 새로 만들지 않고 분위기별 곡을 돌려 쓴다.
+
+| 분위기 | 곡 |
+|---|---|
+| 타이틀 | `title` |
+| 일상·군영 | `ch2_camp` |
+| 긴장·잠입 | `ch3_probe` |
+| 전투·습격·퇴각 | `ch1_raid` |
+| 생존·쓸쓸함 | `ch1_ditch` |
+| 연회·불안한 평온 | `ch4_feast` |
+| 애도·진혼 | `ch4_dawn` |
+| 군의·지략 | (아직 없음) |
+| 장엄·결전 | (아직 없음) |
+
+장면과 곡의 연결은 `index.html`의 `BGM85`에서 한다 (`'ch{장}_{배경키}':'곡이름'`).
