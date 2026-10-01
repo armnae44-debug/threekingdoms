@@ -49,3 +49,21 @@
 - 주인공 '나'는 화면에 그리지 않는다. 내가 말할 때는 듣는 상대가 화면에 남는다.
 - 초상 그림이 없는 인물도 실루엣으로 세우지 않는다. `assets/portrait/`에 그림을 넣으면 그때부터 나온다.
 - 다친 상태(`state.wounds`)면 시야 가장자리가 붉게 천천히 맥동한다.
+
+### 2장(원래 2·3장)에 아직 필요한 것
+
+| 종류 | 파일 | 장면 |
+|---|---|---|
+| 배경 | `bg/ch2_field.webp` | 들판에 목책 세우기 |
+| 배경 | `bg/ch2_camp_autumn.webp` | 가을 편성 개편 |
+| 배경 | `bg/ch3_camp.webp` | 허도 성 밖 진영, 겨울 배급 |
+| 배경 | `bg/ch3_store.webp` | 군수 창고 · 밤 |
+| 배경 | `bg/ch3_tent.webp` | 백부장 막사 / 위림 집무실 |
+| 초상 | `portrait/wangsam.webp` | 왕삼 |
+| 초상 | `portrait/sochil.webp` | 소칠 |
+| 초상 | `portrait/weilin.webp` | 위림 |
+| 초상 | `portrait/baekbu.webp` | 백부장 |
+| 음악 | `bgm/ch2_camp.m4a` | 군영 일상 |
+| 음악 | `bgm/ch3_probe.m4a` | 배급 비리 캐기 · 창고 잠입 |
+
+음악 파일이 아직 없으면 지금 나오던 곡이 그대로 이어진다.
