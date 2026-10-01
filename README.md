@@ -58,3 +58,24 @@
 아직 필요: `bg/ch2_camp_autumn.webp` 가로(16:9) 그림
 
 인물 화면 키는 `index.html`의 `SIZE90`에서 조정한다 (왕삼 100 · 백부장 97 · 조노 96 · 위림 95 · 소칠 90).
+
+### 3장(원래 4장, 완성)에 필요한 것
+
+| 종류 | 파일 | 장면 |
+|---|---|---|
+| 배경 | `bg/ch4_camp.webp` | 완성 성 밖 진영 낮, 성루에 장수 깃발 |
+| 배경 | `bg/ch4_feast.webp` | 연회장 밤 |
+| 배경 | `bg/ch4_smithy.webp` | 성 서편 대장간 뒤 장작더미 (선택) |
+| 배경 | `bg/ch4_stable.webp` | 마구간 (선택) |
+| 배경 | `bg/ch4_night.webp` | 습격 직전의 고요한 밤 |
+| 배경 | `bg/ch4_fire.webp` | 불타는 완성 진영 |
+| 배경 | `bg/ch4_river.webp` | 육수 밤, 강 건너는 퇴각 |
+| 배경 | `bg/ch4_dawn.webp` | 강가 새벽 |
+| 배경 | `bg/ch4_tent.webp` | 조조의 막사 |
+| 배경 | `bg/ch4_campfire.webp` | 강가 화톳불 밤 |
+| 초상 | `portrait/caocao.webp` · `dianwei.webp` · `caoang.webp` · `hujuer.webp` | 조조 · 전위 · 조앙 · 호거아 |
+| 음악 | `bgm/ch4_feast.m4a` | 입성·연회·준비 |
+| 음악 | `bgm/ch4_river.m4a` | 육수 퇴각 |
+| 음악 | `bgm/ch4_dawn.m4a` | 새벽·조조·마무리 |
+
+습격 장면은 1장 기습 곡(`ch1_raid`)을 다시 쓴다. 따로 만들면 `ch4_raid.m4a`로 넣고 `BGM85.ch4_fire`를 바꾼다.
