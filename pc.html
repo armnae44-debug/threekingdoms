@@ -4706,7 +4706,7 @@ let ch5StartAlive = [];
 function ch5_deed(short_){
   const g=dig.got, n=Object.keys(g).length;
   if(n>=2){
-    if(g.old && g.survey) return short_?'노인의 기억과 제가 잰 숫자를 맞춰 본':'노인의 기억과 제가 잰 숫자를 맞춰 보았습니다';
+    if(g.old && g.survey) return short_?'노인의 기억과 직접 잰 숫자를 맞춰 본':'노인의 기억과 제가 잰 숫자를 맞춰 보았습니다';
     if(g.old && g.folk)   return short_?'옛 기억과 성 안 사정을 맞춰 본':'노인의 기억과 성 안에서 나온 자들의 말을 맞춰 보았습니다';
     return short_?'땅을 재고 성 안 사정을 물어본':'땅을 재고, 성 안에서 나온 자들에게 물었습니다';
   }

@@ -77,7 +77,13 @@
 | 생존·쓸쓸함 | `ch1_ditch` |
 | 연회·불안한 평온 | `ch4_feast` |
 | 애도·진혼 | `ch4_dawn` |
-| 군의·지략 | (아직 없음) |
-| 장엄·결전 | (아직 없음) |
+| 군의·지략 | `ch5_council` |
+| 공성·수공 | `ch5_siege` |
+| 비장·처분 | `ch5_lvbu` |
 
 장면과 곡의 연결은 `index.html`의 `BGM85`에서 한다 (`'ch{장}_{배경키}':'곡이름'`).
+
+### 4장(원래 5장, 하비)
+
+들어 있음: 배경 `ch5_camp`, `ch5_field`, `ch5_tent`, `ch5_paddy`, `ch5_river`, `ch5_flooded`, `ch5_night`, `ch5_gate` /
+초상 `xunyou`, `guojia`, `lvbu`, `chengong`, `liubei` / 음악 `ch5_siege`, `ch5_council`, `ch5_lvbu`
