@@ -104,6 +104,7 @@ body.veil #topBar{opacity:0;pointer-events:none;}
   width:62%;height:80%;opacity:0;transition:opacity .7s ease;z-index:12;}
 #actor.show{opacity:1;}
 #actor .sil{position:absolute;inset:0;filter:drop-shadow(0 0 26px rgba(0,0,0,.9));}
+#actor .sil img{filter:brightness(.9) saturate(.88) contrast(1.04);}
 #actor .nameplate{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
   font-size:11px;letter-spacing:.25em;color:var(--bronze);text-shadow:0 2px 8px #000;white-space:nowrap;}
 
@@ -13931,13 +13932,17 @@ function bgm85(name){
   if(old){ const t0=Date.now(); const fo=setInterval(()=>{ const r=1-(Date.now()-t0)/1200; if(r<=0){ old.pause(); clearInterval(fo); } else old.volume=Math.max(0,bgmVol85*r); },60); }
   if(!name){ bgmEl85=null; return; }
   const a=new Audio(); a.loop=true; a.volume=0; bgmEl85=a;
-  const srcs=[ASSET85+'bgm/'+name+'.ogg',ASSET85+'bgm/'+name+'.m4a',ASSET85+'bgm/'+name+'.mp3']; let i=0;
-  a.onerror=()=>{ i++; if(i<srcs.length){ a.src=srcs[i]; a.play().catch(()=>{}); } };
+  // 있는 파일부터 찾는다. 어느 파일로 재생되든 소리가 0에서 커지도록 'playing'에서 키운다
+  const srcs=[ASSET85+'bgm/'+name+'.m4a',ASSET85+'bgm/'+name+'.ogg',ASSET85+'bgm/'+name+'.mp3']; let i=0;
+  a.addEventListener('playing',()=>{ if(bgmEl85!==a) return; const v0=a.volume, t0=Date.now(); const fi=setInterval(()=>{ const r=(Date.now()-t0)/1200; if(bgmEl85!==a){ clearInterval(fi); return; } if(r>=1){ a.volume=bgmVol85; clearInterval(fi); } else a.volume=Math.min(bgmVol85,v0+(bgmVol85-v0)*r); },60); });
+  a.onerror=()=>{ i++; if(i<srcs.length && bgmEl85===a){ a.src=srcs[i]; a.play().catch(()=>{}); } };
   a.src=srcs[0];
-  a.play().then(()=>{ const t0=Date.now(); const fi=setInterval(()=>{ const r=(Date.now()-t0)/1200; if(r>=1||bgmEl85!==a){ if(bgmEl85===a) a.volume=bgmVol85; clearInterval(fi);} else a.volume=bgmVol85*r; },60); }).catch(()=>{});
+  a.play().catch(()=>{});
 }
 function bgm85ForBg(k){ const ch=state.chapter||1; const n=BGM85['ch'+ch+'_'+k]; if(n!==undefined) bgm85(n); }
-document.addEventListener('pointerdown',function once85(){ if(!bgmNow85) bgm85('title'); document.removeEventListener('pointerdown',once85); },{once:true});
+// 브라우저가 소리를 막았으면 다음 클릭/키 입력 때 다시 튼다
+function wake85(){ if(!bgmNow85) bgm85('title'); else if(bgmEl85&&bgmEl85.paused) bgmEl85.play().catch(()=>{}); }
+document.addEventListener('pointerdown',wake85); document.addEventListener('keydown',wake85);
 window.addEventListener('keydown',e=>{ if((e.key==='m'||e.key==='M') && bgmEl85){ bgmEl85.muted=!bgmEl85.muted; } });
 
 </script>
