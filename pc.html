@@ -2563,7 +2563,7 @@ function ch2_teachResolve(pick){
 
 /* ── 십장 ── */
 function ch2_promo(){
-  enterScene('편성 개편', { year:196, rank:'졸' }); mark83({id:'m2-xudu',kind:'held',chron:'xudu'});
+  enterScene('십장이 되다', { year:196, rank:'졸' }); mark83({id:'m2-xudu',kind:'held',chron:'xudu'});
   setBg('camp_autumn');
   say('', '가을에 부대 편성이 바뀌었다.\n\n조공이 천자를 허도로 모신다는 말이 돌았고, 부대가 통째로 다시 짜였다. 죽은 사람이 많았으니 빈자리도 많았다.', ()=>{
     say('', '내 이름이 십장 자리에 오른 이유는 하나였다.\n\n글을 읽고 셈을 할 줄 아는 졸이 드물었다. 십인대마다 배급 장부를 읽을 사람이 하나는 있어야 했다.', ()=>{
@@ -2949,7 +2949,7 @@ function ch3_searchFail(pick){
     say('', '이튿날 아침, 조원들이 나를 보는 눈이 달라져 있었다.', ()=>{
       const w = whoAlive(['wangsam','jono','sochil']);
       const step2 = ()=>{
-        setActor('general','위림(魏林)');
+        setBg('camp'); setActor('general','위림(魏林)');
         say('', '배급일, 위림이 직접 나왔다. 손에 순찰 기록을 들고 있었다.\n\n그는 우리 십인대 자루를 제 손으로 반쯤 덜어 냈다. 모두가 보는 앞에서.', ()=>{
           say(nm('weilin'), '"밤중에 남의 창고 담을 기웃거리는 십인대가 있다더군. 불만 있으면 장군께 고해 보든가, 십장."', ()=>ch3_collapse());
         });
@@ -14087,6 +14087,9 @@ const HERO86={ jono:{hz:'趙老',kr:'조노',sub:'연주 징집병 · 스무 해
   sochil:{hz:'小七',kr:'소칠',sub:'열여섯 · 형이 셋이었다'},
   weilin:{hz:'魏林',kr:'위림',sub:'군수 관리 · 배급을 쥔 자'} };
 Object.assign(NAME85,{ '위림':'weilin', '백부장':'baekbu' });
+HERO86.baekbu={hz:'百夫長',kr:'백부장',sub:'목책 검사를 나온 무관'};
+/* 화면에서의 키 (화면 높이 대비 %) — 왕삼이 가장 크고 소칠이 가장 작다 */
+const SIZE90={ wangsam:100, baekbu:97, jono:96, weilin:95, sochil:90 };
 const SEEN86={};
 function hero86(key){
   const h=HERO86[key]||{}; const book=(typeof NAMEBOOK!=='undefined'&&NAMEBOOK[key])||[];
@@ -14109,7 +14112,8 @@ portrait85=function(key){
     if(sil.dataset.p85===p){ dom.actor.classList.add('p86','show'); return; }   // 잠깐 내려갔던 같은 인물은 다시 세운다
     sil.dataset.p85=p;
     const hero=!SEEN86[key]; SEEN86[key]=1;
-    sil.innerHTML=`<img class="${hero?'hero':'in'}" src="${p}" alt="" style="width:100%;height:100%;object-fit:contain;object-position:50% 100%">`;
+    const h=(typeof SIZE90!=='undefined'&&SIZE90[key])||96;   // 인물마다 키 차이
+    sil.innerHTML=`<div style="position:absolute;left:0;right:0;bottom:0;height:${h}%;display:flex;justify-content:center;align-items:flex-end"><img class="${hero?'hero':'in'}" src="${p}" alt="" style="height:100%;width:auto;max-width:100%;object-fit:contain;object-position:50% 100%"></div>`;
     dom.actor.classList.add('p86','show');
     if(hero) hero86(key);
   });
@@ -14144,8 +14148,8 @@ function switch86(name){
 }
 bgm85=function(name){
   if(name===bgmNow85){ bgmPend86=null; clearTimeout(bgmTimer86); return; }
-  if(name===bgmPend86) return;
   const since=Date.now()-bgmStart86;
+  if(name===bgmPend86 && since<DWELL86) return;   // 이미 기다리는 곡이면 그대로 (기다릴 필요가 없어졌으면 바로 넘긴다)
   if(!bgmEl85||bgmEl85.paused||URGENT86[name]||since>=DWELL86) return switch86(name);
   bgmPend86=name; clearTimeout(bgmTimer86);
   bgmTimer86=setTimeout(()=>{ if(bgmPend86===name) switch86(name); }, DWELL86-since);
@@ -14244,7 +14248,7 @@ Object.assign(BGM85,{
 const ch3_target89=ch3_target;
 ch3_target=function(){ bgm85('ch3_probe'); return ch3_target89.apply(this,arguments); };
 const ch3_wrap89=ch3_wrap;
-ch3_wrap=function(){ const r=ch3_wrap89.apply(this,arguments); bgm85('ch2_camp'); return r; };
+ch3_wrap=function(){ const r=ch3_wrap89.apply(this,arguments); bgmStart86=0; bgm85('ch2_camp'); return r; };   // 캐기가 끝나면 바로 군영 곡으로
 /* 파일이 없는 곡: 이전 곡으로 되돌린다 */
 const track89=track86;
 track86=function(name){
@@ -14266,6 +14270,27 @@ switch86=function(name){
   if(bgmEl85 && bgmEl85!==prev){ bgmEl85._prev=prev; bgmEl85._name=name; }
   if(prev && !prev._name) prev._name=null;
 };
+
+/* ==========================================================
+   v90 · 음악 넘김 규칙 보완
+   - 타이틀 곡에서 넘어갈 때, 장이 바뀌었을 때는 1분을 기다리지 않는다
+   - 비리 캐기가 시작되는 순간(ch3_probe)도 바로 넘긴다
+   ========================================================== */
+URGENT86.ch3_probe=1;
+let bgmCh90=null;
+const bgm90=bgm85;
+bgm85=function(name){
+  const ch=(typeof state!=='undefined'&&state.chapter)||0;
+  if(name!==bgmNow85 && bgmEl85 && (bgmNow85==='title' || (bgmCh90!==null && ch!==bgmCh90))) bgmStart86=0;
+  const r=bgm90.apply(this,arguments);
+  if(bgmNow85===name) bgmCh90=ch;
+  return r;
+};
+
+/* v90b · 장소가 바뀌면 직전 장면의 인물 그림을 내린다 */
+let bgPrev90=null;
+const setBg90=setBg;
+setBg=function(k){ if(bgPrev90!==null && k!==bgPrev90) dom.actor.classList.remove('show'); bgPrev90=k; return setBg90.apply(this,arguments); };
 </script>
 </body>
 </html>
