@@ -5026,7 +5026,8 @@ function ch5_assign(){
   setActor('xunyou','순유(荀攸)');
   state.flags.ch5_named=true;
   seq5([
-    ['순유', '"이틀 주겠소. 그 이상은 그대 백이 군후 없이 못 버티오."'],
+    ['순유', '"이틀 주겠소. 그동안 그대 백은 옆 군후에게 맡겨 두시오."'],
+    ['순유', '"이틀이 다요. 성벽 앞에 제 군후 없는 백을 그 이상 세워 둘 수는 없소."'],
     ['순유', '"이틀 뒤 이 자리에서, 저 넷 가운데 어디서 물이 새는지 짚어 오시오. 짚지 못하면 못 했다고 말하면 되오. 틀린 자리를 짚으면, 그 자리를 파는 사람들의 날이 버려지오."'],
     ['', '막사를 나서는데, 등 뒤에서 잔 내려놓는 소리가 났다.']
   ], ()=>ch5_dig());
@@ -5567,22 +5568,20 @@ function ch5_lvbuChoice(pick){
 function ch5_spareTry(){
   const ok = state.flags.xiapi==='ok';
   say('나', '"…저 자를 살려 쓰시지요."', ()=>{
-    if(!ok){
-      seq5([
+    setActor('liubei','유비(劉備)');
+    seq5([
+      ...(ok ? [] : [
         ['', '조공이 처음으로 이쪽을 봤다. 누가 말했는지 찾는 눈이었다.'],
         ['조조', ch5_wanchengChanged() ? '"완성의 그 군후로군. 이번에는 무얼 했다고 포로 처분에까지 입을 대나."' : '"파수가 포로 처분에까지 입을 대나."'],
         ['', '좌중에서 웃음이 터졌다. 나를 향한 웃음이었다.'],
-        ['나(독백)', ch5_wanchengChanged() ? '완성에서 얻은 이름은, 하비에서 아무것도 하지 않은 군후를 대신 말해 주지 않았다.' : '이름도 모르는 군후 하나의 말은 거기까지였다.']
-      ], ()=>ch5_lvbuDie(false));
-      return;
-    }
-    setActor('liubei','유비(劉備)');
-    seq5([
+        ['', '조공은 웃지 않았다. 아직 여포에게서 마음을 다 거두지 못한 얼굴이었다.'],
+        ['조조', '"…그래도 말은 들어 보지."']
+      ]),
       ['', '좌중이 술렁였다.'],
       ['유비', '"군후. 저 자는 두 주인을 죽였소."'],
       ['나', '"알고 있습니다."'],
       function(next){ setActor('caocao','조조(曹操)'); next(); },
-      ['', '조공이 나를 똑바로 봤다. 하비의 물길을 짚은 군후라는 걸, 그는 알고 있었다.'],
+      ok ? ['', '조공이 나를 똑바로 봤다. 하비의 물길을 짚은 군후라는 걸, 그는 알고 있었다.'] : ['', '조공이 나를 똑바로 봤다.'],
       ['조조', '"그럼 어찌 쓰겠나. 내게 세 번째 주인이 되라는 말인가."']
     ], ()=>{
       choose(permitted([
@@ -5595,6 +5594,17 @@ function ch5_spareTry(){
   });
 }
 
+/* 여포를 살리자는 말이 먹힐 확률 — 어느 길에서든 제대로 된 논리면 6할은 넘는다 */
+function ch5_spareChance(pick){
+  const ok = state.flags.xiapi==='ok';
+  let p = { leash: ok?0.9:0.65, dianwei: ok?0.85:0.6, future: ok?0.6:0.4 }[pick];
+  if(state.flags.ch5_water) p+=0.08;
+  if(state.flags.defect==='three') p+=0.05;
+  if(!ok && ch5_wanchengChanged()) p+=0.05;
+  return Math.min(0.95, p);
+}
+function ch5_spareRoll(pick){ return Math.random() < ch5_spareChance(pick); }
+
 function ch5_spareResolve(pick){
   if(pick==='leash'){
     seq5([
@@ -5603,8 +5613,7 @@ function ch5_spareResolve(pick){
       ['나', '"싸울 때만 기병을 빌려주시고, 싸움이 끝나면 거두십시오. 저 자 밑에 사람이 붙지 않게."'],
       ['조조', '"그걸로 되겠나. 군사를 안 줘도 사람은 모이는 법이다."']
     ], ()=>{
-      const r = roll(30 + (state.flags.defect==='three'?6:0) + state.interventions*2 + (state.flags.ch5_water?4:0), 28);
-      if(r==='fail'){
+      if(!ch5_spareRoll('leash')){
         seq5([
           ['', '대답할 말이 떠오르지 않았다.'],
           ['조조', '"목줄은, 찬 놈이 끊는 법이다."'],
@@ -5630,8 +5639,7 @@ function ch5_spareResolve(pick){
       ['나', '"전위 장군이 조공 곁에 계십니다. 저 자가 칼을 돌려도, 조공께 닿기 전에 막을 분이 있습니다."'],
       ['', '조공 등 뒤에 선 전위가 코웃음을 쳤다.']
     ], ()=>{
-      const r = roll(30 + state.interventions*3, 28);
-      if(r==='fail'){
+      if(!ch5_spareRoll('dianwei')){
         seq5([
           ['전위', '"칼을 돌리면 베면 그만이지. 그런데 저놈 잠든 것까지 지켜 줄 만큼 내가 한가하진 않소."'],
           ['', '조공이 웃었다.'],
@@ -5658,9 +5666,19 @@ function ch5_spareResolve(pick){
     ['조조', '"원소의 기병."'],
     ['', '그가 내 말을 천천히 되받았다.'],
     ['조조', '"원소는 아직 황하 북쪽에서 공손찬과 싸우는 중이다. 자네는 그 기병이 이리로 오는 걸, 벌써 보았나?"'],
-    ['', '무릎 위에서 주먹이 쥐어졌다 풀렸다. 대답할 수 있는 말이 하나도 없었다.'],
-    ['', '조공은 대답을 기다리지 않았다. 다만 내 얼굴을 한 번 더 보고 나서 손을 들었다.']
-  ], ()=>ch5_lvbuDie(false));
+    ['', '무릎 위에서 주먹이 쥐어졌다 풀렸다. 대답할 수 있는 말이 하나도 없었다.']
+  ], ()=>{
+    if(!ch5_spareRoll('future')){
+      say('', '조공은 대답을 기다리지 않았다. 다만 내 얼굴을 한 번 더 보고 나서 손을 들었다.', ()=>ch5_lvbuDie(false));
+      return;
+    }
+    seq5([
+      ['', '조공이 오래 나를 봤다. 그러다 여포에게로 눈을 돌렸다.'],
+      ['조조', '"…좋다. 자네 말이 맞는지, 저 자를 살려 두고 보지."'],
+      ['조조', '"줄을 늦춰라. 다만 군사는 주지 않는다."'],
+      ['', '여포가 살았다. 그리고 조공은, 원소의 기병을 먼저 말한 군후의 얼굴을 기억했다.']
+    ], ()=>{ state.flags.lubuSpared=true; state.interventions++; ch5_spared(); });
+  });
 }
 
 function ch5_spared(){
@@ -5701,7 +5719,7 @@ function ch5_lvbuDie(spoke){
 function ch5_chengong(){
   setActor('chengong','진궁(陳宮)');
   seq5([
-    ['', '여포가 끌려 나간 자리로 사내 하나가 나왔다.\n\n손은 묶여 있었다. 그런데 포로처럼 보이지 않았다. 끌려 나오는 게 아니라 제 발로 걸어 나왔다.'],
+    ['', (state.flags.lubuSpared?'여포가 물러난':'여포가 끌려 나간')+' 자리로 사내 하나가 나왔다.\n\n손은 묶여 있었다. 그런데 포로처럼 보이지 않았다. 끌려 나오는 게 아니라 제 발로 걸어 나왔다.'],
     ['조조', '"공대(公臺)."'],
     ['진궁', '"…맹덕."'],
     ['조조', '"나를 버리고 고른 주인이 여포였나."'],
@@ -5904,7 +5922,9 @@ function ch5_guojiaEnd(pick){
 function ch5_slips(){
   const sp=state.flags.lubuSpared;
   roster82Set('lvbu','여포(呂布)','천하무쌍', sp?'생존 · 목줄을 찬 채로':'백문루에서 죽음',
-    sp ? (state.flags.lvbuLeash?'군사는 주지 않고 창만 쥐여 준다는 조건으로 살았다. 그 조건을 짠 것은 나였다.':'전위가 곁에서 지킨다는 조건으로 살았다.')
+    sp ? (state.flags.lvbuLeash?'군사는 주지 않고 창만 쥐여 준다는 조건으로 살았다. 그 조건을 짠 것은 나였다.'
+          : state.flags.lvbuRespect?'전위가 곁에서 지킨다는 조건으로 살았다.'
+          : '원소의 기병을 막으라는 내 말 한마디로 살았다. 조공은 그 말을 한 내 얼굴을 기억한다.')
        : (state.flags.ch5_water?'죽기 전날 밤, 내게 물을 청했다. 말부터 먹이라고 했다.':'끌려가며 유비를 향해 "너는 뭐냐"고 외쳤다.'));
   roster82Set('chengong','진궁(陳宮)','여포의 모사','죽음', state.flags.ch5_toldChengong?'"이미 끝난 일을 확인하는 얼굴"이라 했다.':'끝까지 제 발로 걸어갔다.');
   if(state.flags.defect==='three') roster82Set('housheng','후성·송헌·위속','여포의 부장들','항복','각자 자기만 사면장을 받은 줄 알았다.');
