@@ -5594,14 +5594,14 @@ function ch5_spareTry(){
   });
 }
 
-/* 여포를 살리자는 말이 먹힐 확률 — 어느 길에서든 제대로 된 논리면 6할은 넘는다 */
+/* 여포를 살리자는 말이 먹힐 확률 — 살리는 쪽과 역사대로 가는 쪽이 대략 6:4 */
 function ch5_spareChance(pick){
   const ok = state.flags.xiapi==='ok';
-  let p = { leash: ok?0.9:0.65, dianwei: ok?0.85:0.6, future: ok?0.6:0.4 }[pick];
-  if(state.flags.ch5_water) p+=0.08;
+  let p = { leash: ok?0.6:0.5, dianwei: ok?0.55:0.45, future: ok?0.4:0.3 }[pick];
+  if(state.flags.ch5_water) p+=0.05;
   if(state.flags.defect==='three') p+=0.05;
   if(!ok && ch5_wanchengChanged()) p+=0.05;
-  return Math.min(0.95, p);
+  return Math.min(0.7, p);
 }
 function ch5_spareRoll(pick){ return Math.random() < ch5_spareChance(pick); }
 
