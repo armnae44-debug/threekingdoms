@@ -2108,6 +2108,14 @@ function ch1_resolve(pick){
 
 /* ── 도랑 · 조노 ── */
 function ch1_ditch(){
+  const how0 = state.flags.ch1_alone
+    ? '틈을 빠져나온 뒤로는 불빛이 안 보이는 쪽으로만 기었다.'
+    : state.flags.ch1_trampled
+    ? '기병이 지나가고 한참 뒤에야 몸을 끌고 움직였다. 빠진 무릎이 자꾸 꺾였다.'
+    : '말발굽 소리가 완전히 사라진 뒤에야 시체 밑에서 기어 나왔다.';
+  say('', how0, ()=>ch1_ditchIn());
+}
+function ch1_ditchIn(){
   scene('night','성 밖 · 버려진 도랑', ()=>{
     enterScene('도랑 · 조노', { year:194, rank:'졸' });
     setActor('me','나');
@@ -2116,7 +2124,7 @@ function ch1_ditch(){
       : state.flags.ch1_trampled
       ? '기병이 지나가고 한참 뒤에야 몸을 끌고 움직였다. 빠진 무릎이 자꾸 꺾였다.'
       : '말발굽 소리가 완전히 사라진 뒤에야 시체 밑에서 기어 나왔다.';
-    say('', how+'\n\n정신을 차려 보니 성 밖 도랑 바닥이었다. 흙탕물이 발목까지 고여 있었다.', ()=>{
+    say('', '정신을 차려 보니 성 밖 도랑 바닥이었다. 흙탕물이 발목까지 고여 있었다.', ()=>{
       say(nm('jono'), '"…살아 있소?"', ()=>{ say('', '어둠 속에서 쉰 목소리가 들렸다. 말끝에 마른기침이 섞여 있었다.', ()=>{
         say('', '대답하려 했지만 목이 말라붙어 소리가 나오지 않았다.\n\n흙벽에 등을 기댄 사내 하나가 나를 보고 있었다. 마흔 줄쯤 돼 보였다. 상투가 반쯤 풀려 있었고, 수염에 진흙이 엉겨 붙어 있었다. 낡은 갑옷 아래로 굵은 팔뚝이 보였다. 눈빛만은 또렷했다.', ()=>{
           say(nm('jono'), '"눈은 뜨는구려. 그럼 산 거요."', ()=>{
@@ -3423,7 +3431,17 @@ function ch4_tail(){
       }
       state.flags.knowSmithy=true; sign('ji');
       if(byJono) bond('jono',1,'호거아의 뒤를 밟아 극을 숨긴 곳을 알아냈다');
-      setBg('smithy');
+      const smithy4=()=>{ if(!byJono) setBg('smithy'); };
+      if(!byJono){ engrave([
+        ['','호거아는 곧장 전위의 막사 쪽으로 갔다.'],
+        ['','막사 앞에 세워져 있던 쌍극 두 자루를, 한 자루씩 두 번에 나눠 끌고 나갔다.']
+      ], ()=>{ smithy4(); engrave([
+        ['','성 서편 대장간 뒤였다. 그는 장작더미를 걷어 내고 그 밑에 극을 밀어 넣었다.'],
+        ['','다시 장작을 덮고, 주위를 한 번 둘러본 뒤 돌아섰다.'],
+        ['','나는 담 그늘에서 숨을 죽였다.']
+      ], ()=>{
+        say('나(독백)', '어디 있는지는 알았다.\n\n남은 건, 이걸 누구에게 어떻게 말하느냐였다. 항복한 성에서, 십장이, 장수 쪽 부장을 도둑으로.', ()=>ch4_prepIntro());
+      }); }); return; }
       engrave(byJono ? [
         ['','한참 뒤에 조노가 돌아와 내 옆에 앉았다. 잔을 들어 입을 가리고 말했다.'],
         [nm('jono'),'"전위 장군 막사 앞에서 극 두 자루를 끌고 나갑디다. 한 자루씩, 두 번 오갔소."'],
@@ -3550,10 +3568,10 @@ function ch4_tellDianwei(cb){
           say('', '전위가 나를 내려다봤다. 술 냄새가 훅 끼쳤다. 그런데 눈은 맑았다.', ()=>{
             say('전위', '"네 눈으로 봤나."', ()=>{
               say('나', '"예."', ()=>{
-                setBg('smithy');
                 engrave([
                   ['','전위는 대답 대신 막사로 걸어갔다. 극을 세워 두던 자리가 비어 있었다.'],
-                  ['','그는 아무 말 없이 성 서편으로 걸었다. 나는 그 뒤를 따랐다.'],
+                  ['','그는 아무 말 없이 성 서편으로 걸었다. 나는 그 뒤를 따랐다.']
+                ], ()=>{ setBg('smithy'); engrave([
                   ['','장작더미를 걷어 내자, 쇠붙이 두 자루가 드러났다.'],
                   ['','전위가 한 손에 한 자루씩 들어 올렸다. 팔십 근짜리를, 젓가락처럼.']
                 ], ()=>{
@@ -3567,7 +3585,7 @@ function ch4_tellDianwei(cb){
                       });
                     });
                   });
-                });
+                }); });
               });
             });
           });
@@ -3619,7 +3637,7 @@ function ch4_water(cb){
     state.flags.dianweiSober=true;
     if(state.silver>0){ state.silver-=1; render(); }
     say('', '술 나르는 종졸에게 값을 쥐여 주고, 전위에게 올라갈 술독에만 물을 타게 했다.', ()=>{
-      say('', '그날 밤 전위는 여느 때처럼 잔을 비웠다. 걸음은 조금도 흐트러지지 않았다.\n\n"…오늘 술은 영 싱겁군."', cb);
+      say('', '그날 밤 전위는 여느 때처럼 잔을 비웠다. 걸음은 조금도 흐트러지지 않았다.', ()=>say('전위', '"…오늘 술은 영 싱겁군."', cb));
     });
     return;
   }
@@ -4698,7 +4716,7 @@ function ch4_vow(){
   if(dead.length){
     const d=short(dead[0].name);
     const names=live.map(s=>short(s.name));
-    say('', `강가에 불을 피웠다. ${names.join(', ')}${hasJong(names[names.length-1])?'이':'가'} 둘러앉았다.\n\n${J(d,'이','가')} 앉던 자리는 비어 있었다. 아무도 그리로 옮겨 앉지 않았다.`, ()=>{
+    say('', `${state.flags.caoangLives?'그날 밤 불을 피웠다. 완성을 빠져나온 뒤 처음으로 다 같이 둘러앉은 자리였다. ':'강가에 불을 피웠다. '}${names.join(', ')}${hasJong(names[names.length-1])?'이':'가'} 둘러앉았다.\n\n${J(d,'이','가')} 앉던 자리는 비어 있었다. 아무도 그리로 옮겨 앉지 않았다.`, ()=>{
       voice(['jono','wangsam','sochil'], '"오늘 밤은 그 이름 부르지 마시오.\n\n부르면 다들 잠 못 자오."', ()=>{
         choose(permitted([
           { text:`그래도 "${d}" 하고 이름을 부른다`, act:'call' },
@@ -4716,7 +4734,7 @@ function ch4_vow(){
     });
     return;
   }
-  say('', '강가에 불을 피웠다. 아홉이 하나도 빠짐없이 둘러앉아 있었다.', ()=>{
+  say('', state.flags.caoangLives?'그날 밤 불을 피웠다. 완성을 빠져나온 뒤 처음으로, 아홉이 하나도 빠짐없이 한자리에 둘러앉았다.':'강가에 불을 피웠다. 아홉이 하나도 빠짐없이 둘러앉아 있었다.', ()=>{
     voice(['sochil','jono','wangsam'], '"…나리. 저희 다 살았네요."', ()=>{
       choose(permitted([
         { text:'"운이 좋았소."', sub:'담담하게 넘긴다', act:'luck' },
@@ -4826,7 +4844,7 @@ function ch5_open(){
   dig = { left:2, done:[], got:{} };
   ch5StartAlive = alive().map(x=>x.id);
   learn('xiapi');
-  setBg('camp'); setActor('me','나');
+  state.chapter=3; setBg('camp'); state.chapter=5; setActor('me','나');
 
   if(state.rank!=='군후'){
     state.rank='군후';
@@ -4990,10 +5008,11 @@ function ch5_tent(){
       ['순유', '"논이 그 물을 다 마셨을 리는 없소. 어딘가로 새고 있소."'],
       ['순유', '"새는 자리를 모르니, 둑을 더 높이 쌓아 봐야 더 많이 샐 뿐이오."'],
       ['', '구석의 사내가 잔을 내려놓았다.'],
-      function(next){ setActor('guojia','곽가(郭嘉)'); next(); },
+      function(next){ shadow93('guojia'); next(); },
       ['구석의 사내', '"그래서 사다리 든 사람들을 부른 거요. 성벽 밑을 두 달 밟은 건 우리가 아니라 저들이니까."'],
       ['순유', '"봉효. 술은 그만 드시오."'],
-      ['나(독백)', '봉효. 곽가.\n\n조공이 가장 아낀다는 모사였다. 책에서 그는 서른여덟에 병으로 죽는다. 저 마른기침 끝에.'],
+      function(next){ portrait85('guojia'); next(); },
+      ['', '봉효. 곽가.\n\n조공이 가장 아낀다는 모사였다. 책에서 그는 서른여덟에 병으로 죽는다. 저 마른기침 끝에.'],
       function(next){ setActor('xunyou','순유(荀攸)'); next(); },
       ['순유', '"무엇이든 좋소. 본 것을 말해 주시오."'],
       ['', '앞의 셋이 차례로 답했다. 성벽의 높이, 쏟아지는 돌, 흙으로 메운 성문.\n\n순유는 고개를 끄덕이며 들었다. 붓은 들지 않았다.'],
@@ -5068,7 +5087,7 @@ const DIG5 = {
 };
 
 function ch5_dig(){
-  setBg('paddy'); setActor('me','나');
+  setBg('camp'); setActor('me','나');
   if(dig.left<=0) return ch5_report();
   const list=[];
   Object.keys(DIG5).forEach(k=>{ if(!dig.done.includes(k)) list.push({ text:DIG5[k].text, sub:DIG5[k].sub, act:k }); });
@@ -5355,7 +5374,7 @@ function ch5_floodWork(){
       ['','흙벽이 무너졌다. 물이 옛길로 쏟아져 들어갔다.'],
       ['','논으로 퍼지지 않았다. 양옆 둑 사이로, 제 길을 기억하는 짐승처럼 곧장 성 서쪽으로 달려갔다.']
     ], ()=>{
-      shake83();
+      shake83(); setBg('flooded');
       engrave([
         ['','해가 뜨기 전에 서쪽 성벽 밑동이 물에 잠겼다.'],
         ['','사흘 뒤에는 성문 문턱까지 물이 찼다. 성 안 서쪽 우물에서는 물이 솟았다고 했다.'],
@@ -13154,11 +13173,12 @@ INJECT75.push(
 );
 const say78=say;
 say=function(who,text,cb){
+  if(window.NOINJ75) return say78(who,text,cb);
   const t=String(text||''), t0=t.replace(/^"/,'');
   const inj=INJECT75.find(x=>(t.startsWith(x.match)||t0.startsWith(x.match)) && (!x.when||x.when()));
   if(!inj) return say78(who,text,cb);
   const res=w=> w&&w[0]==='@' ? nm(w.slice(1)) : w;
-  const play=(list,done)=>{ let i=0; (function next(){ if(i>=list.length) return done&&done(); const [w,x]=list[i++]; say78(res(w),x,next); })(); };
+  const play=(list,done)=>{ let i=0; (function next(){ if(i>=list.length) return done&&done(); const [w,x]=list[i++]; window.NOINJ75=true; try{ say(res(w),x,next); } finally{ window.NOINJ75=false; } })(); };
   const bef=typeof inj.before==='function'?inj.before():(inj.before||[]);
   const aft=typeof inj.after==='function'?inj.after():(inj.after||[]);
   play(bef, ()=>say78(who,text,()=>play(aft,cb)));
@@ -14066,7 +14086,7 @@ Object.assign(BG,{
   camp_spring: BG.camp,
   camp_dusk: BG.camp
 });
-[['ch1_ditch','ditch_night'],['ch1_thirst','ditch_day'],['ch1_sound','ditch_night'],['ch1_end','ditch_dawn'],['ch1_close','ditch_dawn']].forEach(([fn,k])=>{
+[['ch1_ditchIn','ditch_night'],['ch1_thirst','ditch_day'],['ch1_sound','ditch_day'],['ch1_end','ditch_dawn'],['ch1_close','ditch_dawn']].forEach(([fn,k])=>{
   if(typeof window[fn]==='function'){ const f=window[fn]; window[fn]=function(){ setBg(k); return f.apply(this,arguments); }; }
 });
 
@@ -14459,6 +14479,41 @@ c67Start=function(ch){
   if(ch==='6A'||ch==='6B'){ const F=state.flags; F.storeSeen=['report','report_fail','deal','deal_fail','bribe','hold'].includes(F.ch3); }
   return c67Start94(ch);
 };
+
+/* ==========================================================
+   v95 · 인물 그림 이어짐
+   - 대화 사이에 서술이 한두 줄 끼어도 말하던 사람은 그대로 서 있다 (세 줄째에 내린다)
+   - 장면이 바뀌면 내린다
+   - 이름 모를 인물이 제 이름을 밝히는 줄에서 실루엣이 얼굴로 바뀐다
+   - '구석의 사내'(곽가)는 정체가 밝혀질 때까지 실루엣
+   - 백부장은 그림만 세우고 등장 연출(이름패·번쩍임)은 하지 않는다
+   ========================================================== */
+Object.assign(NAME85,{ '백부장':'baekbu' }); SEEN86.baekbu=1;
+const REV95={}; let nar95=0;
+// 시간이 넘어가는 서술로 시작하면 그 줄에서 바로 내린다
+const SKIP95=/^(그날|그해|그 뒤|이튿날|다음 날|며칠|사흘|닷새|열흘|이레|해가|저녁|새벽|아침|밤이|자정|첫서리|건안|봄|여름|가을|겨울|성문 쪽 횃불)/;
+const shadow95=shadow93;
+shadow93=function(id){ if(REV95[id]) return portrait85(id); return shadow95(id); };
+const say95=say;
+say=function(who,text){
+  const raw=String(who||'').trim();
+  const was=dom.actor.classList.contains('show');
+  try{
+    if(raw==='???' && LASTNM93 && LASTNM93.r==='???'){
+      const id=LASTNM93.id, kr=(HERO86[id]&&HERO86[id].kr)||'';
+      if(kr && String(text||'').indexOf(kr+'(')>=0) REV95[id]=1;
+    }
+  }catch(e){}
+  const r=say95.apply(this,arguments);
+  try{
+    if(!raw){ nar95++; if(SKIP95.test(String(text||'').trim())) nar95=9; if(was && nar95<3) dom.actor.classList.add('show'); }
+    else nar95=0;
+    if(raw==='구석의 사내') shadow93('guojia');
+  }catch(e){}
+  return r;
+};
+const scene95=scene;
+scene=function(){ nar95=9; dom.actor.classList.remove('show'); return scene95.apply(this,arguments); };
 </script>
 </body>
 </html>
