@@ -14514,6 +14514,124 @@ say=function(who,text){
 };
 const scene95=scene;
 scene=function(){ nar95=9; dom.actor.classList.remove('show'); return scene95.apply(this,arguments); };
+
+/* ==========================================================
+   v96 · 5~12장 그림·음악 반영
+   - 배경: 같은 그림을 여러 장면이 나눠 쓴다(BGALIAS96). 장면 중간에 장소가 바뀌는 곳은 줄 머리로 배경을 바꾼다(TRIG96)
+   - 음악: 같은 성격의 곡을 돌려 쓴다(POOL96). 장 첫 장면과 "자네는 누군가"에는 메인 테마
+   ========================================================== */
+const BGALIAS96={ ch13_farewell:'ch7_farewell', ch11_stable:'ch9_stable', ch10_jushou:'ch9_jushou', ch11_depart:'ch10_depart', ch11_night:'ch10_night',
+  ch11_tent:'ch10_tent', ch11_yuan:'ch10_yuan', ch13_yuan:'ch10_yuan', ch13_camp:'ch12_camp', ch13_dawn:'ch12_dawn', ch10_wall:'ch12_wall',
+  ch13_tent:'ch14_hall', ch13_sortie:'ch14_tent', ch14_infirmary:'ch13_infirmary' };
+const cand96=cand85;
+cand85=function(dir,names){
+  if(dir!=='bg') return cand96(dir,names);
+  const out=[]; names.forEach(n=>{ out.push(n); if(BGALIAS96[n]) out.push(BGALIAS96[n]); });
+  return cand96(dir,out);
+};
+Object.assign(BG,{ hill:BG.field, vista:BG.night, catapult:BG.camp, workshop:BG.camp, raid:BG.night, trench:BG.night, wall_fire:BG.fire });
+
+/* 장소가 따로 있는 장면은 배경 키를 바로잡는다 */
+(function(){
+  const fix=(ch,test,bg)=>(C67_DATA[ch]||[]).forEach(e=>{ if(e.type==='scene'&&test(e)) e.bg=bg; });
+  ['7A','7B'].forEach(c=>fix(c,e=>e.location==='연진 남쪽 언덕','hill'));
+  fix('7A',e=>e.location==='길 위의 송별','farewell');
+  ['9A','9B'].forEach(c=>fix(c,e=>e.location==='도랑','trench'));
+  fix('9A',e=>e.location==='다른 손','jushou');
+  fix('9B',e=>e.location==='원소군 본영','jushou');
+  fix('9B',e=>e.location==='목책 위'&&e.bg==='night','wall');
+})();
+
+/* 한 장면 안에서 장소가 바뀌는 줄 (서술 줄의 첫머리) */
+const TRIG96={
+  8:[['처음에는 적진의 끝을 찾아보려','vista'],['나도 적진에서 눈을 떼고','camp'],
+     ['그날 밤 우리 부대는 출격하지 않았다','raid'],['동이 트기 전에 나는 입구 밖으로','camp'],
+     ['발석거를 처음 본 것은','workshop'],['사흘 뒤, 발석거들이 진지 안으로','catapult'],
+     ['그날 오후 조홍이 나를 불렀다','workshop'],['그날 밤 유엽과 그림을 다시 펼쳤다','workshop'],
+     ['나는 입구로 달려갔다','raid'],['부대로 돌아가니 조노가 내 창을','camp'],['다음 날 어둠이 내리자 진영을 나섰다','raid'],
+     ['아침에 작업장으로 갔다','workshop'],['시험장의 일은 장인들이 맡았다','camp'],
+     ['조공은 시험에 쓰고 남은 돌을','workshop'],['그날 밤 병기가 옮겨졌다','catapult'],
+     ['왕삼은 새 병기가 오는지부터','camp'],['마지막 두 대의 시험이 끝난 밤','catapult'],
+     ['유엽은 군막보다 그 곁에','workshop'],['적진에도 불이 켜졌다','vista']],
+  9:[['그날 밤 목책 위에서 그것을 봤다','wall_fire']]
+};
+let trig96=false;
+const say96=say;
+say=function(who,text){
+  try{
+    if(!String(who||'').trim()){
+      const list=TRIG96[state.chapter];
+      if(list){ const t=String(text||'').replace(/<[^>]*>/g,'').trim(); for(const [h,k] of list){ if(t.startsWith(h)){ trig96=true; try{ setBg(k); } finally{ trig96=false; } break; } } }
+    }
+  }catch(e){}
+  return say96.apply(this,arguments);
+};
+
+/* 음악: 새 곡 연결 */
+Object.assign(BGM85,{
+  ch6_night:'guanyu', ch7_farewell:'guanyu', ch13_farewell:'guanyu', ch9_wall:'guanyu', ch9_wall_fire:'ch5_lvbu',
+  ch7_hill:'ch5_siege', ch8_vista:'ch1_ditch', ch8_raid:'ch1_raid', ch8_catapult:'byeokryeok', ch8_workshop:'byeokryeok',
+  ch9_trench:'ch1_ditch', ch9_jushou:'ch3_probe', ch14_epilogue:'epilogue'
+});
+Object.assign(URGENT86,{ guandu_final2:1, council2:1, yuan_camp:1, byeokryeok:1, guanyu:1 });
+/* 같은 성격의 곡은 돌려 쓴다. 지금 나오는 곡이 같은 묶음이면 바꾸지 않는다 */
+const POOL96={ ch2_camp:['ch2_camp','epilogue'], ch5_council:['ch5_council','council2','yuan_camp'], ch5_siege:['ch5_siege','guandu_final2'] };
+const POOLLATE96={ ch3_probe:['ch3_probe','yuan_camp'] };   // 원소군 막간은 5장부터만 섞는다
+const rot96={};
+const bgm96=bgm85;
+bgm85=function(name){
+  try{
+    const ch=(typeof state!=='undefined'&&state.chapter)||0;
+    const pool=POOL96[name]||(ch>=6&&POOLLATE96[name]);
+    if(pool){ if(pool.indexOf(bgmNow85)>=0) return; rot96[name]=((rot96[name]===undefined?-1:rot96[name])+1)%pool.length; name=pool[rot96[name]]; }
+  }catch(e){}
+  return bgm96.apply(this,[name]);
+};
+/* 메인 테마: 장 첫 장면과 "자네는 누군가". 그 장면의 장소에 머무는 동안 이어진다 */
+let theme96=null;
+const scene96=scene;
+scene=function(bg,line){
+  try{
+    const t=String(line||'').replace(/<[^>]*>/g,'').trim();
+    if(THEMEHEAD96.test(t)){ theme96=bg; bgmStart86=0; bgm85('title'); }
+    else theme96=null;
+  }catch(e){}
+  return scene96.apply(this,arguments);
+};
+const bgmForBg96=bgm85ForBg;
+const THEMEHEAD96=/^제\s*\d+\s*장|자네는 누군가/;
+bgm85ForBg=function(k){
+  // 12~14장은 제목 장면 직전에 배경을 먼저 바꾼다. 곧 메인 테마가 나오니 장소 곡은 건너뛴다
+  try{ if((state.chapter||0)>=12&&typeof abCursor!=='undefined'&&abCursor&&AB_DATA[abCursor.chapter]){ const e=AB_DATA[abCursor.chapter][abCursor.index]; if(e&&e.type==='scene'&&e.title&&THEMEHEAD96.test(e.title)&&e.bg===k&&theme96===null) return; } }catch(e){}
+  if(k==='epilogue'&&(state.chapter||0)>=14) bgmStart86=0;   // 엔딩의 옛 관도는 기다리지 않고 바로 넘긴다
+  if(theme96!==null){ if(k===theme96||trig96) return; theme96=null; } return bgmForBg96(k); };   // 줄 머리로 바뀐 배경은 테마를 끊지 않는다
+
+/* 새 인물 */
+Object.assign(HERO86,{
+  caohong:{hz:'曹洪',kr:'조홍',sub:'조공의 사촌 아우 · 자렴'},
+  guanyu:{hz:'關羽',kr:'관우',sub:'유비의 의제 · 운장'},
+  zhangliao:{hz:'張遼',kr:'장료',sub:'여포의 옛 부장 · 문원'},
+  zhanghe:{hz:'張郃',kr:'장합',sub:'원소의 장수 · 준예'},
+  gaolan:{hz:'高覽',kr:'고람',sub:'원소의 장수'},
+  yuanshao:{hz:'袁紹',kr:'원소',sub:'대장군 · 본초'},
+  jushou:{hz:'沮授',kr:'저수',sub:'원소의 감군'},
+  xuyou:{hz:'許攸',kr:'허유',sub:'원소의 모사 · 자원'},
+  guotu:{hz:'郭圖',kr:'곽도',sub:'원소의 모사 · 공칙'},
+  shenpei:{hz:'審配',kr:'심배',sub:'원소의 모사 · 정남'},
+  chunyuqiong:{hz:'淳于瓊',kr:'순우경',sub:'오소를 지키는 장수 · 중간'},
+  jiaxu:{hz:'賈詡',kr:'가후',sub:'장수를 따라온 모사 · 문화'},
+  liuye:{hz:'劉曄',kr:'유엽',sub:'조공의 막료 · 자양'},
+  manchong:{hz:'滿寵',kr:'만총',sub:'허도 현령 · 백녕'},
+  dianman:{hz:'典滿',kr:'전만',sub:'전위의 아들'},
+  jinqi:{hz:'',kr:'진기',sub:'귀가 밝은 병사'},
+  jango:{hz:'',kr:'장오',sub:'붉은 머릿수건'},
+  iseok:{hz:'',kr:'이석',sub:'병사'},
+  mao:{hz:'',kr:'마오',sub:'병사'},
+  mopal:{hz:'',kr:'모팔',sub:'물 나르는 병사'},
+  duseok:{hz:'',kr:'두석',sub:'병사'}
+});
+Object.assign(SIZE90,{ guanyu:100, dianman:99, caohong:95, zhanghe:96, zhangliao:95, gaolan:96, yuanshao:95, chunyuqiong:94,
+  jushou:92, xuyou:91, guotu:92, shenpei:92, jiaxu:92, liuye:93, manchong:93, jinqi:91, jango:92, iseok:91, mao:89, mopal:93, duseok:93 });
 </script>
 </body>
 </html>
