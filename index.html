@@ -15901,6 +15901,108 @@ ch2_road100=function(cb){
   setInterval(()=>{ try{ const k=JSON.stringify([(state.squad||[]).map(q=>[q.id,q.bond,q.alive]),state.suspicion||0]); if(sig && k!==sig && !open) btn.classList.add('new'); sig=k; }catch(e){} },700);
 })();
 
+/* ==========================================================
+   v109 · 시안 「그을린 죽간 발」 (주소 끝에 ?ui=5)
+   오른쪽에 검게 그을린 대쪽을 엮은 발. 상아색 글씨. 선택지는 글자만.
+   ========================================================== */
+(function(){
+  if(!/[?&]ui=5/.test(location.search)) return;
+  document.body.classList.add('ui109');
+  const lk=document.createElement('link'); lk.rel='stylesheet';
+  lk.href='https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap'; document.head.appendChild(lk);
+  const GRAIN="url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .004' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .75 0 0 0 0 .55 0 0 0 0 .3 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E\")";
+  const css=`
+  body.ui109{--ivory109:#eadfc7;--ivory2:#b9ac93;--ivory3:#857a68;--bronze109:#c2a072;--zhu109:#b5473b;--w109:min(500px,38vw)}
+  body.ui109.pc75 #stage{display:block!important}
+  body.ui109.pc75 #visual{position:fixed!important;inset:0!important}
+  body.ui109.pc75 #visual::after{content:'';position:absolute;inset:0;width:auto!important;pointer-events:none;z-index:6;
+    background:linear-gradient(90deg,rgba(0,0,0,0) 50%,rgba(6,4,3,.45) 72%,rgba(6,4,3,.6))!important}
+  body.ui109.pc75 #stage #topBar::before,body.ui109.pc75 #stage #bottom::after,body.ui109.pc75 #stage #bottom::before{display:none!important}
+  /* 발: 대쪽 + 마디 + 위아래 끈 */
+  body.ui109.pc75 #stage::after{content:'';position:fixed;z-index:15;pointer-events:none;top:14px;bottom:14px;right:26px;width:var(--w109);border-radius:3px;
+    background:
+      linear-gradient(180deg,rgba(0,0,0,0) 31%,rgba(0,0,0,.18) 31.4%,rgba(255,214,160,.035) 31.8%,rgba(0,0,0,0) 32.4%,rgba(0,0,0,0) 69%,rgba(0,0,0,.18) 69.4%,rgba(255,214,160,.035) 69.8%,rgba(0,0,0,0) 70.4%),
+      repeating-linear-gradient(90deg,rgba(0,0,0,.42) 0 1px,rgba(255,214,160,.045) 1px 2px,rgba(0,0,0,.10) 2px 6px,rgba(255,214,160,.025) 18px 28px,rgba(0,0,0,0) 34px,rgba(0,0,0,.16) 44px,rgba(0,0,0,.32) 46px),
+      ${GRAIN},
+      linear-gradient(180deg,rgba(33,25,17,.95),rgba(24,18,13,.96) 50%,rgba(18,13,10,.97));
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    box-shadow:0 30px 60px rgba(0,0,0,.65),0 0 0 1px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,214,160,.08)}
+  body.ui109.pc75 #stage::before{content:'';position:fixed;z-index:16;pointer-events:none;right:14px;width:calc(var(--w109) + 24px);top:36px;height:calc(100% - 72px);
+    background:
+      repeating-linear-gradient(60deg,#4a3826 0 3px,#6d5539 3px 5px,#3a2b1d 5px 7px) top/100% 5px no-repeat,
+      repeating-linear-gradient(60deg,#4a3826 0 3px,#6d5539 3px 5px,#3a2b1d 5px 7px) bottom/100% 5px no-repeat;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,.7))}
+  /* 글 칸을 발 위에 */
+  body.ui109.pc75 #stage #topBar{position:fixed!important;top:14px;right:26px;width:var(--w109);left:auto;z-index:20;background:transparent!important;padding:46px 40px 6px 44px!important}
+  body.ui109.pc75 #stage #bottom{position:fixed!important;right:26px;width:var(--w109);left:auto;top:150px;bottom:14px;z-index:20;height:auto!important;
+    background:transparent!important;padding:0 40px 74px 44px!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;overflow:hidden!important}
+  body.ui109 #hud75::after{display:none!important}
+  body.ui109 #hudCh75{background:none!important;-webkit-text-fill-color:var(--ivory109)!important;color:var(--ivory109)!important;font-size:24px!important;letter-spacing:.3em!important}
+  body.ui109 #hudLoc75{color:var(--ivory3)!important;letter-spacing:.14em!important;font-family:'Gowun Batang',var(--serif)!important}
+  body.ui109 #menuBtn75{color:var(--ivory2)!important;background:none!important;border:0!important}
+  body.ui109 #body,body.ui109 #body *{font-family:'Gowun Batang',var(--serif)!important}
+  body.ui109 #body{color:var(--ivory109)!important;font-size:19.5px!important;line-height:1.95!important;text-shadow:0 1px 2px rgba(0,0,0,.6)!important;border:0!important;padding-left:0!important}
+  body.ui109 #body *{border:0!important}
+  body.ui109 #narr.mono75 #body{color:#cdbf9f!important}
+  body.ui109 #who{color:var(--bronze109)!important;font-family:'Gowun Batang',var(--serif)!important;font-weight:700!important;font-size:16px!important;letter-spacing:.14em!important}
+  body.ui109 #who::before{display:none!important}
+  body.ui109 #who .hz101{color:var(--ivory3)!important}
+  body.ui109.pc75 .tr75{color:var(--ivory3)!important;font-family:'Gowun Batang',var(--serif)!important;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+  body.ui109.pc75 .tr75 b{color:#9c8463!important;font-family:'Gowun Batang',var(--serif)!important}
+  body.ui109 #narr,body.ui109 #trail75{-webkit-mask-image:linear-gradient(180deg,transparent,#000 16%)!important;mask-image:linear-gradient(180deg,transparent,#000 16%)!important}
+  body.ui109 #narr{-webkit-mask-image:none!important;mask-image:none!important}
+  body.ui109 #contBtn{color:var(--bronze109)!important}
+  /* 선택지: 글자만, 밑줄 */
+  body.ui109 #stage #bottom #choices{counter-reset:ch75;margin-top:14px!important}
+  body.ui109 #stage #bottom #choices .ch{background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;transform:none!important;
+    padding:8px 0 8px 32px!important;margin:0!important;color:var(--ivory2)!important;font-size:17.5px!important;font-weight:400!important;font-family:'Gowun Batang',var(--serif)!important;transition:color .2s!important}
+  body.ui109 #stage #bottom #choices .ch::before{position:absolute!important;left:0!important;top:10px!important;width:auto!important;height:auto!important;border:0!important;background:none!important;
+    box-shadow:none!important;transform:none!important;color:var(--ivory3)!important;font-size:14px!important}
+  body.ui109 #stage #bottom #choices .ch::after{content:''!important;position:absolute;left:32px;bottom:4px;top:auto!important;height:1px;width:0;background:var(--ivory109)!important;opacity:.55;transition:width .35s cubic-bezier(.2,.8,.2,1)}
+  body.ui109 #stage #bottom #choices .ch:hover{color:#fff4dc!important}
+  body.ui109 #stage #bottom #choices .ch:hover::after{width:calc(100% - 32px)}
+  body.ui109 #stage #bottom #choices .ch:hover::before{color:var(--ivory109)!important}
+  body.ui109 #stage #bottom #choices .ch .sub{display:block!important;margin-top:2px;color:var(--ivory3)!important;font-size:13.5px!important}
+  body.ui109 #choices .ch .od103{display:inline!important;margin-left:8px;border:0!important;background:none!important;padding:0!important;border-radius:0!important;font-size:12.5px!important;color:var(--zhu109)!important}
+  body.ui109 #choices .ch .od103.hi{color:#8aa592!important} body.ui109 #choices .ch .od103.mid{color:#c29a55!important}
+  /* 아래 단추 */
+  body.ui109.pc75 #ctl75{position:absolute!important;left:44px;right:40px;bottom:30px;margin:0!important;padding:0!important;border:0!important;min-height:0!important}
+  body.ui109.pc75 #ctl75::before{display:none!important}
+  body.ui109 #ctl75 button{color:var(--ivory3)!important;font-size:12.5px!important;background:none!important;font-family:'Gowun Batang',var(--serif)!important}
+  body.ui109 #ctl75 button:hover{color:var(--ivory109)!important}
+  body.ui109 #ctl75 .hint75{color:#6a604f!important}
+  body.ui109 #jumpBtn88{background:none!important;border:0!important;color:#6a604f!important}
+  /* 그림: 인물은 발 왼쪽 */
+  body.ui109.pc75 #actor{left:calc((100vw - var(--w109) - 40px) / 2)!important;width:50%!important}
+  /* 알림 */
+  body.ui109.pc75 #mark75{left:24px!important;right:auto!important;width:auto!important;top:20px!important;padding:0!important}
+  body.ui109 .mk75{background:rgba(24,18,13,.92)!important;border:0!important;border-left:3px solid var(--bronze109)!important;border-radius:0!important;box-shadow:0 10px 24px rgba(0,0,0,.5)!important}
+  body.ui109 .mk75 .sl{background:none!important;color:var(--bronze109)!important;border:1px solid var(--bronze109)!important}
+  /* 곁의 사람: 기본 숨김 */
+  body.ui109 #st103{display:none!important}
+  body.ui109.st109 #st103.on{display:flex!important;position:absolute!important;top:20px!important;left:24px!important;background:rgba(24,18,13,.9)!important;border:0!important;border-radius:0!important;box-shadow:0 10px 24px rgba(0,0,0,.5)!important;backdrop-filter:none!important}
+  body.ui109 #st103 .p{border:0!important;background:none!important}
+  body.ui109 #ppl109{position:absolute;right:86px;top:56px;background:none;border:0;color:var(--ivory3);font-size:12.5px;letter-spacing:.12em;cursor:pointer;font-family:'Gowun Batang',var(--serif);z-index:21}
+  body.ui109 #ppl109:hover,body.ui109.st109 #ppl109{color:var(--ivory109)}
+  body.ui109 #ppl109 i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--zhu109);margin-left:6px;vertical-align:middle;opacity:0;transition:opacity .3s}
+  body.ui109 #ppl109.new i{opacity:1}
+  /* 장 제목 */
+  body.ui109 #center .ct.card{font-family:'Gowun Batang',var(--serif)!important;font-weight:700!important;font-size:30px!important;letter-spacing:.4em!important;color:#efe6d0!important;
+    background:none!important;box-shadow:none!important;text-shadow:0 2px 24px rgba(0,0,0,.9)!important}
+  body.ui109 #center .ct.card::before,body.ui109 #center .ct.card::after{display:none!important}
+  `;
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+  let open=false; try{ open=localStorage.getItem('ppl109')==='1'; }catch(e){}
+  const set=o=>{ open=o; document.body.classList.toggle('st109',o); try{ localStorage.setItem('ppl109',o?'1':'0'); }catch(e){} const b=document.getElementById('ppl109'); if(b&&o) b.classList.remove('new'); };
+  set(open);
+  const btn=document.createElement('button'); btn.id='ppl109'; btn.type='button'; btn.title='곁의 사람 · 조공의 시선 (C)'; btn.innerHTML='곁의 사람<i></i>';
+  btn.onclick=e=>{ e.stopPropagation(); set(!open); };
+  const tb=document.getElementById('topBar'); if(tb) tb.appendChild(btn);
+  document.addEventListener('keydown',e=>{ if((e.key==='c'||e.key==='C'||e.key==='ㅊ') && !e.ctrlKey && !e.metaKey && !/INPUT|TEXTAREA/.test((e.target||{}).tagName||'')) set(!open); });
+  let sig='';
+  setInterval(()=>{ try{ const k=JSON.stringify([(state.squad||[]).map(q=>[q.id,q.bond,q.alive]),state.suspicion||0]); if(sig && k!==sig && !open) btn.classList.add('new'); sig=k; }catch(e){} },700);
+})();
+
 /* 4장 · 공격 사흘 전, 사다리 */
 function ch5_ladderPrep100(){
   const J_=isAlive('jono'), W_=isAlive('wangsam'), S_=isAlive('sochil');
