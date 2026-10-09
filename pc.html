@@ -15243,6 +15243,150 @@ function proFlash101(){
   setTimeout(()=>{ dom.center.innerHTML=''; proNext(); },2600+6400);
 }
 
+
+/* ==========================================================
+   v102 · 인물 정보(사서·연의) / 책에 적힌 결말 / 신뢰 변화 표시
+   ========================================================== */
+const PEOPLE101={
+ caocao:{n:'조조',hz:'曹操',ja:'맹덕(孟德)',sa:'후한 말의 승상. 흩어진 화북을 하나로 묶고, 둔전을 열어 군량 문제를 풀었다. 건안 5년(200) 관도에서 원소를 꺾었다. 시를 잘 썼고 『손자병법』에 주석을 달았다. 아들 조비가 위나라를 세운 뒤 무제로 높여졌다.',yy:'『삼국지연의』에서는 꾀 많고 의심 많은 간웅으로 그려진다. "내가 천하를 저버릴지언정 천하가 나를 저버리게 하지는 않겠다"는 말이 이 책에서 나왔다. 적벽에서 크게 지는 장면이 길게 나온다.'},
+ lvbu:{n:'여포',hz:'呂布',ja:'봉선(奉先)',sa:'정원과 동탁을 차례로 죽였다. 조조가 비운 연주를 빼앗아 복양에서 맞섰고(194), 서주를 차지했다. 건안 3년(198) 하비에서 사로잡혀 처형되었다.',yy:'천하에 맞설 자가 없는 무장으로 그려진다. 적토마를 타고 방천화극을 쓴다. 초선을 둘러싼 연환계, 유비·관우·장비 셋과 싸우는 장면이 유명하다. 하비 백문루에서 목이 매달린다.'},
+ guanyu:{n:'관우',hz:'關羽',ja:'운장(雲長)',sa:'유비의 장수. 건안 5년(200) 하비에서 조조에게 사로잡혀 편장군이 되었다. 백마에서 안량을 베어 한수정후에 봉해졌고, 받은 것을 봉해 두고 유비에게 돌아갔다. 219년 형주에서 손권에게 죽었다.',yy:'의리의 상징으로 그려진다. 청룡언월도를 쓰고, 조조를 떠나며 다섯 관문을 지나 여섯 장수를 벤다. 안량에 이어 문추도 벤다. 뒤에 신으로 모셔진다.'},
+ liubei:{n:'유비',hz:'劉備',ja:'현덕(玄德)',sa:'서주를 맡았다가 여포에게 빼앗기고 조조에게 몸을 맡겼다. 조조가 세운 서주자사 차주를 베고 돌아섰다가 패해 원소에게 갔다. 뒤에 촉한을 세웠다(221).',yy:'어진 군주의 주인공. 관우·장비와 도원에서 의형제를 맺고, 제갈량을 세 번 찾아간다.'},
+ caohong:{n:'조홍',hz:'曹洪',ja:'자렴(子廉)',sa:'조조의 사촌 아우. 190년 형양에서 조조가 말을 잃자 제 말을 내주어 살렸다. 관도에서 조조가 오소를 칠 때 본영을 지켰다. 재물에 인색했다는 기록도 있다.',yy:'사서와 같은 일화로 나온다. 조조를 살린 충직한 친척 장수.'},
+ jushou:{n:'저수',hz:'沮授',sa:'원소의 감군이자 참모. 천자를 모시라고 권했으나 원소가 듣지 않았다. 관도에서 서두르지 말고 오소를 지키라고 했으나 역시 무시되었다. 원소가 진 뒤 사로잡혔고, 원소에게 돌아가려다 처형되었다.',yy:'끝까지 원소를 섬긴 충신으로 그려진다. 조조가 그의 무덤에 비를 세워 준다.'},
+ zhanghe:{n:'장합',hz:'張郃',ja:'준예(儁乂)',sa:'원소의 장수. 관도에서 오소를 구하자고 했으나 받아들여지지 않았고, 곽도의 참소를 받자 고람과 함께 조조에게 넘어갔다. 뒤에 위나라의 명장이 되어 231년 제갈량과 싸우다 죽었다.',yy:'사서와 비슷하다. 뒷부분에서 제갈량의 맞수로 자주 나온다.'},
+ xunyou:{n:'순유',hz:'荀攸',ja:'공달(公達)',sa:'조조의 군사. 하비에서 기수와 사수를 터서 성을 잠그자고 했고, 백마에서는 동쪽을 치는 척하고 서쪽을 치는 꾀와 짐을 미끼로 문추를 꾀는 꾀를 냈다. 허유가 왔을 때 오소를 치자는 데 찬성했다.',yy:'순욱의 조카로 나온다. 비중은 사서보다 작다.'},
+ jiaxu:{n:'가후',hz:'賈詡',ja:'문화(文和)',sa:'장수(張繡)의 모사. 완성에서 조조를 기습하게 했고(197), 2년 뒤 장수에게 조조에게 가라고 권했다. 관도에서는 결전을 권했다. 뒤에 위나라 태위가 되었다.',yy:'사서와 같다. 이간책으로 마초와 한수를 갈라놓는 장면이 유명하다.'},
+ xuyou:{n:'허유',hz:'許攸',ja:'자원(子遠)',sa:'원소의 모사. 관도에서 조조에게 넘어와 오소에 군량이 있다고 알려 주었다. 뒤에 공을 내세우며 무례하게 굴다가 조조에게 죽었다.',yy:'공을 자랑하다 허저의 칼에 죽는다.'},
+ zhangliao:{n:'장료',hz:'張遼',ja:'문원(文遠)',sa:'여포의 부장이었다가 하비 뒤 조조에게 왔다. 백마에서 관우와 함께 안량을 쳤다. 215년 합비에서 적은 군사로 손권을 크게 이겼다.',yy:'관우를 설득해 항복하게 하는 장면이 있다. 합비의 명장으로 그려진다.'},
+ caoang:{n:'조앙',hz:'曹昂',ja:'자수(子脩)',sa:'조조의 맏아들. 건안 2년(197) 완성에서 장수(張繡)가 들이치자 아버지에게 말을 내주고 죽었다.',yy:'사서와 같다.'},
+ dianwei:{n:'전위',hz:'典韋',sa:'조조의 호위. 큰 쌍극을 썼다. 건안 2년(197) 완성에서 문을 막고 싸우다 죽었다. 조조가 그를 위해 크게 울었다.',yy:'장수의 부장 호거아가 술에 취한 전위의 극을 몰래 훔쳐 간다. 극을 잃은 전위가 맨손으로 문을 지키다 죽는다.'},
+ yuanshao:{n:'원소',hz:'袁紹',ja:'본초(本初)',sa:'4대에 걸쳐 삼공을 낸 명문가 출신. 동탁을 치는 연합군의 맹주였다. 199년 공손찬을 꺾고 하북 네 주를 차지했으나, 이듬해 관도에서 조조에게 졌다. 202년 병으로 죽었다.',yy:'결단을 못 하고 좋은 말을 듣지 않는 인물로 그려진다. 군사 수도 70만으로 크게 부풀려진다.'},
+ shenpei:{n:'심배',hz:'審配',ja:'정남(正南)',sa:'원소의 모사. 관도 뒤 업성을 지키다 204년 성이 떨어지자 처형되었다. 죽기 전까지 굽히지 않았다.',yy:'사서와 같다.'},
+ guotu:{n:'곽도',hz:'郭圖',ja:'공칙(公則)',sa:'원소의 모사. 장합을 참소해 조조에게 넘어가게 만들었다. 원소가 죽은 뒤 원담 편에 섰다가 205년 죽었다.',yy:'남을 헐뜯는 모사로 그려진다.'},
+ guojia:{n:'곽가',hz:'郭嘉',ja:'봉효(奉孝)',sa:'조조의 군사좨주. 원소와 싸워 이길 까닭을 열 가지로 들었다(십승십패론). 여포를 칠 때와 원소에 맞설 때 계책을 냈다. 207년 서른여덟에 병으로 죽었다.',yy:'죽기 전에 남긴 글로 요동의 일을 미리 맞힌다. 조조가 적벽에서 지고 "봉효가 살아 있었다면" 하고 운다.'},
+ manchong:{n:'만총',hz:'滿寵',ja:'백녕(伯寧)',sa:'허현의 현령일 때 조홍의 빈객이 법을 어기자 잡아다 처벌했다. 법을 엄하게 지킨 관리였다. 뒤에 합비를 지키며 오나라와 맞섰다.',yy:'비중이 작다.'},
+ liuye:{n:'유엽',hz:'劉曄',ja:'자양(子揚)',sa:'관도에서 발석거를 만들어 원소군이 쌓은 흙산과 망루를 부쉈다. 원소군은 이 병기를 벽력거라 불렀다.',yy:'사서와 같은 일화로 나온다.'},
+ gaolan:{n:'고람',hz:'高覽',sa:'원소의 장수. 관도에서 장합과 함께 조조에게 넘어왔다. 그 뒤의 기록은 거의 없다.',yy:'뒤에 조운에게 죽는다.'},
+ xuchu:{n:'허저',hz:'許褚',ja:'중강(仲康)',sa:'조조의 호위. 전위가 죽은 뒤 조조 곁을 지켰다. 힘이 세어 "호치(범 같은 바보)"라 불렸다.',yy:'마초와 웃통을 벗고 싸우는 장면이 유명하다. 허유를 벤다.'},
+ chunyuqiong:{n:'순우경',hz:'淳于瓊',ja:'중간(仲簡)',sa:'원소의 장수. 오소에서 군량을 지키다 조조의 기습에 져서 죽었다.',yy:'술에 취해 있다가 기습을 당한다. 조조가 코를 베어 돌려보낸다.'},
+ chengong:{n:'진궁',hz:'陳宮',ja:'공대(公臺)',sa:'처음에는 조조를 섬겼다가 여포를 연주로 끌어들였다. 하비에서 여포와 함께 사로잡혀 처형되었다.',yy:'조조가 여백사 일가를 죽이는 것을 보고 그를 떠나는 장면이 있다.'},
+ hujuer:{n:'호거아',hz:'胡車兒',sa:'장수(張繡)의 부장. 용맹이 군에서 으뜸이라, 조조가 그를 아껴 금을 주었다는 기록이 있다.',yy:'전위가 술에 취한 틈에 그의 쌍극을 훔쳐 간다.'},
+ dianman:{n:'전만',hz:'典滿',sa:'전위의 아들. 전위가 죽은 뒤 조조가 그를 사마로 삼아 곁에 두었다.',yy:'거의 나오지 않는다.'},
+ jono:{n:'조노',hz:'趙老',fic:'이 게임에서 만든 인물이다. 연주에서 징집되어 스무 해를 구른 노병. 조조가 처음 군사를 일으킬 때 깃발을 들었다.'},
+ wangsam:{n:'왕삼',hz:'王三',fic:'이 게임에서 만든 인물이다. 덩치가 크고, 비켜야 할 때 비키지 않는다.'},
+ sochil:{n:'소칠',hz:'小七',fic:'이 게임에서 만든 인물이다. 형 셋을 전쟁에 잃은 집의 막내.'},
+ weilin:{n:'위림',hz:'魏林',fic:'이 게임에서 만든 인물이다. 허도의 군수 관리.'},
+ jinqi:{n:'진기',fic:'이 게임에서 만든 인물이다. 귀가 밝은 병사.'},
+ jango:{n:'장오',fic:'이 게임에서 만든 인물이다. 붉은 머릿수건을 맨 병사.'},
+ duseok:{n:'두석',fic:'이 게임에서 만든 인물이다. 백마에서 다친 병사.'},
+ mopal:{n:'모팔',fic:'이 게임에서 만든 인물이다. 물을 나르는 병사.'}
+};
+(function(){
+  const st=document.createElement('style');
+  st.textContent=`
+  #pp101{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:16px;}
+  #pp101.show{display:flex;}
+  #pp101 .card{width:100%;max-width:560px;max-height:88vh;overflow:auto;background:#121011;border:1px solid rgba(217,181,106,.35);border-radius:4px;padding:26px 28px;font-family:var(--serif);color:#e9e2d4;}
+  #pp101 .nm{font-size:26px;font-weight:700;letter-spacing:.06em;}
+  #pp101 .nm small{margin-left:10px;font-size:18px;color:rgba(217,181,106,.75);font-weight:400;}
+  #pp101 .ja{font-size:14px;color:#8d8a90;margin-top:4px;}
+  #pp101 h4{margin:20px 0 6px;font-size:13px;letter-spacing:.2em;color:var(--bronze);font-family:var(--sans);}
+  #pp101 p{font-size:16px;line-height:1.85;margin:0;word-break:keep-all;}
+  #pp101 .x{float:right;cursor:pointer;color:#8d8a90;font-size:14px;border:1px solid #3a3226;padding:4px 10px;border-radius:3px;background:none;}
+  #pp101 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:14px;}
+  #pp101 .list button{padding:9px 8px;border:1px solid #3a3226;background:#1a1714;color:#e9e2d4;border-radius:3px;cursor:pointer;font-family:var(--serif);font-size:15px;text-align:left;}
+  #pp101 .list button small{display:block;color:rgba(217,181,106,.6);font-size:12px;}
+  #pp101 .fate{display:flex;flex-direction:column;gap:12px;margin-top:16px;}
+  #pp101 .fate .it{border-left:2px solid #5a4630;padding:6px 0 6px 14px;}
+  #pp101 .fate .it b{font-size:18px;}
+  #pp101 .fate .it .w{font-size:13px;color:#8d8a90;margin-left:8px;}
+  #pp101 .fate .it .t{font-size:15px;line-height:1.7;color:#cfc8ba;}
+  #pp101 .fate .it.changed .t{text-decoration:line-through;color:#7a7670;}
+  #pp101 .fate .it .st{font-size:13px;margin-top:3px;}
+  #pp101 .fate .it.changed .st{color:#8fc39a;} #pp101 .fate .it.kept .st{color:#d07a6a;}
+  #who.click101,#actor.click101{cursor:pointer;}
+  `;
+  document.head.appendChild(st);
+  const d=document.createElement('div'); d.id='pp101'; d.innerHTML='<div class="card" role="dialog"></div>';
+  d.addEventListener('click',e=>{ e.stopPropagation(); if(e.target===d||e.target.classList.contains('x')) d.classList.remove('show'); const b=e.target.closest('button[data-p]'); if(b) people101(b.dataset.p); });
+  ['pointerdown','mousedown','touchstart'].forEach(ev=>d.addEventListener(ev,e=>e.stopPropagation()));
+  document.body.appendChild(d);
+  const list=document.querySelector('#menu75 .list75');
+  if(list){ list.insertAdjacentHTML('afterbegin','<button onclick="menu75Close();bookFate102()">책에 적힌 결말<small>바꾼 것과 그대로인 것</small></button><button onclick="menu75Close();peopleList101()">인물<small>사서와 연의에서는 어땠나</small></button>'); }
+})();
+const SEENP101=new Set();
+function pp101(html){ const d=document.getElementById('pp101'); d.querySelector('.card').innerHTML='<button class="x">닫기</button>'+html; d.classList.add('show'); }
+function people101(k){
+  const p=PEOPLE101[k]; if(!p) return;
+  let h='<div class="nm">'+p.n+(p.hz?'<small>'+p.hz+'</small>':'')+'</div>'+(p.ja?'<div class="ja">자(字) '+p.ja+'</div>':'');
+  if(p.fic) h+='<h4>이 게임의 인물</h4><p>'+p.fic+'</p>';
+  else h+='<h4>사서(『삼국지』)에서는</h4><p>'+p.sa+'</p><h4>연의(『삼국지연의』)에서는</h4><p>'+p.yy+'</p>';
+  pp101(h);
+}
+function peopleList101(){
+  const ks=[...SEENP101].filter(k=>PEOPLE101[k]);
+  pp101('<div class="nm">인물</div><div class="ja">지금까지 만난 사람들. 누르면 설명이 나온다.</div><div class="list">'+(ks.length?ks.map(k=>'<button data-p="'+k+'">'+PEOPLE101[k].n+'<small>'+(PEOPLE101[k].fic?'가상 인물':(PEOPLE101[k].hz||''))+'</small></button>').join(''):'<p>아직 만난 사람이 없다.</p>')+'</div>');
+}
+/* 말한 사람을 기억해 두고, 이름표를 누르면 설명을 연다 */
+let whoKey101=null;
+const say102=say;
+say=function(who,...rest){
+  const r=say102.call(this,who,...rest);
+  try{ const n=String(who||'').replace(/\(.*$/,'').replace(/[^가-힣]/g,''); const k=NAME85[n];
+    whoKey101 = (k&&PEOPLE101[k]) ? k : null; if(whoKey101) SEENP101.add(whoKey101);
+    dom.who.classList.toggle('click101',!!whoKey101); dom.who.title=whoKey101?'누르면 인물 설명':''; }catch(e){}
+  return r;
+};
+document.addEventListener('click',e=>{
+  if(e.target.closest && e.target.closest('#who') && whoKey101){ e.stopPropagation(); e.preventDefault(); people101(whoKey101); }
+},true);
+
+/* 책에 적힌 결말 */
+const FATE101=[
+  {who:'조앙',w:'건안 2년 · 완성',t:'장수(張繡)가 들이친 밤, 아버지에게 말을 내주고 걸어서 남았다가 죽는다.',done:()=>(state.chapter||0)>4,ok:()=>!!state.flags.caoangLives},
+  {who:'전위',w:'건안 2년 · 완성',t:'극을 잃고 맨손으로 문을 막다가 죽는다.',done:()=>(state.chapter||0)>4,ok:()=>!!state.flags.dianweiLives},
+  {who:'여포',w:'건안 3년 · 하비',t:'사로잡혀 백문루에서 목이 매달린다.',done:()=>(state.chapter||0)>5,ok:()=>!!state.flags.lubuSpared},
+  {who:'저수',w:'건안 5년 · 관도',t:'사로잡힌 뒤 원소에게 돌아가려다 죽는다.',done:()=>!!state.flags.jushouSaved||(state.chapter||0)>14,ok:()=>!!state.flags.jushouSaved}
+];
+function bookFate102(first){
+  let h='<div class="nm">책에 적힌 결말</div><div class="ja">'+(first?'퇴근길에 읽던 책은 이 사람들의 끝을 이렇게 적었다. 그 책 속에 지금 내가 있다.':'바꾼 것은 줄이 그어진다.')+'</div><div class="fate">';
+  FATE101.forEach(f=>{ const d=!first&&f.done(), ok=d&&f.ok();
+    h+='<div class="it'+(d?(ok?' changed':' kept'):'')+'"><b>'+f.who+'</b><span class="w">'+f.w+'</span><div class="t">'+f.t+'</div>'+(d?'<div class="st">'+(ok?'바뀌었다. 살았다.':'책대로 되었다.')+'</div>':'')+'</div>'; });
+  h+='<div class="it"><b>조노 · 왕삼 · 소칠</b><div class="t">책에 이름이 없다. 이 사람들이 어떻게 될지는 책도 모른다.</div></div></div>';
+  pp101(h);
+}
+/* 1장이 끝나고 2장이 시작되기 전에 한 번 보여 준다 */
+const ch2_open102=ch2_open;
+ch2_open=function(){
+  if(state.flags.fate101shown) return ch2_open102();
+  state.flags.fate101shown=true;
+  bookFate102(true);
+  const d=document.getElementById('pp101');
+  const obs=new MutationObserver(()=>{ if(!d.classList.contains('show')){ obs.disconnect(); ch2_open102(); } });
+  obs.observe(d,{attributes:true,attributeFilter:['class']});
+};
+
+/* 신뢰가 바뀌면 바로 보이게: 같은 순간에 바뀐 것은 한 번에 */
+let bondQ102=[], bondT102=null;
+const bond102=bond;
+bond=function(id,n,memory){
+  const s=sq(id); const was=s&&s.alive;
+  const r=bond102.apply(this,arguments);
+  try{
+    if(was && n){ bondQ102.push({nm:short(s.name),n,memory});
+      clearTimeout(bondT102); bondT102=setTimeout(()=>{
+        const q=bondQ102; bondQ102=[];
+        const byName={}; q.forEach(x=>{ byName[x.nm]=(byName[x.nm]||0)+x.n; });
+        const label=Object.entries(byName).map(([k,v])=>k+(v>0?' ▲':v<0?' ▼':'')).join(' · ');
+        const body = q.length===1 && q[0].memory ? q[0].memory : '이 일을 기억한다';
+        toast75('memory','情',label,body);
+      },250);
+    }
+  }catch(e){}
+  return r;
+};
+
 /* 4장 · 공격 사흘 전, 사다리 */
 function ch5_ladderPrep100(){
   const J_=isAlive('jono'), W_=isAlive('wangsam'), S_=isAlive('sochil');
