@@ -15807,6 +15807,100 @@ ch2_road100=function(cb){
   }catch(e){} },600);
 })();
 
+/* ==========================================================
+   v108 · 시안 「영화 자막」 (주소 끝에 ?ui=4)
+   그림은 화면 가득, 위아래에 검은 띠. 대사는 아래 띠 안의 자막으로만.
+   ========================================================== */
+(function(){
+  if(!/[?&]ui=4/.test(location.search)) return;
+  document.body.classList.add('ui108');
+  const css=`
+  body.ui108{--bar108:#050403;--sub108:#ece6d8;--dim108:#8a8275;--faint108:#5f594f;--mark108:#b0453a}
+  body.ui108.pc75 #stage{display:block!important}
+  body.ui108.pc75 #visual{position:fixed!important;inset:0!important}
+  body.ui108.pc75 #visual::after,body.ui108.pc75 #stage #topBar::before,body.ui108.pc75 #stage #bottom::after,body.ui108.pc75 #stage #bottom::before{display:none!important}
+  /* 위 띠 */
+  body.ui108.pc75 #stage #topBar{position:fixed!important;top:0;left:0;right:0;height:9vh;min-height:58px;padding:0 44px!important;z-index:40;
+    background:var(--bar108)!important;display:flex!important;align-items:center;justify-content:space-between}
+  body.ui108 #hud75{display:flex!important;flex-direction:row!important;align-items:baseline;gap:16px;padding:0!important}
+  body.ui108 #hud75::after{display:none!important}
+  body.ui108 #hudCh75{background:none!important;-webkit-text-fill-color:var(--dim108)!important;color:var(--dim108)!important;font-size:15px!important;letter-spacing:.42em!important;font-weight:400!important}
+  body.ui108 #hudLoc75{color:var(--faint108)!important;font-size:13px!important;letter-spacing:.18em!important}
+  body.ui108 #menuBtn75{color:var(--dim108)!important;background:none!important;border:0!important}
+  body.ui108 #ppl108{margin-left:auto;margin-right:12px;background:none;border:0;color:var(--faint108);font-size:13px;letter-spacing:.16em;cursor:pointer;font-family:var(--serif)}
+  body.ui108 #ppl108:hover,body.ui108.st108 #ppl108{color:var(--sub108)}
+  body.ui108 #ppl108 i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--mark108);margin-left:6px;vertical-align:middle;opacity:0;transition:opacity .3s}
+  body.ui108 #ppl108.new i{opacity:1}
+  /* 아래 띠: 자막 */
+  body.ui108.pc75 #stage #bottom{position:fixed!important;left:0;right:0;bottom:0;top:auto!important;z-index:40;height:auto!important;min-height:25vh;max-height:56vh;
+    background:var(--bar108)!important;padding:26px max(56px,calc(50vw - 440px)) 52px!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;
+    transition:min-height .55s cubic-bezier(.2,.8,.2,1);overflow:hidden!important}
+  body.ui108.pc75:has(#choices.show) #stage #bottom{min-height:38vh}
+  body.ui108 #trail75{display:none!important}
+  body.ui108.pc75 #narr{order:1;text-align:center;-webkit-mask-image:none!important;mask-image:none!important}
+  body.ui108 #who{display:block!important;color:var(--dim108)!important;font-size:13px!important;letter-spacing:.32em!important;font-weight:400!important;margin:0 0 10px!important}
+  body.ui108 #who::before,body.ui108 #who::after{display:none!important}
+  body.ui108 #who .hz101{color:var(--faint108)!important;margin-left:8px}
+  body.ui108 #body{color:var(--sub108)!important;font-size:21px!important;line-height:1.8!important;text-shadow:none!important;border:0!important;padding:0!important;
+    animation:sub108 .7s ease both!important;word-break:keep-all}
+  body.ui108 #body *{border:0!important}
+  body.ui108 #narr.mono75 #body{color:#c9c1b0!important;font-style:normal}
+  @keyframes sub108{from{opacity:0}to{opacity:1}}
+  body.ui108 #cont{position:absolute!important;left:50%!important;bottom:20px!important;right:auto!important;top:auto!important;transform:translateX(-50%)}
+  body.ui108 #contBtn{color:var(--faint108)!important;font-size:12px!important}
+  /* 선택지: 글자만 */
+  body.ui108.pc75 #stage #bottom #choices{order:2;align-self:center;margin-top:18px!important;max-height:none!important;counter-reset:ch75}
+  body.ui108 #stage #bottom #choices .ch{background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;transform:none!important;
+    padding:7px 0 7px 34px!important;margin:0!important;color:#a39b8d!important;font-size:18.5px!important;font-weight:400!important;text-align:left;transition:color .2s!important}
+  body.ui108 #stage #bottom #choices .ch::before{position:absolute!important;left:0!important;top:9px!important;width:auto!important;height:auto!important;border:0!important;background:none!important;
+    box-shadow:none!important;transform:none!important;color:var(--faint108)!important;font-size:14px!important}
+  body.ui108 #stage #bottom #choices .ch::after{content:''!important;position:absolute;left:34px;bottom:4px;top:auto!important;height:1px;width:0;background:var(--sub108)!important;opacity:.5;transition:width .35s cubic-bezier(.2,.8,.2,1)}
+  body.ui108 #stage #bottom #choices .ch:hover{color:#fff!important}
+  body.ui108 #stage #bottom #choices .ch:hover::after{width:calc(100% - 34px)}
+  body.ui108 #stage #bottom #choices .ch:hover::before{color:var(--sub108)!important}
+  body.ui108 #stage #bottom #choices .ch .sub{display:inline!important;margin-left:14px;color:var(--faint108)!important;font-size:14px!important}
+  body.ui108 #choices .ch .od103{display:inline!important;margin-left:10px;border:0!important;background:none!important;padding:0!important;border-radius:0!important;
+    font-size:12.5px!important;color:var(--mark108)!important;letter-spacing:.06em}
+  body.ui108 #choices .ch .od103.hi{color:#7f9a86!important} body.ui108 #choices .ch .od103.mid{color:#b0924f!important}
+  body.ui108 #choices .ch .bond82{color:var(--dim108)!important}
+  /* 아래 단추 */
+  body.ui108.pc75 #ctl75{position:absolute!important;right:44px;bottom:14px;margin:0!important;padding:0!important;border:0!important;min-height:0!important}
+  body.ui108.pc75 #ctl75::before{display:none!important}
+  body.ui108 #ctl75 button{color:var(--faint108)!important;font-size:12.5px!important;background:none!important;letter-spacing:.1em}
+  body.ui108 #ctl75 button:hover{color:var(--sub108)!important}
+  body.ui108 #ctl75 .hint75{display:none!important}
+  body.ui108 #jumpBtn88{background:none!important;border:0!important;color:var(--faint108)!important;left:44px!important;right:auto!important;bottom:14px!important;z-index:45}
+  /* 그림 */
+  body.ui108.pc75 #actor{top:calc(max(9vh,58px) + 2vh)!important;bottom:25vh!important;height:auto!important;width:52%!important;transition:bottom .55s cubic-bezier(.2,.8,.2,1),opacity .5s}
+  body.ui108.pc75:has(#choices.show) #actor{bottom:38vh!important}
+  body.ui108 #vignette{background:radial-gradient(ellipse at 50% 46%,rgba(0,0,0,0) 50%,rgba(0,0,0,.55) 100%)!important}
+  /* 장 제목: 영화 첫 장면처럼 글자만 */
+  body.ui108 #center .ct.card{font-family:var(--serif)!important;font-weight:400!important;font-size:30px!important;letter-spacing:.5em!important;color:#efe9dc!important;
+    background:none!important;box-shadow:none!important;text-shadow:0 2px 24px rgba(0,0,0,.9)!important;padding:0!important}
+  body.ui108 #center .ct.card::before,body.ui108 #center .ct.card::after{display:none!important}
+  /* 알림: 위 띠 바로 밑 왼쪽 */
+  body.ui108.pc75 #mark75{left:44px!important;right:auto!important;width:auto!important;top:calc(max(9vh,58px) + 14px)!important;padding:0!important}
+  body.ui108 .mk75{background:rgba(5,4,3,.82)!important;border:0!important;box-shadow:none!important;border-radius:0!important}
+  body.ui108 .mk75 .sl{background:none!important;color:var(--mark108)!important;border:1px solid var(--mark108)!important}
+  /* 곁의 사람 칸: 기본은 숨김 */
+  body.ui108 #st103{display:none!important}
+  body.ui108.st108 #st103.on{display:flex!important;position:absolute!important;top:calc(max(9vh,58px) + 14px)!important;left:44px!important;
+    background:rgba(5,4,3,.8)!important;border:0!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important}
+  body.ui108 #st103 .p{border:0!important;background:none!important}
+  `;
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+  /* 곁의 사람 켜고 끄기 (C 키) */
+  let open=false; try{ open=localStorage.getItem('ppl108')==='1'; }catch(e){}
+  const set=o=>{ open=o; document.body.classList.toggle('st108',o); try{ localStorage.setItem('ppl108',o?'1':'0'); }catch(e){} const b=document.getElementById('ppl108'); if(b&&o) b.classList.remove('new'); };
+  set(open);
+  const btn=document.createElement('button'); btn.id='ppl108'; btn.type='button'; btn.title='곁의 사람 · 조공의 시선 (C)'; btn.innerHTML='곁의 사람<i></i>';
+  btn.onclick=e=>{ e.stopPropagation(); set(!open); };
+  const tb=document.getElementById('topBar'), mb=document.getElementById('menuBtn75'); if(tb) tb.insertBefore(btn, mb||null);
+  document.addEventListener('keydown',e=>{ if((e.key==='c'||e.key==='C'||e.key==='ㅊ') && !e.ctrlKey && !e.metaKey && !/INPUT|TEXTAREA/.test((e.target||{}).tagName||'')) set(!open); });
+  let sig='';
+  setInterval(()=>{ try{ const k=JSON.stringify([(state.squad||[]).map(q=>[q.id,q.bond,q.alive]),state.suspicion||0]); if(sig && k!==sig && !open) btn.classList.add('new'); sig=k; }catch(e){} },700);
+})();
+
 /* 4장 · 공격 사흘 전, 사다리 */
 function ch5_ladderPrep100(){
   const J_=isAlive('jono'), W_=isAlive('wangsam'), S_=isAlive('sochil');
