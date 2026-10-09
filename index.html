@@ -15421,8 +15421,11 @@ ch2_road100=function(cb){
   body:not(.pc75) #topBar{flex-wrap:wrap}
   body:not(.pc75) #st103{order:9;flex-basis:100%;gap:6px;margin:8px 0 2px}
   body:not(.pc75) #st103 .p{padding:4px 8px 4px 4px} body:not(.pc75) #st103 .p img{width:26px;height:26px} body:not(.pc75) #st103 .p .n{font-size:12px}
-  body:not(.pc75) #st103 .g{flex-basis:100%;min-width:0;padding:0}
-  body.pc75 #st103{order:-1;margin:6px 0 auto;}
+  body:not(.pc75) #st103 .g{flex-basis:100%;min-width:0;padding:0;cursor:pointer}
+  body:not(.pc75) #st103 .g .ht{display:none} body:not(.pc75) #st103 .g.open .ht{display:block}
+  #st103 .p .lv{font-size:11px;color:#bfae88;margin-left:5px}
+  body.pc75 #st103{position:absolute;top:18px;left:18px;z-index:30;margin:0;max-width:min(560px,calc(100% - 36px));padding:10px;gap:8px;
+    background:linear-gradient(180deg,rgba(10,9,8,.78),rgba(10,9,8,.6));border:1px solid rgba(217,181,106,.18);border-radius:6px;backdrop-filter:blur(3px)}
   #st103 .p{display:flex;gap:8px;align-items:center;padding:6px 10px 6px 6px;border:1px solid rgba(217,181,106,.16);border-radius:4px;background:rgba(255,255,255,.02);min-width:0}
   #st103 .p img{width:34px;height:34px;border-radius:50%;object-fit:cover;object-position:50% 12%;background:#1a1712;border:1px solid rgba(217,181,106,.3)}
   #st103 .p.dead{opacity:.38} #st103 .p.dead img{filter:grayscale(1)}
@@ -15440,13 +15443,6 @@ ch2_road100=function(cb){
   #st103 .g .ht{font-size:11.5px;color:#9d927c;line-height:1.45}
   #choices .ch .od103{display:inline-block;margin-top:6px;font-size:12px;letter-spacing:.04em;padding:1px 8px;border-radius:10px;border:1px solid currentColor}
   #choices .ch .od103.hi{color:#8fb39e} #choices .ch .od103.mid{color:#c9a861} #choices .ch .od103.lo{color:#c96a5e}
-  /* 시험: 수묵 톤 (주소 끝에 ?ink=1 을 붙였을 때만) */
-  body.ink104 #bg{filter:saturate(.42) sepia(.28) contrast(1.06) brightness(.9)!important}
-  #ink104{display:none} body.ink104 #ink104{display:block;position:absolute;inset:0;pointer-events:none;z-index:3;mix-blend-mode:multiply;opacity:.6;
-    background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,0) 55%,rgba(20,14,8,.65) 100%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .47 0 0 0 0 .36 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23f)'/%3E%3C/svg%3E")}
-  body.ink104 #actor .sil img{filter:saturate(.5) sepia(.22) contrast(1.05) brightness(.92)!important}
-  body.ink104 #actor{transition:width .9s ease,height .9s ease,left .9s ease,opacity .5s}
-  body.ink104.pc75 #actor.settle104{width:34%!important;height:72%!important;left:24%!important}
   `;
   const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
 
@@ -15464,15 +15460,15 @@ ch2_road100=function(cb){
     return '';
   }
   function hint(s){
-    if(s>=7) return '나를 재고 있다. 허도로 가는 전령이 잦아졌다.';
-    if(s>=5) return '내 뒤를 캐게 했다. 만총이 나를 부를 것이다.';
-    if(s>=4) return '내 이름을 기억한다. 큰 싸움 날 밤에는 내 청이 통한다. 한 칸이 더 차면 뒷조사를 받는다.';
-    if(s>=1) return '가끔 눈이 머문다. 넷째 칸이 차면 큰 싸움 날 밤에 내 청이 통한다.';
+    if(s>=7) return '나를 재고 있다.';
+    if(s>=5) return '내 뒤를 캐게 했다.';
+    if(s>=4) return '내 이름을 기억한다. 한 칸 더 차면 뒷조사를 받는다.';
+    if(s>=1) return '가끔 눈이 머문다. 넷째 칸부터 내 청이 통한다.';
     return '아직 나를 모른다.';
   }
-  let sig='';
+  let sig=''; window.open103=false;
   function draw(){
-    const host=document.getElementById(document.body.classList.contains('pc75')?'bottom':'topBar'); if(!host) return;
+    const host=document.getElementById(document.body.classList.contains('pc75')?'visual':'topBar'); if(!host) return;
     let el=document.getElementById('st103');
     if(!el){ el=document.createElement('div'); el.id='st103'; host.insertBefore(el, host.firstChild); }
     else if(el.parentElement!==host){ host.insertBefore(el, host.firstChild); }
@@ -15486,9 +15482,9 @@ ch2_road100=function(cb){
     el.innerHTML = people.map(p=>{
       const n=pips(p.b), lv=p.b>=12?'목숨을 건다':p.b>=6?'믿는다':p.b>=1?'지켜본다':p.b<=-3?'등을 돌렸다':'모른다';
       return `<div class="p${p.alive?'':' dead'}" title="${p.n} · ${p.alive?lv:'전사'}"><img src="assets/portrait/${p.id}.webp" alt=""><div>
-        <div class="n">${p.n}${p.alive?(p.h?`<span class="h">· ${p.h}</span>`:''):'<span class="h">· 전사</span>'}</div>
+        <div class="n">${p.n}${p.alive?`<span class="lv">${lv}</span>`+(p.h?`<span class="h">· ${p.h}</span>`:''):'<span class="h">· 전사</span>'}</div>
         <div class="pips${p.b<=-3?' bad':''}">${p.alive?[0,1,2,3].map(i=>`<i class="${i<n?'on':''}"></i>`).join(''):''}</div></div></div>`;
-    }).join('') + (showG?`<div class="g"><div class="lb"><span>조공의 시선</span></div>
+    }).join('') + (showG?`<div class="g${open103?' open':''}" onclick="open103=!open103;this.classList.toggle('open',open103)"><div class="lb"><span>조공의 시선</span></div>
       <div class="bar"><b style="width:${Math.min(100,s/8*100)}%"></b><u style="left:50%"></u><u style="left:62.5%"></u></div>
       <div class="ht">${hint(s)}</div></div>`:'');
   }
@@ -15512,18 +15508,44 @@ ch2_road100=function(cb){
     }catch(e){}
   };
 
-  /* 시험: ?ink=1 이면 수묵 톤과, 등장 뒤 작아지는 인물 그림 */
-  try{
-    if(/[?&]ink=1/.test(location.search)){
-      document.body.classList.add('ink104');
-      { const v=document.getElementById('visual'), k=document.createElement('div'); k.id='ink104'; v.appendChild(k); }
-      const a=document.getElementById('actor'); let tm=null;
-      new MutationObserver(()=>{
-        if(a.classList.contains('show')){ if(!a.classList.contains('settle104') && !tm) tm=setTimeout(()=>{ tm=null; if(a.classList.contains('show')) a.classList.add('settle104'); },1800); }
-        else { clearTimeout(tm); tm=null; if(a.classList.contains('settle104')) a.classList.remove('settle104'); }
-      }).observe(a,{attributes:true,attributeFilter:['class']});
-    }
-  }catch(e){}
+})();
+
+/* ==========================================================
+   v105 · 선택지는 요약으로, 고른 뒤에 대사
+   ========================================================== */
+(function(){
+  const SUM={"\"여기가 어딥니까?\"": "여기가 어디냐고 묻는다", "\"저는… 어느 부대였습니까?\"": "내가 어느 부대였는지 묻는다", "\"여기를 파 봅시다\"": "여기를 파 보자고 한다", "\"고향에서 우물 파는 노인한테 배웠습니다\"": "우물 파는 노인에게 배웠다고 한다", "\"어디선가 본 적이 있습니다\"": "어디선가 본 적이 있다고 한다", "\"그쪽 국은 바닥에 쏟아졌잖소\"": "쏟아진 국 이야기를 꺼낸다", "\"맞으면서 주먹 한 번 안 들던 게 마음에 걸려서 그러오\"": "맞으면서 참던 게 마음에 걸렸다고 한다", "\"반씩 나눠 먹읍시다. 나도 배고프오\"": "국을 반씩 나눠 먹자고 한다", "\"장사치 밑에서 셈하며 익혔습니다\"": "장사치 밑에서 셈을 익혔다고 한다", "\"그렇게 부르지 마시오\"": "나리라고 부르지 말라고 한다", "\"장부가 곳간 회계와 안 맞습니다\"": "장부가 곳간 회계와 안 맞는다고 찌른다", "\"제 밑의 아홉이 석 달째 굶습니다\"": "굶고 있는 부하 아홉을 앞세운다", "\"공은 백부장님 몫으로 하십시오\"": "공을 백부장에게 돌린다", "\"주공! 공자를 태우십시오!\" 하고 목이 터져라 외친다": "공자를 태우라고 주공께 외친다", "\"제 사람들이 아직 안에 있습니다.\" 하고 고개를 젓는다": "내 사람들이 안에 있다며 고개를 젓는다", "\"보고 들은 것을 하나씩 아뢰겠습니다\"": "보고 들은 것을 하나씩 아뢴다", "\"운이 좋았을 뿐입니다\"": "운이 좋았을 뿐이라고 한다", "\"항복한 지 열흘 된 성에서, 십장이 장수 쪽 사람을 지목하면 항복을 깨뜨렸다는 죄를 뒤집어씁니다\"": "십장이 나설 수 없었던 사정을 말한다", "\"제 눈 말고는 증거가 없었습니다\"": "내 눈 말고는 증거가 없었다고 한다", "\"운이 좋았소.\"": "운이 좋았다고 넘긴다", "\"다음에도 다 데리고 나가겠소.\"": "다음에도 다 데리고 나가겠다고 약속한다", "\"뛰어내려!\"": "뛰어내리라고 외친다", "\"방패 올려!\"": "방패를 올리라고 외친다", "\"서쪽 논에서 발이 빠졌습니다. 비 한 방울 안 왔는데요\"": "서쪽 논에서 발이 빠진 일을 말한다", "\"물이 새는 자리를, 제가 찾아오겠습니다\"": "물이 새는 자리를 찾아오겠다고 나선다", "\"북쪽 나루입니다\"": "북쪽 나루를 짚는다", "\"늙은 버드나무 굽이입니다\"": "늙은 버드나무 굽이를 짚는다", "\"방앗간 앞 굽이입니다\"": "방앗간 앞 굽이를 짚는다", "\"남쪽 둑 바로 위입니다\"": "남쪽 둑 바로 위를 짚는다", "\"…짚지 못하겠습니다\"": "짚지 못하겠다고 한다", "\"후성 한 사람에게만 보내십시오\"": "후성 한 사람에게만 보내자고 한다", "\"후성, 송헌, 위속. 셋에게 따로 보내십시오\"": "세 장수에게 따로 보내자고 한다", "\"보내지 마십시오. 물이 알아서 할 겁니다\"": "사면장을 보내지 말자고 한다", "\"저 자를 살려 쓰시지요\"": "여포를 살려 쓰자고 한다", "\"베셔야 합니다\"": "여포를 베어야 한다고 한다", "\"군사를 주지 마십시오. 창 한 자루만 쥐여 주십시오\"": "군사는 주지 말고 창만 쥐여 주자고 한다", "\"전위 장군 곁에 두십시오\"": "여포를 전위 곁에 두자고 한다", "\"원소의 기병을 막을 자가, 저 자 말고 있습니까\"": "원소의 기병을 막을 사람은 여포뿐이라고 한다", "\"서쪽 논에서 발이 빠졌습니다. 그게 시작이었습니다\"": "서쪽 논에서 발이 빠진 일부터 말한다", "\"복양에서 도랑을 판 적이 있습니다\"": "복양에서 도랑을 판 일을 꺼낸다", "\"배운 적은 없습니다\"": "배운 적이 없다고 한다", "\"장사치 밑에서 셈을 배웠습니다\"": "장사치 밑에서 셈을 배웠다고 한다", "\"…어디선가 본 적이 있습니다\"": "어디선가 본 적이 있다고 한다", "\"문을 열어주는 건 아닙니다. 도망칠 만한 순간을 만드는 겁니다.\"": "도망칠 틈만 만들어 주자고 한다", "\"저쪽으로 돌아가고 싶어 하는 놈입니다. 길이 보이면 뛸 겁니다.\"": "그 포로는 돌아가고 싶어 한다고 말한다", "\"도망친 놈은 자기가 훔쳐본 걸 더 믿을 테니까요.\"": "몰래 본 것을 더 믿을 거라고 한다", "\"거짓말을 시킬 필요가 없어집니다. 자기 눈으로 보게 하면 됩니다.\"": "제 눈으로 보게 하면 된다고 한다", "\"돌아가는 동안 우리 진영을 직접 보게 할 수 있습니다.\"": "돌아가는 길에 우리 진영을 보게 하자고 한다", "\"믿지 않을 겁니다. 그래서 확인하러 올 겁니다.\"": "원소 쪽이 확인하러 올 거라고 한다", "\"믿게 만드는 게 목적은 아닙니다. 의심하게 만들면 됩니다.\"": "의심만 심으면 된다고 한다", "\"서쪽부터. 무너지면 사람으로 막아야 한다\"": "서쪽 말뚝부터 갈게 한다", "\"화살부터. 쏠 것이 없으면 붙기 전에 진다\"": "화살부터 마련하게 한다", "\"먹이고 시작한다\"": "먼저 먹이고 일을 시작한다", "\"아직 버틸 수 있다. 조금 더 붙는다\"": "조금 더 버티게 한다", "\"사람부터 뺀다. 외책은 내준다\"": "바깥 목책을 내주고 사람부터 뺀다", "\"부상병부터 넘기고 마지막 줄이 빠진다\"": "부상병부터 넘기고 마지막 줄을 뺀다", "\"싸울 수는 있습니다. 오래 버틸 수 있는지는 모르겠습니다\"": "오래 버틸 수 있을지는 모르겠다고 한다", "\"물러나면 더 잘 싸울 수 있습니까?\"": "물러나면 더 잘 싸울 수 있느냐고 되묻는다", "\"……문약 공도 남으라고 할 것 같습니다\"": "순욱도 남으라고 할 것 같다고 한다", "\"나도 내가 어디 사람인지 모르겠어.\"": "나도 내가 어디 사람인지 모르겠다고 한다", "\"지금까지 그게 중요했나.\"": "그게 지금까지 중요했느냐고 되묻는다", "\"올 거라고 생각했습니다\"": "올 줄 알았다고 한다", "\"몰랐습니다\"": "몰랐다고 한다", "\"올 수도 있다고 생각했습니다\"": "올 수도 있다고 생각했다고 한다", "\"오소가 얼마나 중요한지가 과장됐을 수 있습니다.\"": "오소의 무게가 부풀려졌을 수 있다고 한다", "\"순우경의 방비를 허유가 너무 낮게 본 걸 수도 있습니다.\"": "허유가 순우경의 방비를 낮게 봤을 수 있다고 한다", "\"길을 안다는 것과 오천이 통과한다는 건 다릅니다.\"": "오천이 그 길을 지날 수 있을지는 따로 봐야 한다고 한다", "\"제 목을 걸겠습니다\"": "장합을 받아 달라며 목을 건다", "\"들것부터 보내 주십시오.\"": "들것부터 보내 달라고 한다", "\"막을 자리부터 세웁시다.\"": "막을 자리부터 세우자고 한다", "\"함께 나가겠습니다.\"": "장합과 함께 나가겠다고 한다", "\"들것은 제가 옮기겠습니다.\"": "들것을 옮기겠다고 한다", "\"명단에서 지운 사람들은 무엇이 달랐습니까?\"": "명단에서 지운 사람들은 무엇이 달랐는지 묻는다", "\"원소가 공을 버렸다고 생각하십니까?\"": "원소가 저수를 버렸다고 생각하는지 묻는다", "\"지금 제 부하들로 부대를 꾸리고 싶습니다.\"": "내 부하들로 부대를 꾸리겠다고 한다", "\"순유 공을 도우며 군의에 참석하고 싶습니다.\"": "순유를 도우며 군의에 들겠다고 한다", "\"항복한 병사들과 포로를 살피는 일을 맡겠습니다.\"": "항복한 병사와 포로를 살피겠다고 한다", "\"죽었다 깨어났을 뿐입니다.\"": "죽었다 깨어났을 뿐이라고 한다", "\"주공의 군사입니다.\"": "주공의 군사라고만 답한다", "\"이 싸움의 끝을 읽었습니다.\"": "이 싸움의 끝을 읽었다고 말한다", "\"문 옆이 제일 위험한 자리입니다.\"": "문 옆이 제일 위험한 자리라고 한다", "\"조공께서 온후를 믿으시는 겁니다.\"": "조공이 온후를 믿는 거라고 한다", "\"병서에서 읽었습니다.\"": "병서에서 읽었다고 한다", "\"누가 해 준 이야기였습니다.\"": "누가 해 준 이야기라고 한다", "\"그냥 떠올랐습니다.\"": "그냥 떠올랐다고 한다", "\"없다. 물러날 때까지는 우리가 버틴다.\"": "교대병은 없다고 사실대로 말한다", "\"신호만 올리면 교대병이 들어온다.\"": "교대병이 온다고 약속한다", "\"문을 열어라!\"": "문을 열라고 외친다", "\"온후, 왼쪽부터 뚫어 주십시오.\"": "여포에게 왼쪽부터 뚫어 달라고 청한다", "\"제가 데려오겠습니다.\"": "내가 데려오겠다고 한다", "\"살아 나온 건 저 하나가 아닙니다.\"": "살아 나온 건 나 혼자가 아니라고 한다", "\"제가 여기 앉아 있는 건 온후 덕입니다.\"": "내가 살아 있는 건 온후 덕이라고 한다", "\"넌 누워 있어.\"": "왕삼에게 누워 있으라고 한다", "\"얕보신 덕에 살았습니다.\"": "얕본 덕에 살았다고 받아친다", "\"버틴 건 제 부하들입니다.\"": "버틴 건 부하들이라고 한다", "\"미안하다. 내가 널 보냈다.\"": "소칠에게 미안하다고 한다", "\"잘 돌아왔다.\"": "잘 돌아왔다고만 한다", "\"제 부하들이 여기 있습니다.\"": "내 부하들이 여기 있다고 한다", "\"형님께 제 이름을 한 번만 말해주십시오.\"": "유비에게 내 이름을 말해 달라고 한다", "\"…언젠가.\"": "언젠가라고만 답한다", "\"쫓으십시오.\"": "쫓으라고 한다", "\"말들이 지쳤습니다.\"": "말들이 지쳤다고 한다", "\"약조하십시오.\"": "이 자리에서 약조하라고 한다", "\"주공께 여쭈셔야 합니다.\"": "주공께 먼저 여쭈라고 한다", "\"제 몫의 상은 부하들에게 돌려주십시오.\"": "내 몫의 상을 부하들에게 돌려 달라고 한다", "\"저수를 제가 설득해 보겠습니다.\"": "저수를 설득해 보겠다고 한다", "\"하내 사마씨의 둘째를 불러 쓰십시오.\"": "하내 사마씨의 둘째를 천거한다", "\"온후 곁에 계속 두어 주십시오.\"": "온후 곁에 계속 있게 해 달라고 한다", "\"이번엔 문이 열려 있었습니다.\"": "이번엔 문이 열려 있었다고 한다", "\"다음엔 제가 문을 지키겠습니다.\"": "다음엔 내가 문을 지키겠다고 한다", "\"호거아는 동쪽 끝, 셋째 군막에 있습니다.\"": "호거아가 있는 군막을 알려 준다", "\"싸움이 끝나면 제가 함께 찾아가겠습니다.\"": "싸움이 끝나면 함께 찾아가자고 한다", "\"…모릅니다.\"": "모른다고 한다", "\"조공 곁이 더 낫지 않습니까.\"": "조공 곁이 더 낫지 않으냐고 묻는다", "\"유비 공은 늘 지셨습니다.\"": "유비는 늘 졌다고 말한다", "\"저라면 남았을 겁니다.\"": "나라면 남았을 거라고 한다", "\"그래도 먼저 힘이 있어야 지킬 수 있지 않습니까.\"": "힘이 있어야 지킬 수 있지 않으냐고 묻는다", "\"그래서 유비 공께 돌아가시는 겁니까.\"": "그래서 유비에게 돌아가느냐고 묻는다", "\"저도 곳간 앞에 서 본 적이 있습니다.\"": "나도 곳간 앞에 서 본 적이 있다고 한다", "\"바라는 건 없습니다.\"": "바라는 건 없다고 한다", "\"…하나 있습니다.\"": "하나 있다고 한다", "\"목줄은 온후께서 직접 푸실 겁니다.\"": "목줄은 온후가 직접 풀 거라고 한다", "\"조공 곁에서 더 많은 사람을 살릴 수 있지 않습니까.\"": "조공 곁에서 더 많이 살릴 수 있지 않으냐고 묻는다", "\"따라가는 병사들은, 장군과 같은 뜻일까요.\"": "따라가는 병사들도 같은 뜻이냐고 묻는다", "\"저라면 이 대우를 버리지 못할 것 같습니다.\"": "나라면 이 대우를 버리지 못하겠다고 한다", "\"아닙니다.\"": "아니라고 답한다", "\"맞습니다.\"": "맞다고 답한다", "\"버린 곡식을 집집마다 적어 두면 됩니다.\"": "버린 곡식을 집집마다 적어 두자고 한다", "\"…알고 싸우셨습니까.\"": "알고 싸웠느냐고 묻는다", "\"다음에 적으로 만나면, 오늘을 기억하시겠습니까.\"": "적으로 만나면 오늘을 기억하겠느냐고 묻는다", "\"저는 여기 남아, 제 병사들을 지키겠습니다.\"": "여기 남아 내 병사들을 지키겠다고 한다", "\"관 장군! 온후 옆으로!\"": "관우를 여포 옆으로 부른다", "\"공을 세우고 싶었습니다.\"": "공을 세우고 싶었다고 한다", "\"우리 앞의 적까지 온후께 보낼 수는 없었습니다.\"": "우리 앞의 적은 우리가 맡아야 했다고 한다", "\"쏘지 마! 여기 사람 있다!\"": "쏘지 말라고 외친다", "\"쏴! 지금 쏴!\"": "지금 쏘라고 외친다", "\"허 공 덕에 알았습니다.\"": "허유 덕에 알았다고 한다", "\"장합과 고람이 옵니다.\"": "장합과 고람이 온다고 이름까지 알린다", "\"원소는 오소가 아니라 이쪽을 칠 겁니다.\"": "원소가 이쪽을 칠 거라고 알린다", "\"조공께서 장군을 보내기 싫으신 겁니다.\"": "조공이 관우를 보내기 싫은 거라고 말한다", "\"제가 태웠습니다.\"": "내가 태웠다고 아뢴다", "\"오래전에 본 그림입니다.\"": "오래전에 본 그림이라고 한다", "\"서역 상인이 들고 온 그림이었습니다.\"": "서역 상인이 들고 온 그림이라고 한다", "\"…꿈에서 봤습니다.\"": "꿈에서 봤다고 한다", "\"어디서 보았는지는 말씀드릴 수 없습니다.\"": "어디서 봤는지는 말할 수 없다고 한다", "\"시험이 끝날 때까지 남겠습니다.\"": "시험이 끝날 때까지 남겠다고 한다", "\"내일은 제가 부대를 이끌겠습니다.\"": "내일은 부대를 이끌겠다고 한다", "\"완성된 한 대부터 써주십시오.\"": "완성된 한 대부터 쓰자고 한다", "\"더 버틸 테니, 세 대를 함께 써주십시오.\"": "세 대가 다 될 때까지 버티겠다고 한다", "\"…예. 알고 있었습니다.\"": "알고 있었다고 털어놓는다", "\"잘못 봤습니다.\"": "잘못 봤다고 둘러댄다"};
+  const SUBDEL={'"장합과 고람이 옵니다."':1};
+  let P=null;              /* 고른 뒤 아직 말하지 않은 대사 */
+  const strip=t=>String(t||'').replace(/<[^>]+>/g,'').trim();
+  const quote=t=>{ const m=String(t).match(/^"[^"]*"/); return m?m[0]:t; };
+  const ch0=choose;
+  choose=function(list,cb){
+    if(P){ const q=P; P=null; return say105('나',q,()=>choose(list,cb)); }
+    const L=(list||[]).map(c=>{
+      const raw=strip(c.text), sm=SUM[raw];
+      if(!sm) return c;
+      const pre=String(c.text).slice(0,String(c.text).indexOf(raw));
+      return Object.assign({},c,{text:pre+sm, sub:SUBDEL[raw]?'':c.sub, q105:quote(raw)});
+    });
+    return ch0(L,c=>{ P=c&&c.q105||null; cb(c); });
+  };
+  const say105=say;
+  say=function(who,text,cb,...rest){
+    if(P){ const q=P; P=null; if(who!=='나') return say105('나',q,()=>say(who,text,cb,...rest)); }
+    return say105(who,text,cb,...rest);
+  };
+  const eg105=engrave;
+  engrave=function(lines,cb){
+    if(P){ const q=P; P=null; const f=Array.isArray(lines)&&lines.find(l=>l);
+      const w=Array.isArray(f)?f[0]:''; if(w!=='나') return say105('나',q,()=>engrave(lines,cb)); }
+    return eg105(lines,cb);
+  };
+  const sc105=scene;
+  scene=function(bg,line,cb){ if(P){ const q=P; P=null; return say105('나',q,()=>scene(bg,line,cb)); } return sc105(bg,line,cb); };
+  const il105=interlude;
+  interlude=function(place,lines,cb){ if(P){ const q=P; P=null; return say105('나',q,()=>interlude(place,lines,cb)); } return il105(place,lines,cb); };
+  window.sum105Clear=()=>{ P=null; };
 })();
 
 /* 4장 · 공격 사흘 전, 사다리 */
