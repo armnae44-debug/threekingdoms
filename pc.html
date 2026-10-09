@@ -15666,14 +15666,22 @@ ch2_road100=function(cb){
   const PAPER="url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .33 0 0 0 0 .2 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)'/%3E%3C/svg%3E\")";
   const FIBER="url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .4' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .4 0 0 0 0 .25 0 0 0 .5 -.18'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23f)'/%3E%3C/svg%3E\")";
   const css=`
-  body.ui107{--ink107:#231a12;--ink107b:#5a4a37;--ink107c:#8d7c62;--zhu107:#a3271e;--paper107:#e6d8b8}
+  body.ui107{--ink107:#2a1f15;--ink107b:#5d4b36;--ink107c:#7f6d54;--zhu107:#a3271e;--paper107:#e6d8b8}
   /* 그림은 화면 전체, 오른쪽에 종이 한 장 */
   body.ui107.pc75 #visual{grid-column:1 / 3!important}
   body.ui107.pc75 #stage #topBar,body.ui107.pc75 #stage #bottom{background:transparent!important;z-index:20;position:relative}
   body.ui107.pc75 #stage #topBar::before,body.ui107.pc75 #stage #bottom::after{display:none!important}
   body.ui107.pc75 #stage::after{content:'';position:fixed;z-index:15;pointer-events:none;top:18px;bottom:16px;right:18px;width:calc(var(--col) - 14px);
-    background:${PAPER},${FIBER},radial-gradient(120% 90% at 30% 20%,#efe4c8,#e1d1ad 60%,#cdb98f);
-    filter:url(#edge107) drop-shadow(0 18px 28px rgba(0,0,0,.6)) drop-shadow(0 2px 3px rgba(0,0,0,.5));transform:rotate(-.6deg)}
+    background:${PAPER},${FIBER},
+      radial-gradient(90% 70% at 18% 8%,rgba(255,244,214,.30),rgba(255,244,214,0) 60%),
+      linear-gradient(180deg,rgba(0,0,0,0) 62%,rgba(48,30,12,.22)),
+      linear-gradient(90deg,rgba(40,26,12,.20),rgba(40,26,12,0) 14%),
+      linear-gradient(160deg,rgba(226,210,174,.80),rgba(204,184,146,.84) 55%,rgba(176,154,114,.88));
+    -webkit-backdrop-filter:blur(16px) saturate(.55) brightness(1.15);backdrop-filter:blur(16px) saturate(.55) brightness(1.15);
+    filter:url(#edge107) drop-shadow(-14px 22px 34px rgba(0,0,0,.55)) drop-shadow(0 2px 2px rgba(0,0,0,.35));transform:rotate(-.6deg)}
+  /* 종이가 놓인 자리 둘레로 그림이 조금 가라앉는다 */
+  body.ui107.pc75 #visual::after{content:'';position:absolute;inset:0;width:auto!important;pointer-events:none;z-index:6;
+    background:linear-gradient(90deg,rgba(0,0,0,0) 45%,rgba(10,7,4,.35) 62%,rgba(10,7,4,.5))}
   /* 먹 글씨 */
   body.ui107 #body,body.ui107 #body *{color:var(--ink107)!important;text-shadow:none!important;font-family:'Gowun Batang',var(--serif)!important}
   body.ui107 #body{font-size:21px!important;line-height:1.95!important;animation:ink107 .9s ease both!important}
@@ -15719,7 +15727,17 @@ ch2_road100=function(cb){
   body.ui107 #nav75Btn,body.ui107 .navBtn75{color:var(--ink107b)!important;border-color:rgba(35,26,18,.3)!important;background:none!important}
   /* 곁의 세 사람: 끈으로 엮은 죽간 */
   body.ui107 #st103{display:none!important}
-  #st107{position:absolute;top:22px;left:24px;z-index:30;display:flex;align-items:flex-start;gap:14px;pointer-events:auto}
+  #st107{position:absolute;top:22px;left:70px;z-index:30;display:flex;align-items:flex-start;gap:14px;pointer-events:auto;
+    transition:opacity .35s ease,transform .35s ease;transform-origin:0 0}
+  #st107:not(.open){opacity:0;transform:translateX(-10px) scale(.97);pointer-events:none}
+  #tab107{position:absolute;top:22px;left:22px;z-index:31;width:30px;height:96px;border:0;cursor:pointer;border-radius:3px;padding:8px 0 0;
+    background:linear-gradient(90deg,#b99a64,#d8bd86 30%,#d3b67c 70%,#a8884f);box-shadow:0 6px 10px rgba(0,0,0,.5);
+    font-family:'Ma Shan Zheng',serif;font-size:19px;color:#2a1f15;display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.82;transition:opacity .2s,transform .2s}
+  #tab107:hover,#tab107.on{opacity:1}
+  #tab107.on{transform:translateY(2px)}
+  #tab107 small{writing-mode:vertical-rl;font-family:'Gowun Batang',serif;font-size:10.5px;letter-spacing:.1em;color:#5d4b36}
+  #tab107 .dot{width:7px;height:7px;border-radius:50%;background:#a3271e;opacity:0;transition:opacity .3s}
+  #tab107.new .dot{opacity:1}
   #st107 .slips{display:flex;gap:3px;padding:10px 0;position:relative;filter:drop-shadow(0 8px 10px rgba(0,0,0,.55))}
   #st107 .slips::before,#st107 .slips::after{content:'';position:absolute;left:-8px;right:-8px;height:3px;background:#5b4630;border-radius:2px;filter:url(#rough107);z-index:2}
   #st107 .slips::before{top:34px} #st107 .slips::after{bottom:34px}
@@ -15762,14 +15780,25 @@ ch2_road100=function(cb){
   const P3=[['jono','조노'],['wangsam','왕삼'],['sochil','소칠']];
   const STROKES=['M8 6 H36','M22 6 V40','M22 22 H34','M10 18 V40','M5 40 H39'];   /* 正 획순 */
   function tally(n){ return `<svg class="tl" width="44" height="46" viewBox="0 0 44 46" style="filter:url(#rough107)">${STROKES.slice(0,n).map(d=>`<path d="${d}"/>`).join('')}</svg>`; }
-  let sig='';
+  let sig='', open=false;
+  try{ open=localStorage.getItem('ledger107')==='1'; }catch(e){}
+  function setOpen(o){ open=o; try{ localStorage.setItem('ledger107',o?'1':'0'); }catch(e){}
+    const el=document.getElementById('st107'), tb=document.getElementById('tab107');
+    if(el) el.classList.toggle('open',o); if(tb){ tb.classList.toggle('on',o); if(o) tb.classList.remove('new'); } }
+  document.addEventListener('keydown',e=>{ if((e.key==='c'||e.key==='C'||e.key==='ㅊ') && !e.ctrlKey && !e.metaKey && !/INPUT|TEXTAREA/.test((e.target||{}).tagName||'')) setOpen(!open); });
   setInterval(()=>{ try{
     const v=document.getElementById('visual'); if(!v) return;
-    let el=document.getElementById('st107'); if(!el){ el=document.createElement('div'); el.id='st107'; v.appendChild(el); }
+    let el=document.getElementById('st107'); if(!el){ el=document.createElement('div'); el.id='st107'; v.appendChild(el); setOpen(open); }
+    let tb=document.getElementById('tab107'); if(!tb){ tb=document.createElement('button'); tb.id='tab107'; tb.type='button';
+      tb.title='곁의 사람과 조공의 시선 (C)'; tb.innerHTML='簿<small>명부</small><i class="dot"></i>'; tb.onclick=e=>{ e.stopPropagation(); setOpen(!open); }; v.appendChild(tb); setOpen(open); }
     const s=state.suspicion||0, ch=state.chapter||0;
     const people=P3.map(([id,n])=>{ const q=sq(id); return q?{id,n,b:q.bond,alive:q.alive}:null; }).filter(Boolean);
-    const k=JSON.stringify([people,s,ch]); if(k===sig) return; sig=k;
-    if(ch<1 || (!people.length && ch<5 && !s)){ el.innerHTML=''; return; }
+    const k=JSON.stringify([people,s,ch]); if(k===sig) return;
+    if(sig && !open){ const tb2=document.getElementById('tab107'); if(tb2) tb2.classList.add('new'); }
+    sig=k;
+    const empty = ch<1 || (!people.length && ch<5 && !s);
+    { const tb3=document.getElementById('tab107'); if(tb3) tb3.style.display=empty?'none':''; }
+    if(empty){ el.innerHTML=''; return; }
     const lvN=b=> b<=-3?0:b<1?1:b<6?2:b<12?3:5;
     const lvT=b=> b>=12?'목숨을 건다':b>=6?'믿는다':b>=1?'지켜본다':b<=-3?'등을 돌렸다':'모른다';
     const hint= s>=5?'내 뒤를 캐게 했다.':s>=4?'내 이름을 기억한다. 한 칸 더 차면 뒷조사를 받는다.':s>=1?'가끔 눈이 머문다. 넷째 칸부터 내 청이 통한다.':'아직 나를 모른다.';
