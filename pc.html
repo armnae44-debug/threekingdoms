@@ -16232,6 +16232,18 @@ ch2_road100=function(cb){
   #start110 .sub.on{display:flex}
   #start110 .sub button{font-size:15px;padding:5px 0 5px 18px}
   #start110 .ver{position:absolute;right:24px;bottom:16px;font-family:'Gowun Batang',serif;font-size:11px;color:#5f584c;letter-spacing:.14em}
+  body:has(#start110:not(.off)) #nav74{display:none!important}
+  /* 세로 화면(휴대폰): 세로 그림, 제목은 위 · 메뉴는 아래 */
+  @media (orientation:portrait){
+    #start110{flex-direction:column;justify-content:space-between;padding:7vh 0 9vh;
+      background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,0) 35%,rgba(0,0,0,.15) 55%,rgba(0,0,0,.88) 78%),url(assets/ui/keyart_v.webp) center/cover}
+    #start110 .logo{height:min(38vh,340px);margin-left:0}
+    #start110 .menu{margin-left:0;align-items:center}
+    #start110 .menu button{text-align:center;padding:8px 0;font-size:18px}
+    #start110 .menu button::before{display:none}
+    #start110 .sub{margin:-2px 0 6px 0;align-items:center}
+    body.ui110 #titleCard{background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.05) 40%,rgba(0,0,0,.7)),url(assets/ui/keyart_v.webp) center/cover!important}
+  }
   /* 설정 */
   #set110{position:fixed;inset:0;z-index:96;display:none;align-items:center;justify-content:center;background:rgba(4,3,2,.78)}
   #set110.on{display:flex}
