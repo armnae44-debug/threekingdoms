@@ -913,6 +913,15 @@ body.pc75 #stage #narr,body.pc75 #narr{height:auto!important;min-height:0!import
 body.pc75 #body{overflow:visible!important;}
 body.pc75 #ctl75{height:auto!important;}
 body.pc75 #stage #bottom #choices{max-height:calc((100vh - 100px) * .42);overflow-y:auto;}
+/* 선택지가 많을 때 카드가 눌려 겹치지 않게: 카드는 줄이지 않고 칸 안에서 넘긴다 */
+#choices .ch{flex-shrink:0;}
+body.pc75 #stage #bottom #choices{max-height:calc((100vh - 100px) * .5);scrollbar-width:thin;}
+@media (max-height:920px){
+  body.pc75 #stage #bottom #choices{max-height:calc((100vh - 100px) * .58);margin-top:10px;}
+  body.pc75 #stage #bottom #choices .ch{font-size:16px;padding:11px 16px 11px 56px;margin-bottom:7px;}
+  body.pc75 #stage #bottom #choices .ch::before{top:10px;left:14px;width:28px;height:28px;font-size:14px;}
+  body.pc75 #stage #bottom #choices .ch .sub{font-size:13.5px;margin-top:3px;}
+}
 body.pc75.dev #stage #bottom #choices{max-height:calc((100vh - 212px) * .42);}
 body.pc75 #ctl75 button{white-space:nowrap;}
 body.pc75 #ctl75 .hint75{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
