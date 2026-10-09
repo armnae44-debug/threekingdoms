@@ -16013,10 +16013,10 @@ ch2_road100=function(cb){
   if(!/[?&]ui=6/.test(location.search)) return;
   document.body.classList.add('ui110');
   const lk=document.createElement('link'); lk.rel='stylesheet';
-  lk.href='https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap'; document.head.appendChild(lk);
+  lk.href='https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Yuji+Boku&display=swap'; document.head.appendChild(lk);
   const TINT={"ch10_depart": [22, 23, 28], "ch10_night": [64, 55, 56], "ch10_road": [49, 46, 52], "ch10_tent": [60, 38, 24], "ch10_yuan": [76, 44, 23], "ch12_assault": [62, 40, 28], "ch12_camp": [65, 48, 38], "ch12_dawn": [101, 82, 70], "ch12_decoy": [57, 51, 51], "ch12_flag": [43, 35, 32], "ch12_hill": [55, 32, 23], "ch12_redsky": [38, 23, 23], "ch12_stable": [66, 45, 35], "ch12_store": [56, 33, 20], "ch12_tent": [71, 48, 32], "ch12_wall": [41, 34, 31], "ch12_west": [63, 43, 33], "ch12_wuchao": [61, 37, 25], "ch12_yuan": [63, 43, 27], "ch13_fire": [48, 27, 15], "ch13_gate": [35, 24, 22], "ch13_infirmary": [69, 46, 42], "ch13_outside": [51, 34, 28], "ch13_sword": [67, 41, 27], "ch13_xuchang": [45, 30, 21], "ch14_base": [124, 100, 83], "ch14_battlefield": [112, 96, 88], "ch14_breach": [103, 85, 73], "ch14_camp": [106, 89, 79], "ch14_dawn": [87, 77, 74], "ch14_epilogue": [118, 85, 58], "ch14_feast": [65, 35, 16], "ch14_ford": [115, 103, 98], "ch14_hall": [40, 27, 16], "ch14_leave": [105, 88, 76], "ch14_prison": [66, 51, 39], "ch14_retreat": [61, 44, 36], "ch14_slip": [39, 23, 12], "ch14_tent": [88, 54, 36], "ch1_ditch_dawn": [63, 61, 68], "ch1_ditch_day": [108, 101, 100], "ch1_ditch_night": [35, 37, 42], "ch1_fire": [68, 36, 24], "ch2_camp": [96, 92, 93], "ch2_camp_autumn": [104, 84, 71], "ch2_camp_dusk": [112, 85, 66], "ch2_camp_spring": [96, 90, 85], "ch2_field": [102, 88, 75], "ch3_camp": [100, 90, 88], "ch3_store": [38, 30, 29], "ch3_tent": [84, 56, 39], "ch4_camp": [112, 96, 86], "ch4_campfire": [33, 30, 29], "ch4_dawn": [99, 90, 87], "ch4_feast": [41, 24, 13], "ch4_fire": [86, 45, 24], "ch4_night": [43, 40, 42], "ch4_river": [48, 48, 52], "ch4_smithy": [35, 29, 28], "ch4_stable": [61, 42, 32], "ch4_tent": [67, 52, 41], "ch5_camp": [104, 71, 54], "ch5_field": [101, 92, 87], "ch5_flooded": [55, 57, 64], "ch5_gate": [70, 64, 64], "ch5_night": [35, 22, 15], "ch5_paddy": [88, 74, 65], "ch5_river": [114, 101, 94], "ch5_tent": [70, 55, 43], "ch6_battlefield": [148, 112, 80], "ch6_camp": [102, 84, 73], "ch6_field": [105, 77, 59], "ch6_night": [55, 37, 29], "ch6_tent": [63, 35, 16], "ch7_battlefield": [111, 91, 75], "ch7_camp": [108, 70, 48], "ch7_farewell": [109, 94, 84], "ch7_field": [120, 103, 90], "ch7_hill": [117, 98, 83], "ch7_night": [43, 35, 34], "ch7_tent": [96, 70, 50], "ch8_camp": [107, 90, 78], "ch8_catapult": [114, 103, 98], "ch8_night": [57, 40, 32], "ch8_raid": [40, 29, 25], "ch8_tent": [51, 33, 22], "ch8_vista": [76, 55, 52], "ch8_workshop": [117, 97, 83], "ch9_battlefield": [115, 94, 79], "ch9_camp": [93, 84, 79], "ch9_dawn": [88, 78, 74], "ch9_field": [98, 79, 66], "ch9_jushou": [100, 79, 63], "ch9_night": [51, 39, 34], "ch9_stable": [58, 39, 25], "ch9_tent": [54, 37, 26], "ch9_trench": [56, 43, 36], "ch9_wall": [32, 34, 41], "ch9_wall_fire": [32, 33, 38]};
   const css=`
-  body.ui110{--ivory:#eadfc7;--ivory2:#bdb196;--ivory3:#8b816e;--bronze:#c7a46e;--zhu:#b5473b;--w110:min(600px,44vw);--tint110:rgb(60,70,110)}
+  body.ui110{--ivory:#eadfc7;--ivory2:#bdb196;--ivory3:#8b816e;--bronze:#c7a46e;--zhu:#b5473b;--w110:min(520px,36vw);--tint110:rgb(60,70,110)}
   body.ui110.pc75 #stage{display:block!important}
   body.ui110.pc75 #visual{position:fixed!important;inset:0!important}
   body.ui110.pc75 #visual::after{content:'';position:absolute;inset:0;width:auto!important;pointer-events:none;z-index:6;
@@ -16024,20 +16024,21 @@ ch2_road100=function(cb){
   body.ui110.pc75 #stage #topBar::before,body.ui110.pc75 #stage #bottom::after,body.ui110.pc75 #stage #bottom::before{display:none!important}
   /* 족자 */
   #silk110{position:fixed;z-index:15;pointer-events:none;top:6px;bottom:6px;right:22px;width:var(--w110);box-sizing:border-box;
-    border-style:solid;border-width:62px 84px 74px 84px;border-image:url(assets/ui/silk.webp) 140 190 170 190 fill / 62px 84px 74px 84px stretch;
+    border-style:solid;border-width:32px 42px 38px 42px;border-image:url(assets/ui/silk.webp) 140 190 170 190 fill / 32px 42px 38px 42px stretch;
     filter:drop-shadow(-16px 22px 34px rgba(0,0,0,.6)) drop-shadow(0 2px 3px rgba(0,0,0,.5))}
-  #silk110::after{content:'';position:absolute;inset:-6px -26px -10px -26px;background:var(--tint110);mix-blend-mode:soft-light;opacity:.5;pointer-events:none}
+  #silk110::after{content:'';position:absolute;inset:-4px 0 -6px 0;background:var(--tint110);mix-blend-mode:soft-light;opacity:.5;pointer-events:none}
   body:not(.ui110) #silk110{display:none}
   /* 글은 족자 안 */
-  body.ui110.pc75 #stage #topBar{position:fixed!important;top:6px;right:22px;width:var(--w110);left:auto;z-index:20;background:transparent!important;padding:86px 96px 4px 100px!important;box-sizing:border-box}
-  body.ui110.pc75 #stage #bottom{position:fixed!important;right:22px;width:var(--w110);left:auto;top:160px;bottom:6px;z-index:20;height:auto!important;box-sizing:border-box;
-    background:transparent!important;padding:0 96px 116px 100px!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;overflow:hidden!important}
+  body.ui110.pc75 #stage #topBar{position:fixed!important;top:6px;right:22px;width:var(--w110);left:auto;z-index:20;background:transparent!important;padding:50px 50px 4px 56px!important;box-sizing:border-box}
+  body.ui110.pc75 #stage #bottom{position:fixed!important;right:22px;width:var(--w110);left:auto;top:150px;bottom:6px;z-index:20;height:auto!important;box-sizing:border-box;
+    background:transparent!important;padding:0 50px 74px 56px!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;overflow:hidden!important}
   body.ui110 #hud75::after{display:none!important}
   body.ui110 #hudCh75{background:none!important;-webkit-text-fill-color:var(--ivory)!important;color:var(--ivory)!important;font-size:22px!important;letter-spacing:.3em!important}
   body.ui110 #hudLoc75{color:var(--ivory3)!important;letter-spacing:.14em!important;font-family:'Gowun Batang',var(--serif)!important}
   body.ui110 #menuBtn75{color:var(--ivory2)!important;background:none!important;border:0!important}
   body.ui110 #body,body.ui110 #body *{font-family:'Gowun Batang',var(--serif)!important}
-  body.ui110 #body{color:var(--ivory)!important;font-size:19px!important;line-height:1.9!important;text-shadow:0 1px 2px rgba(0,0,0,.6)!important;border:0!important;padding-left:0!important}
+  body.ui110 #body,body.ui110 .tr75,body.ui110 #choices .ch{word-break:keep-all!important;overflow-wrap:break-word}
+  body.ui110 #body{color:var(--ivory)!important;font-size:18.5px!important;line-height:1.9!important;text-shadow:0 1px 2px rgba(0,0,0,.6)!important;border:0!important;padding-left:0!important}
   body.ui110 #body *{border:0!important}
   body.ui110 #narr.mono75 #body{color:#cdbf9f!important}
   body.ui110 #who{color:var(--bronze)!important;font-family:'Gowun Batang',var(--serif)!important;font-weight:700!important;font-size:15.5px!important;letter-spacing:.14em!important}
@@ -16062,7 +16063,7 @@ ch2_road100=function(cb){
   body.ui110 #choices .ch .od103{display:inline!important;margin-left:8px;border:0!important;background:none!important;padding:0!important;border-radius:0!important;font-size:12.5px!important;color:var(--zhu)!important}
   body.ui110 #choices .ch .od103.hi{color:#8aa592!important} body.ui110 #choices .ch .od103.mid{color:#c29a55!important}
   /* 아래 단추 */
-  body.ui110.pc75 #ctl75{position:absolute!important;left:100px;right:96px;bottom:84px;margin:0!important;padding:0!important;border:0!important;min-height:0!important}
+  body.ui110.pc75 #ctl75{position:absolute!important;left:56px;right:50px;bottom:46px;margin:0!important;padding:0!important;border:0!important;min-height:0!important}
   body.ui110.pc75 #ctl75::before{display:none!important}
   body.ui110 #ctl75 button{color:var(--ivory3)!important;font-size:12.5px!important;background:none!important;font-family:'Gowun Batang',var(--serif)!important;padding:0 8px 0 0!important}
   body.ui110 #ctl75 button:hover{color:var(--ivory)!important}
@@ -16094,7 +16095,7 @@ ch2_road100=function(cb){
   #ppl110 .eye .row i.on{background:#c0392b;border-color:#c0392b;box-shadow:0 0 6px rgba(192,57,43,.6)}
   #ppl110 .eye .row i.mk::after{content:'';position:absolute;left:50%;top:-6px;width:1px;height:4px;background:#d9c79d}
   #ppl110 .eye .h{font-family:'Gowun Batang',serif;color:#d9c79d;font-size:12px;line-height:1.5;text-shadow:0 1px 2px #000}
-  body.ui110 #pplBtn110{position:absolute;right:150px;top:94px;background:none;border:0;color:var(--ivory3);font-size:12.5px;letter-spacing:.12em;cursor:pointer;font-family:'Gowun Batang',var(--serif);z-index:21}
+  body.ui110 #pplBtn110{position:absolute;right:96px;top:58px;background:none;border:0;color:var(--ivory3);font-size:12.5px;letter-spacing:.12em;cursor:pointer;font-family:'Gowun Batang',var(--serif);z-index:21}
   body.ui110 #pplBtn110:hover,body.ui110.st110 #pplBtn110{color:var(--ivory)}
   body.ui110 #pplBtn110 i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--zhu);margin-left:6px;vertical-align:middle;opacity:0;transition:opacity .3s}
   body.ui110 #pplBtn110.new i{opacity:1}
@@ -16161,6 +16162,195 @@ ch2_road100=function(cb){
   const hc=document.getElementById('hudCh75'); let lastCh='';
   if(hc) new MutationObserver(()=>{ const t=(hc.textContent||'').replace(/\s/g,''); if(!t||t===lastCh) return; lastCh=t;
     const n=KN.indexOf(t.replace(/[第章]/g,'')); if(n>0) title110(n); }).observe(hc,{childList:true,characterData:true,subtree:true});
+})();
+
+/* ==========================================================
+   v111 · 「비단 족자」 시안 보강 (?ui=6)
+   - 명부: 동료 한 사람이 대쪽 한 쪽. 한자 이름은 붓글씨로 세로, 한글은 작게. C 키
+   - 글 칸 숨기기: H 키 또는 마우스 오른쪽 클릭
+   - 시작 화면: 官渡之路 + 이어하기·처음부터·불러오기·장 선택·기록·설정 (이름 입력 없음)
+   - 설정: 글자 크기, 음악 크기, 화면 흔들림
+   ========================================================== */
+(function(){
+  if(!/[?&]ui=6/.test(location.search)) return;
+  const css=`
+  /* 평소 화면: 시선 점만 작게 */
+  #eye110{margin-top:10px;display:flex;align-items:center;gap:8px;font-family:'Gowun Batang',serif;font-size:11.5px;letter-spacing:.12em;color:#8b816e;z-index:21}
+  #eye110 i{width:7px;height:7px;border-radius:50%;border:1px solid rgba(214,90,74,.6)}
+  #eye110 i.on{background:#b5473b;border-color:#b5473b}
+  #eye110 i.mk{margin-left:4px}
+  body.ui110 #ppl110{display:none!important}
+  /* 명부 */
+  #roster110{position:fixed;inset:0;z-index:85;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
+    background:radial-gradient(ellipse at 50% 45%,rgba(10,8,6,.82),rgba(4,3,2,.95));opacity:0;pointer-events:none;transition:opacity .35s ease}
+  #roster110.on{opacity:1;pointer-events:auto}
+  #roster110 h2{margin:0;font-family:'Ma Shan Zheng',serif;font-weight:400;font-size:34px;letter-spacing:.3em;color:#e9dfc7}
+  #roster110 .bund{position:relative;display:flex;gap:6px;padding:0 18px;transform:translateY(8px);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+  #roster110.on .bund{transform:none}
+  #roster110 .cord{position:absolute;left:0;right:0;height:5px;border-radius:3px;z-index:3;
+    background:repeating-linear-gradient(60deg,#3b2c1d 0 3px,#6b5236 3px 5px,#2c2116 5px 7px);box-shadow:0 2px 3px rgba(0,0,0,.6)}
+  #roster110 .cord.t{top:15%} #roster110 .cord.b{bottom:15%}
+  #roster110 .slip{position:relative;height:min(62vh,520px);background-size:100% 100%;background-repeat:no-repeat;
+    display:flex;flex-direction:column;align-items:center;padding-top:calc(min(62vh,520px) * .15 + 22px);box-sizing:border-box;filter:drop-shadow(0 10px 14px rgba(0,0,0,.6))}
+  #roster110 .slip .hz{writing-mode:vertical-rl;text-orientation:upright;font-family:'Yuji Boku','Ma Shan Zheng',serif;font-size:40px;line-height:1;color:#1c130b;mix-blend-mode:multiply;opacity:.92;filter:blur(.25px);letter-spacing:.02em}
+  #roster110 .slip .kr{writing-mode:vertical-rl;margin-top:14px;font-family:'Gowun Batang',serif;font-weight:700;font-size:13px;color:#3a2a1a;letter-spacing:.2em;mix-blend-mode:multiply}
+  #roster110 .slip .st{writing-mode:vertical-rl;margin-top:12px;font-family:'Gowun Batang',serif;font-size:13px;color:#2f2216;letter-spacing:.12em;mix-blend-mode:multiply}
+  #roster110 .slip .hu{writing-mode:vertical-rl;margin-top:10px;font-family:'Gowun Batang',serif;font-weight:700;font-size:13px;color:#a3271e;letter-spacing:.12em;mix-blend-mode:multiply}
+  #roster110 .slip.dead{filter:grayscale(.7) brightness(.7) drop-shadow(0 10px 14px rgba(0,0,0,.6))}
+  #roster110 .slip.dead .hz{text-decoration:line-through;text-decoration-thickness:3px}
+  #roster110 .eye{text-align:center;font-family:'Gowun Batang',serif;color:#d9c79d}
+  #roster110 .eye .t{font-size:15px;letter-spacing:.3em;color:#e9dfc7}
+  #roster110 .eye .row{display:flex;gap:7px;justify-content:center;margin:10px 0 8px}
+  #roster110 .eye .row i{width:15px;height:15px;border-radius:50%;border:1px solid rgba(214,90,74,.7);position:relative}
+  #roster110 .eye .row i.on{background:#b5473b;border-color:#b5473b;box-shadow:0 0 8px rgba(181,71,59,.6)}
+  #roster110 .eye .row i.mk::after{content:'';position:absolute;left:50%;top:-8px;width:1px;height:5px;background:#d9c79d}
+  #roster110 .eye .h{font-size:13.5px;color:#a99c82}
+  #roster110 .x{font-family:'Gowun Batang',serif;font-size:12px;color:#6f6656;letter-spacing:.2em}
+  /* 글 칸 숨기기 */
+  body.ui110.hide110 #silk110,body.ui110.hide110 #stage #topBar,body.ui110.hide110 #stage #bottom,body.ui110.hide110 #mark75{opacity:0!important;pointer-events:none!important}
+  body.ui110 #silk110,body.ui110 #stage #topBar,body.ui110 #stage #bottom{transition:opacity .35s ease}
+  body.ui110.hide110 #visual::after{opacity:0}
+  #hideHint110{position:fixed;right:24px;bottom:18px;z-index:60;font-family:'Gowun Batang',serif;font-size:12px;color:#8b816e;letter-spacing:.14em;opacity:0;transition:opacity .3s;pointer-events:none}
+  body.hide110 #hideHint110{opacity:1}
+  /* 시작 화면 */
+  body.ui110 #nameCard{display:none!important}
+  #start110{position:fixed;inset:0;z-index:95;display:flex;align-items:center;
+    background:linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,.25) 45%,rgba(0,0,0,0) 70%),linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,0) 40%,rgba(0,0,0,.6)),url(assets/ui/keyart.webp) center/cover;
+    transition:opacity .8s ease}
+  #start110.off{opacity:0;pointer-events:none}
+  #start110 .logo{height:min(66vh,560px);margin-left:9vw;filter:drop-shadow(0 4px 30px rgba(0,0,0,.9))}
+  #start110 .menu{display:flex;flex-direction:column;gap:4px;margin-left:5vw}
+  #start110 .menu button{background:none;border:0;text-align:left;cursor:pointer;padding:9px 0 9px 22px;position:relative;
+    font-family:'Gowun Batang',serif;font-size:20px;letter-spacing:.2em;color:#bdb196;transition:color .2s}
+  #start110 .menu button::before{content:'';position:absolute;left:0;top:50%;width:10px;height:1px;background:#bdb196;opacity:0;transition:opacity .2s,width .3s}
+  #start110 .menu button:hover{color:#fff4dc} #start110 .menu button:hover::before{opacity:1;width:14px}
+  #start110 .menu button small{display:block;font-size:11.5px;letter-spacing:.08em;color:#7f7664;margin-top:3px}
+  #start110 .menu button[hidden]{display:none}
+  #start110 .sub{display:none;flex-direction:column;gap:2px;margin:-2px 0 6px 22px}
+  #start110 .sub.on{display:flex}
+  #start110 .sub button{font-size:15px;padding:5px 0 5px 18px}
+  #start110 .ver{position:absolute;right:24px;bottom:16px;font-family:'Gowun Batang',serif;font-size:11px;color:#5f584c;letter-spacing:.14em}
+  /* 설정 */
+  #set110{position:fixed;inset:0;z-index:96;display:none;align-items:center;justify-content:center;background:rgba(4,3,2,.78)}
+  #set110.on{display:flex}
+  #set110 .p{width:min(440px,90vw);padding:30px 34px 24px;background:#14121a;box-shadow:0 20px 50px rgba(0,0,0,.7),inset 0 0 0 1px rgba(199,164,110,.25);font-family:'Gowun Batang',serif;color:#eadfc7}
+  #set110 h3{margin:0 0 20px;font-weight:700;font-size:18px;letter-spacing:.3em}
+  #set110 .r{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-top:1px solid rgba(199,164,110,.14);font-size:15px}
+  #set110 .seg{display:flex;gap:4px}
+  #set110 .seg button{background:none;border:1px solid rgba(199,164,110,.3);color:#bdb196;font-family:inherit;font-size:13px;padding:5px 10px;cursor:pointer}
+  #set110 .seg button.on{background:rgba(199,164,110,.18);color:#fff4dc;border-color:rgba(199,164,110,.7)}
+  #set110 input[type=range]{width:170px;accent-color:#c7a46e}
+  #set110 .ok{margin-top:18px;width:100%;background:none;border:1px solid rgba(199,164,110,.45);color:#eadfc7;font-family:inherit;font-size:15px;letter-spacing:.3em;padding:10px;cursor:pointer}
+  body.ui110.fs-s #body{font-size:17px!important} body.ui110.fs-l #body{font-size:21px!important}
+  body.ui110.fs-s .tr75{font-size:14px!important} body.ui110.fs-l .tr75{font-size:17px!important}
+  `;
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+  const $i=id=>document.getElementById(id);
+  const store={ get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:v; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
+
+  /* ---------- 평소 화면의 시선 점 ---------- */
+  const eye=document.createElement('div'); eye.id='eye110'; ($i('hud75')||$i('topBar')).appendChild(eye);
+  /* ---------- 명부 ---------- */
+  const R=document.createElement('div'); R.id='roster110'; R.setAttribute('role','dialog'); R.setAttribute('aria-label','명부'); document.body.appendChild(R);
+  const btn=$i('pplBtn110'); if(btn) btn.innerHTML='명부<i></i>';
+  let rOpen=false;
+  const rSet=o=>{ rOpen=o; R.classList.toggle('on',o); if(o){ draw(true); if(btn) btn.classList.remove('new'); } };
+  if(btn) btn.onclick=e=>{ e.stopPropagation(); rSet(!rOpen); };
+  R.onclick=e=>{ e.stopPropagation(); rSet(false); };
+  document.addEventListener('keydown',e=>{
+    if(/INPUT|TEXTAREA/.test((e.target||{}).tagName||'')||e.ctrlKey||e.metaKey) return;
+    if(e.key==='c'||e.key==='C'||e.key==='ㅊ'){ e.stopImmediatePropagation(); if(!$i('start110')||$i('start110').classList.contains('off')) rSet(!rOpen); }
+    if(e.key==='Escape' && rOpen) rSet(false);
+    if(e.key==='h'||e.key==='H'||e.key==='ㅗ'){ hideToggle(); }
+  },true);
+  const HURT={ jump:['wangsam','다리를 절룩임'], shield:['wangsam','팔을 못 듦'], shove:['wangsam','몸을 다침'] };
+  function hurt(id){ const F=state.flags, ch=state.chapter||1;
+    if(ch===5 && F.ch5_ladder){ const h=HURT[F.ch5_ladder]; if(h&&h[0]===id) return h[1]; if(id==='sochil'&&F.ch5_ladder==='shove') return '왼팔을 못 씀'; }
+    if(ch===4 && F.ch4_shield===id) return '창에 찔림'; if(ch===3 && id==='sochil' && F.sochilWeak) return '앓아누움'; return ''; }
+  const lvT=b=> b>=12?'목숨을 건다':b>=6?'믿는다':b>=1?'지켜본다':b<=-3?'등을 돌렸다':'모른다';
+  const SL=[['slip3',78],['slip2',70],['slip3',80],['slip1',64],['slip2',72]];
+  const hint=s=> s>=5?'내 뒤를 캐게 했다.':s>=4?'내 이름을 기억한다. 한 칸 더 차면 뒷조사를 받는다.':s>=1?'가끔 눈이 머문다. 넷째 칸부터 내 청이 통한다.':'아직 나를 모른다.';
+  let sig='';
+  function draw(force){
+    const s=state.suspicion||0, ch=state.chapter||0, sqd=(state.squad||[]);
+    const k=JSON.stringify([sqd.map(q=>[q.id,q.bond,q.alive]),s,ch,state.flags&&state.flags.ch5_ladder]);
+    if(k!==sig){ if(sig && !rOpen && btn) btn.classList.add('new'); sig=k; force=true; }
+    if(btn) btn.style.display=(ch<1||(!sqd.length&&!s&&ch<5))?'none':'';
+    eye.style.display=(ch>=5||s>0)?'':'none';
+    eye.innerHTML='조공의 시선'+[1,2,3,4,5,6,7,8].map(i=>`<i class="${i<=s?'on':''}${i===4?' mk':''}"></i>`).join('');
+    if(!force) return;
+    const slips=sqd.map((q,i)=>{ const m=String(q.name||'').match(/\(([^)]+)\)/); const hz=m?m[1]:''; const kr=String(q.name||'').replace(/\(.*$/,'');
+      const [img,w]=SL[i%SL.length]; const h=q.alive?hurt(q.id):'';
+      return `<div class="slip${q.alive?'':' dead'}" style="width:${w}px;background-image:url(assets/ui/${img}.webp)">`
+        +(hz?`<span class="hz">${hz}</span>`:'')+`<span class="kr">${kr}</span><span class="st">${q.alive?lvT(q.bond):'전사'}</span>${h?`<span class="hu">${h}</span>`:''}</div>`; }).join('');
+    R.innerHTML=`<h2>名簿</h2>`+(slips?`<div class="bund"><i class="cord t"></i><i class="cord b"></i>${slips}</div>`:'')
+      +`<div class="eye"><div class="t">조공의 시선</div><div class="row">${[1,2,3,4,5,6,7,8].map(i=>`<i class="${i<=s?'on':''}${i===4||i===5?' mk':''}"></i>`).join('')}</div><div class="h">${hint(s)}</div></div>`
+      +`<div class="x">아무 데나 누르거나 C 키를 누르면 닫힌다</div>`;
+  }
+  setInterval(()=>{ try{ draw(false); }catch(e){} },600);
+
+  /* ---------- 글 칸 숨기기 ---------- */
+  const hh=document.createElement('div'); hh.id='hideHint110'; hh.textContent='누르면 글이 돌아온다'; document.body.appendChild(hh);
+  function hideToggle(){ document.body.classList.toggle('hide110'); }
+  document.addEventListener('contextmenu',e=>{ if(!$i('start110').classList.contains('off')) return; e.preventDefault(); hideToggle(); });
+  document.addEventListener('click',e=>{ if(document.body.classList.contains('hide110')){ e.stopPropagation(); e.preventDefault(); document.body.classList.remove('hide110'); } },true);
+
+  /* ---------- 시작 화면 ---------- */
+  const S=document.createElement('div'); S.id='start110';
+  S.innerHTML=`<img class="logo" src="assets/ui/title_game.webp" alt="관도지로">
+    <div class="menu">
+      <button data-a="cont" hidden>이어하기<small></small></button>
+      <button data-a="new">처음부터</button>
+      <button data-a="load">불러오기</button>
+      <button data-a="jump">장 선택</button>
+      <button data-a="rec">기록</button>
+      <div class="sub" id="recSub110"><button data-a="people">인물</button><button data-a="fate">책에 적힌 결말</button></div>
+      <button data-a="set">설정</button>
+    </div>`;
+  document.body.appendChild(S);
+  const auto=(()=>{ try{ return save82Read().auto; }catch(e){ return null; } })();
+  if(auto){ const b=S.querySelector('[data-a=cont]'); b.hidden=false; const p=auto.ptr||{}; const st2=(p.state)||{};
+    b.querySelector('small').textContent=(st2.chapter?`${st2.chapter}번째 이야기 · `:'')+(auto.t?save82Time(auto.t):''); }
+  const close=()=>{ S.classList.add('off'); };
+  S.addEventListener('click',e=>{ const b=e.target.closest('button'); e.stopPropagation(); if(!b) return; const a=b.dataset.a;
+    if(a==='cont'){ close(); save82Load(auto); }
+    if(a==='new'){ close(); const n=$i('nameInput'); if(n) n.value='조평'; $i('nameOk').click(); }
+    if(a==='load'){ save82Open('load'); const ov=$i('save82'); if(ov){ const mo=new MutationObserver(()=>{ if(!ov.classList.contains('show')){ mo.disconnect(); if(document.body.classList.contains('a74Reading')||state.chapter) close(); } }); mo.observe(ov,{attributes:true}); } }
+    if(a==='jump'){ close(); const j=$i('jumpBtn88'); if(j) j.click(); }
+    if(a==='rec'){ $i('recSub110').classList.toggle('on'); }
+    if(a==='people'){ try{ peopleList101(); }catch(_){ } }
+    if(a==='fate'){ try{ bookFate102(true); }catch(_){ } }
+    if(a==='set'){ setOpen(); }
+  });
+  /* 게임 안 메뉴에 저장·설정·처음 화면 */
+  const list=document.querySelector('#menu75 .list75');
+  if(list){ const add=(t,s,f)=>{ const b=document.createElement('button'); b.innerHTML=`${t}<small>${s}</small>`; b.onclick=()=>{ menu75Close(); f(); }; list.appendChild(b); };
+    add('저장 · 불러오기','저장 칸 여섯',()=>save82Open('both'));
+    add('설정','글자 크기 · 음악 · 화면 흔들림',()=>setOpen());
+    add('처음 화면으로','저장하지 않은 것은 사라진다',()=>location.reload()); }
+
+  /* ---------- 설정 ---------- */
+  const SET=document.createElement('div'); SET.id='set110';
+  SET.innerHTML=`<div class="p"><h3>설정</h3>
+    <div class="r">글자 크기<div class="seg" data-k="fs"><button data-v="s">작게</button><button data-v="m">보통</button><button data-v="l">크게</button></div></div>
+    <div class="r">음악<input type="range" min="0" max="100" data-k="vol"></div>
+    <div class="r">화면 흔들림<div class="seg" data-k="shake"><button data-v="on">켬</button><button data-v="off">끔</button></div></div>
+    <button class="ok">닫기</button></div>`;
+  document.body.appendChild(SET);
+  function apply(){
+    const fs=store.get('fs110','m'); document.body.classList.remove('fs-s','fs-l'); if(fs!=='m') document.body.classList.add('fs-'+fs);
+    const v=+store.get('vol110','55')/100; try{ bgmVol85=v; if(bgmEl85) bgmEl85.volume=v; }catch(e){}
+    SET.querySelectorAll('.seg').forEach(g=>{ const cur=store.get(g.dataset.k+'110', g.dataset.k==='fs'?'m':'on'); g.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===cur)); });
+    SET.querySelector('input[data-k=vol]').value=Math.round(v*100);
+  }
+  const shake0=typeof shake83==='function'?shake83:null;
+  if(shake0) shake83=function(){ if(store.get('shake110','on')==='off') return; return shake0.apply(this,arguments); };
+  SET.addEventListener('click',e=>{ e.stopPropagation(); const b=e.target.closest('button'); if(!b) return;
+    if(b.classList.contains('ok')){ SET.classList.remove('on'); return; }
+    const g=b.closest('.seg'); if(g){ store.set(g.dataset.k+'110',b.dataset.v); apply(); } });
+  SET.querySelector('input[data-k=vol]').addEventListener('input',e=>{ store.set('vol110',e.target.value); apply(); });
+  function setOpen(){ apply(); SET.classList.add('on'); }
+  apply();
 })();
 
 /* 4장 · 공격 사흘 전, 사다리 */
