@@ -16388,6 +16388,134 @@ ch2_road100=function(cb){
   };
 })();
 
+/* ==========================================================
+   v113 · 「비단 족자」 시안: 나머지 창도 같은 결로, 장 끝 정리 화면 (?ui=6)
+   ========================================================== */
+(function(){
+  if(!/[?&]ui=6/.test(location.search)) return;
+  const SILK="border-style:solid;border-width:32px 42px 38px 42px;border-image:url(assets/ui/silk.webp) 140 190 170 190 fill / 32px 42px 38px 42px stretch;background:transparent!important;";
+  const css=`
+  /* ---- 창: 비단 족자 한 폭 ---- */
+  body.ui110 .ov,body.ui110 #logWrap{inset:4vh calc(50% - min(420px,46vw))!important;${SILK}box-shadow:0 0 0 100vmax rgba(5,4,7,.8)!important;
+    padding:14px 22px 18px!important;overflow:auto!important;border-radius:0!important;font-family:'Gowun Batang',var(--serif)!important;color:#eadfc7}
+  body.ui110 .ov::before,body.ui110 .ov::after,body.ui110 #logWrap::before,body.ui110 #logWrap::after{display:none!important}
+  body.ui110 .ov h3{font-family:'Gowun Batang',var(--serif)!important;font-weight:700!important;font-size:20px!important;letter-spacing:.32em!important;color:#eadfc7!important;
+    text-align:center!important;margin:6px 0 18px!important;padding-bottom:12px;border-bottom:1px solid rgba(199,164,110,.25)}
+  body.ui110 .ov h3::after{display:none!important}
+  body.ui110 .ov .close,body.ui110 #logWrap .lgTop span{color:#8b816e!important;font-family:'Gowun Batang',var(--serif)!important;font-size:13px!important;letter-spacing:.2em}
+  body.ui110 .ov .close:hover,body.ui110 #logWrap .lgTop span:hover{color:#eadfc7!important}
+  body.ui110 .ov *{font-family:'Gowun Batang',var(--serif)}
+  /* 메뉴 */
+  body.ui110 #menu75 .who75{font-size:24px!important;color:#eadfc7!important;letter-spacing:.2em}
+  body.ui110 #menu75 .sub75{color:#8b816e!important}
+  body.ui110 #menu75 .stats75{border-color:rgba(199,164,110,.2)!important}
+  body.ui110 #menu75 .stats75 div+div{border-color:rgba(199,164,110,.2)!important}
+  body.ui110 #menu75 .stats75 b{color:#eadfc7!important}
+  body.ui110 #menu75 .list75 button{color:#d9cdb2!important;border-bottom:1px solid rgba(199,164,110,.14)!important;background:none!important;font-size:16px!important}
+  body.ui110 #menu75 .list75 button:hover{color:#fff4dc!important}
+  body.ui110 #menu75 .list75 button small{color:#7f7664!important}
+  body.ui110 #menu75 .list75 button:first-child{color:#c7a46e!important}
+  /* 기록(저장) */
+  body.ui110 #save82 .sub82{color:#8b816e!important;text-align:center}
+  body.ui110 .sv82{background:rgba(0,0,0,.22)!important;border:1px solid rgba(199,164,110,.2)!important;border-radius:0!important}
+  body.ui110 .sv82Lab{color:#c7a46e!important} body.ui110 .sv82Time{color:#8b816e!important}
+  body.ui110 .sv82Ch{color:#eadfc7!important} body.ui110 .sv82Ch span{color:#8b816e!important}
+  body.ui110 .sv82Line{color:#a99c82!important}
+  body.ui110 .sv82Btns button{background:none!important;border:1px solid rgba(199,164,110,.4)!important;color:#d9cdb2!important;border-radius:0!important;font-family:'Gowun Batang',var(--serif)!important}
+  body.ui110 .sv82Btns button:hover{color:#fff4dc!important;border-color:rgba(199,164,110,.8)!important}
+  /* 휘하·사서 */
+  body.ui110 .sq{border-color:rgba(199,164,110,.16)!important;background:none!important}
+  body.ui110 .sqName{color:#eadfc7!important} body.ui110 .sqTrait{color:#c7a46e!important} body.ui110 .sqBond{color:#a99c82!important}
+  body.ui110 .sqMem,body.ui110 .sqMem li{color:#8b816e!important}
+  /* 지나간 본문 */
+  body.ui110 #logWrap .lgTop{border-bottom:1px solid rgba(199,164,110,.25)!important;background:none!important}
+  body.ui110 #logWrap .lgTop b{font-family:'Gowun Batang',var(--serif)!important;color:#eadfc7!important;letter-spacing:.32em!important;font-size:19px!important}
+  body.ui110 #logBox .lgLine{font-family:'Gowun Batang',var(--serif)!important;color:#cfc4ab!important;word-break:keep-all}
+  body.ui110 #logBox .lgLine .who{color:#c7a46e!important;font-family:'Gowun Batang',var(--serif)!important}
+  /* 인물 · 책에 적힌 결말 */
+  body.ui110 #pp101{background:rgba(5,4,7,.78)!important}
+  body.ui110 #pp101 .card{${SILK}border-radius:0!important;box-shadow:0 20px 50px rgba(0,0,0,.6)!important;padding:16px 22px!important;font-family:'Gowun Batang',var(--serif)!important;color:#eadfc7!important}
+  body.ui110 #pp101 .card *{font-family:'Gowun Batang',var(--serif)!important}
+  body.ui110 #pp101 .card h2,body.ui110 #pp101 .card h3,body.ui110 #pp101 .card b{color:#eadfc7!important}
+  body.ui110 #pp101 .card .x{background:none!important;border:0!important;color:#8b816e!important}
+  /* 장 선택 */
+  body.ui110 #jump88 .p,body.ui110 #abMenu .abPanel{${SILK}border-radius:0!important;font-family:'Gowun Batang',var(--serif)!important;color:#eadfc7!important}
+  body.ui110 #jump88 button,body.ui110 #abMenu button{border-radius:0!important;font-family:'Gowun Batang',var(--serif)!important}
+  /* ---- 검은 화면 서술 · 막간 · 죽음 ---- */
+  body.ui110 #engrave,body.ui110 #interlude{background:radial-gradient(ellipse at 50% 42%,#13111a,#060508 70%)!important}
+  body.ui110 #engrave .egLine,body.ui110 #interlude .ilLine{font-family:'Gowun Batang',var(--serif)!important;color:#e6dbc3!important;font-size:19.5px!important;line-height:2!important;word-break:keep-all}
+  body.ui110 #engrave .egLine .who,body.ui110 #interlude .ilLine .who{color:#c7a46e!important;font-family:'Gowun Batang',var(--serif)!important;font-weight:700!important}
+  body.ui110 #engrave .egLine.narrLine{color:#cfc4ab!important}
+  body.ui110 #engrave .egNext,body.ui110 #interlude .ilNext{color:#8b816e!important;font-family:'Gowun Batang',var(--serif)!important}
+  body.ui110.il75 #interlude,body.ui110 #interlude{color:#e6dbc3!important}
+  body.ui110 #interlude *{text-shadow:none!important}
+  body.ui110 #interlude .ilTag{color:#c7a46e!important;font-family:'Gowun Batang',var(--serif)!important;letter-spacing:.3em!important}
+  body.ui110 #interlude .ilRule{background:linear-gradient(90deg,rgba(199,164,110,0),rgba(199,164,110,.5),rgba(199,164,110,0))!important;border:0!important}
+  body.ui110 #engrave .epitaph75{font-family:'Yuji Boku','Gowun Batang',serif!important;color:#c9493c!important;font-size:24px!important;letter-spacing:.08em}
+  body.ui110 #engrave .egRetry{display:inline-block;margin-top:22px!important;padding:10px 26px!important;border:1px solid rgba(201,73,60,.55)!important;color:#e6dbc3!important;letter-spacing:.3em!important;cursor:pointer}
+  body.ui110 #engrave .egRetry:hover{border-color:#c9493c!important;color:#fff4dc!important}
+  /* ---- 장 끝 정리 ---- */
+  #end113{position:fixed;inset:0;z-index:72;display:flex;align-items:center;justify-content:center;background:rgba(5,4,7,.86);opacity:0;pointer-events:none;transition:opacity .6s ease}
+  #end113.on{opacity:1;pointer-events:auto;cursor:pointer}
+  #end113 .p{position:relative;width:min(560px,90vw);${SILK}padding:22px 26px 26px;font-family:'Gowun Batang',var(--serif);color:#eadfc7;
+    transform:translateY(10px);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+  #end113.on .p{transform:none}
+  #end113 .hz{font-family:'Yuji Boku','Ma Shan Zheng',serif;font-size:40px;letter-spacing:.3em;text-align:center;color:#eadfc7}
+  #end113 .kr{text-align:center;font-size:14px;letter-spacing:.3em;color:#8b816e;margin:6px 0 18px}
+  #end113 .row{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-top:1px solid rgba(199,164,110,.16);font-size:15px}
+  #end113 .row span{color:#a99c82} #end113 .row b{font-weight:400;color:#eadfc7;text-align:right}
+  #end113 .row b.dn{color:#d16b5c} #end113 .row b.up{color:#c7a46e}
+  #end113 .ch{padding:10px 0 0;border-top:1px solid rgba(199,164,110,.16);font-size:14px;color:#cfc4ab;line-height:1.8}
+  #end113 .ch em{font-style:normal;color:#c7a46e;font-size:12.5px;letter-spacing:.2em;display:block;margin-bottom:2px}
+  #end113 .seal{position:absolute;right:26px;top:14px;width:58px;opacity:0;transform:scale(1.9) rotate(-10deg);transition:opacity .25s ease,transform .3s cubic-bezier(.3,1.6,.5,1)}
+  #end113.stamp .seal{opacity:.92;transform:scale(1) rotate(-6deg)}
+  #end113 .go{text-align:center;margin-top:16px;font-size:12px;letter-spacing:.24em;color:#6f6656}
+  `;
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+  /* 메뉴의 '저장 · 불러오기'는 이미 있는 '기록'과 겹치므로 뺀다 */
+  document.querySelectorAll('#menu75 .list75 button').forEach(b=>{ if(/^저장 · 불러오기/.test(b.textContent)) b.remove(); });
+
+  /* ---- 장 끝 정리: 장이 바뀌는 순간, 앞 장의 처음과 끝을 견준다 ---- */
+  const KN=['','一','二','三','四','五','六','七','八','九','十','十一','十二'];
+  const PL={1:'연주',2:'허도',3:'완성',4:'하비',5:'백마',6:'연진',7:'관도',8:'관도',9:'관도',10:'관도',11:'관도',12:'관도'};
+  const lvT=b=> b>=12?'목숨을 건다':b>=6?'믿는다':b>=1?'지켜본다':b<=-3?'등을 돌렸다':'모른다';
+  const lvN=b=> b>=12?4:b>=6?3:b>=1?2:b<=-3?0:1;
+  const snap=n=>({ n, sq:(state.squad||[]).map(q=>({id:q.id,name:String(q.name||'').replace(/\(.*$/,''),bond:q.bond,alive:q.alive})),
+    s:state.suspicion||0, rank:state.rank||'', chron:(state.chronicle||[]).length });
+  let last=null;
+  const box=document.createElement('div'); box.id='end113'; document.body.appendChild(box);
+  let next=null, tms=[];
+  const close=()=>{ tms.forEach(clearTimeout); tms=[]; box.classList.remove('on','stamp'); const f=next; next=null; setTimeout(()=>f&&f(),350); };
+  box.onclick=e=>{ e.stopPropagation(); close(); };
+  function endCard(a,cb){
+    const rows=[];
+    const nowSq=(state.squad||[]);
+    nowSq.forEach(q=>{ const nm=String(q.name||'').replace(/\(.*$/,''); const was=a.sq.find(x=>x.id===q.id);
+      if(!was){ rows.push(`<div class="row"><span>${nm}</span><b class="up">곁에 왔다</b></div>`); return; }
+      if(was.alive && !q.alive){ rows.push(`<div class="row"><span>${nm}</span><b class="dn">전사</b></div>`); return; }
+      if(!q.alive) return;
+      const d=lvN(q.bond)-lvN(was.bond);
+      rows.push(`<div class="row"><span>${nm}</span><b class="${d>0?'up':d<0?'dn':''}">${d?lvT(was.bond)+' → ':''}${lvT(q.bond)}</b></div>`); });
+    const s=state.suspicion||0;
+    rows.push(`<div class="row"><span>조공의 시선</span><b class="${s>a.s?'dn':''}">${s===a.s?`${s}칸 그대로`:`${a.s}칸 → ${s}칸`}</b></div>`);
+    if(state.rank && state.rank!==a.rank && a.rank) rows.push(`<div class="row"><span>계급</span><b class="up">${a.rank} → ${state.rank}</b></div>`);
+    const newChron=(state.chronicle||[]).slice(a.chron).map(c=>c&&(c.mine||c.text)).filter(Boolean).slice(-2);
+    box.innerHTML=`<div class="p"><div class="hz">第${KN[a.n]||''}章 終</div><div class="kr">제${a.n}장 · ${PL[a.n]?J(PL[a.n],'을','를'):''} 마치며</div>${rows.join('')}`
+      +(newChron.length?`<div class="ch"><em>책과 달라진 일</em>${newChron.join('<br>')}</div>`:'')
+      +`<img class="seal" src="assets/ui/seal_ping.webp" alt=""><div class="go">누르면 다음 장으로</div></div>`;
+    next=cb; requestAnimationFrame(()=>requestAnimationFrame(()=>box.classList.add('on')));
+    tms.push(setTimeout(()=>box.classList.add('stamp'),900));
+  }
+  const t0=window.title110;
+  if(typeof t0==='function'){
+    window.title110=function(n){
+      const prev=last; last=snap(n);
+      if(prev && prev.n && prev.n!==n && n===prev.n+1) return endCard(prev,()=>{ last=snap(n); t0(n); });
+      return t0(n);
+    };
+  }
+})();
+
 /* 4장 · 공격 사흘 전, 사다리 */
 function ch5_ladderPrep100(){
   const J_=isAlive('jono'), W_=isAlive('wangsam'), S_=isAlive('sochil');
