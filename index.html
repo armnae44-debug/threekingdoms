@@ -16516,6 +16516,242 @@ ch2_road100=function(cb){
   }
 })();
 
+/* ==========================================================
+   v114 · 효과음과 장소의 소리
+   - 효과음: 낙관, 붓(선택), 대쪽(명부), 종이(창), 징(죽음), 시선, 판정 성공·실패, 칼·화살·말
+   - 장소의 소리: 배경 그림에 맞춰 비·모닥불·강물·바람·전고가 천천히 바뀌며 이어진다
+   - 설정: 효과음·장소 소리 크기 (M 키는 음악과 함께 모두 끈다)
+   ========================================================== */
+(function(){
+  const store={ get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:v; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
+  const V={ sfx:+store.get('sfx114','70')/100, amb:+store.get('amb114','50')/100 };
+  let muted=false;
+  const web=location.protocol!=='file:' && !!(window.AudioContext||window.webkitAudioContext);
+  let ctx=null, gS=null, gA=null;
+  function ac(){
+    if(ctx||!web) return ctx;
+    try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); gS=ctx.createGain(); gA=ctx.createGain(); gS.connect(ctx.destination); gA.connect(ctx.destination); gains(); }catch(e){ ctx=null; }
+    return ctx;
+  }
+  function gains(){
+    if(gS){ gS.gain.value=muted?0:V.sfx; gA.gain.value=muted?0:V.amb; }
+    ambEls.forEach(t=>t.el&&(t.el.volume=Math.max(0,Math.min(1,(muted?0:V.amb)*t.f))));
+  }
+  const bufs={};
+  function buf(path){
+    if(bufs[path]!==undefined) return bufs[path];
+    const c=ac(); if(!c) return bufs[path]=Promise.resolve(null);
+    return bufs[path]=fetch(path).then(r=>r.ok?r.arrayBuffer():Promise.reject(r.status))
+      .then(b=>new Promise((res,rej)=>c.decodeAudioData(b,res,rej))).catch(()=>null);
+  }
+  const last={};
+  function sfx(name,vol,delay){
+    vol=vol==null?1:vol;
+    if(muted||!V.sfx) return;
+    const now=Date.now(); if(last[name]&&now-last[name]<150) return; last[name]=now;
+    LOG.push(name); if(LOG.length>60) LOG.shift();
+    const path=ASSET85+'sfx/'+name+'.mp3';
+    const go=()=>{
+      if(ctx){ buf(path).then(b=>{ if(!b){ html(); return; } const s=ctx.createBufferSource(); s.buffer=b; const g=ctx.createGain(); g.gain.value=vol; s.connect(g); g.connect(gS); s.start(); }); }
+      else html();
+    };
+    const html=()=>{ try{ const a=new Audio(path); a.volume=Math.max(0,Math.min(1,V.sfx*vol)); a.play().catch(()=>{}); }catch(e){} };
+    delay?setTimeout(go,delay):go();
+  }
+  const LOG=[]; window.sfx114=sfx; sfx.log=LOG; sfx.amb=()=>ambNow;
+
+  /* ---------- 장소의 소리: 겹쳐 넘기며 끊김 없이 돈다 ---------- */
+  const ambEls=[]; let ambNow=null, ambCur=null;
+  const AMBV={ rain:1, fire:1, river:1, wind:1, drums:.8, drums2:.8 };
+  function ambStop(t,sec){
+    if(!t) return; t.dead=true;
+    if(t.src){ const g=t.g.gain, n=ctx.currentTime; g.cancelScheduledValues(n); g.setValueAtTime(g.value,n); g.linearRampToValueAtTime(0,n+sec); setTimeout(()=>{ try{ t.src.stop(); }catch(e){} },sec*1000+100); }
+    if(t.el){ const f0=t.f, t0=Date.now(); const iv=setInterval(()=>{ const r=(Date.now()-t0)/(sec*1000); t.f=Math.max(0,f0*(1-r)); gains(); if(r>=1){ clearInterval(iv); t.el.pause(); const i=ambEls.indexOf(t); if(i>=0) ambEls.splice(i,1); } },80); }
+  }
+  function amb(name){
+    if(name===ambNow) return; ambNow=name;
+    const old=ambCur; ambCur=null; ambStop(old,2.2);
+    if(!name) return;
+    const path=ASSET85+'amb/'+name+'.mp3', want=AMBV[name]||1;
+    const t={ name, f:0 }; ambCur=t;
+    if(ac()){
+      buf(path).then(b=>{
+        if(t.dead||ambCur!==t) return;
+        if(!b) return htmlAmb(t,path,want);
+        const s=ctx.createBufferSource(); s.buffer=b; s.loop=true; const g=ctx.createGain(); g.gain.value=0;
+        s.connect(g); g.connect(gA); s.start(); t.src=s; t.g=g;
+        g.gain.linearRampToValueAtTime(want,ctx.currentTime+2.8);
+      });
+    } else htmlAmb(t,path,want);
+  }
+  function htmlAmb(t,path,want){
+    // 파일로 열었을 때는 Audio 하나를 반복한다 (파일 양 끝은 미리 겹쳐 이어 두었다)
+    const a=new Audio(path); a.loop=true; t.el=a; t.f=0; ambEls.push(t); gains(); a.play().catch(()=>{});
+    const t0=Date.now(); const fi=setInterval(()=>{ if(t.dead){ clearInterval(fi); return; } const r=Math.min(1,(Date.now()-t0)/2800); t.f=want*r; gains(); if(r>=1) clearInterval(fi); },80);
+  }
+
+  /* 배경 그림 이름으로 장소의 소리를 고른다 */
+  const BGN=new Set('ch10_depart ch10_night ch10_road ch10_tent ch10_yuan ch12_assault ch12_camp ch12_dawn ch12_decoy ch12_flag ch12_hill ch12_redsky ch12_stable ch12_store ch12_tent ch12_wall ch12_west ch12_wuchao ch12_yuan ch13_fire ch13_gate ch13_infirmary ch13_outside ch13_sword ch13_xuchang ch14_base ch14_battlefield ch14_breach ch14_camp ch14_dawn ch14_epilogue ch14_feast ch14_ford ch14_hall ch14_leave ch14_prison ch14_retreat ch14_slip ch14_tent ch1_ditch_dawn ch1_ditch_day ch1_ditch_night ch1_fire ch2_camp ch2_camp_autumn ch2_camp_dusk ch2_camp_spring ch2_field ch3_camp ch3_store ch3_tent ch4_camp ch4_campfire ch4_dawn ch4_feast ch4_fire ch4_night ch4_river ch4_smithy ch4_stable ch4_tent ch5_camp ch5_field ch5_flooded ch5_gate ch5_night ch5_paddy ch5_river ch5_tent ch6_battlefield ch6_camp ch6_field ch6_night ch6_tent ch7_battlefield ch7_camp ch7_farewell ch7_field ch7_hill ch7_night ch7_tent ch8_camp ch8_catapult ch8_night ch8_raid ch8_tent ch8_vista ch8_workshop ch9_battlefield ch9_camp ch9_dawn ch9_field ch9_jushou ch9_night ch9_stable ch9_tent ch9_trench ch9_wall ch9_wall_fire'.split(' '));
+  function place(k){ const ch=state.chapter||1, n='ch'+ch+'_'+k; return BGN.has(n)?n:String(k||''); }
+  function ambFor(n){
+    if(/wall_fire|assault|breach|battlefield|raid|wuchao/.test(n)) return 'drums';
+    if(/catapult|_wall$|trench/.test(n)) return 'drums2';
+    if(/flooded/.test(n)) return 'rain';
+    if(/river|ford|paddy/.test(n)) return 'river';
+    if(/fire/.test(n)) return 'fire';
+    if(/night|dusk|field|hill|vista|dawn|road|depart|outside|retreat|leave|ditch|west|redsky|decoy|flag|farewell|epilogue|slip|xuchang/.test(n)) return 'wind';
+    return null;
+  }
+  let placeNow='';
+  const setBg114=setBg;
+  setBg=function(k){ const r=setBg114.apply(this,arguments); try{ placeNow=place(k); if(!onStart()) amb(ambFor(placeNow)); }catch(e){} return r; };
+
+  /* 낮의 진영·마구간에서는 가끔 말이 운다 */
+  (function horse(){ setTimeout(()=>{ try{ if(!onStart() && !document.hidden && /camp(?!fire)|stable/.test(placeNow) && !/night|dusk/.test(placeNow) && Math.random()<(/stable/.test(placeNow)?.8:.45)) sfx('horse',.7); }catch(e){} horse(); }, 40000+Math.random()*60000); })();
+
+  /* 첫 화면: 빗소리와 먼 천둥 */
+  const S0=()=>document.getElementById('start110');
+  function onStart(){ const s=S0(); return !!(s && !s.classList.contains('off')); }
+  let thT=null;
+  function thunderLoop(first){ clearTimeout(thT); thT=setTimeout(()=>{ if(!onStart()) return; if(!document.hidden) sfx('thunder',.8); thunderLoop(false); }, first?2600:24000+Math.random()*26000); }
+  let started=false;
+  function firstSound(){
+    if(started) return; started=true;
+    if(onStart()){ amb('rain'); thunderLoop(true);
+      new MutationObserver((m,o)=>{ if(!onStart()){ o.disconnect(); clearTimeout(thT); amb(ambFor(placeNow)); } }).observe(S0(),{attributes:true,attributeFilter:['class']}); }
+    else if(placeNow){ ambNow=null; amb(ambFor(placeNow)); }
+  }
+  // 브라우저는 처음 누르기 전까지 소리를 막는다
+  const wake=()=>{ const c=ac(); if(c&&c.state==='suspended') c.resume().catch(()=>{}); firstSound(); };
+  document.addEventListener('pointerdown',wake,true); document.addEventListener('keydown',wake,true);
+  document.addEventListener('visibilitychange',()=>{ if(!ctx) return; if(document.hidden) ctx.suspend().catch(()=>{}); else ctx.resume().catch(()=>{}); });
+
+  /* M 키: 음악과 함께 효과음·장소 소리도 끈다 */
+  window.addEventListener('keydown',e=>{ if((e.key==='m'||e.key==='M')&&!/INPUT|TEXTAREA/.test((e.target||{}).tagName||'')){ muted=(typeof bgmEl85!=='undefined'&&bgmEl85)?!!bgmEl85.muted:!muted; gains(); } });
+
+  /* ---------- 효과음을 거는 자리 ---------- */
+  // 선택: 붓을 한 번 긋는 소리
+  document.addEventListener('click',e=>{ const d=e.target.closest&&e.target.closest('#choices .ch'); if(d && !d.classList.contains('lock')) sfx('brush',.9); },true);
+  // 창이 열릴 때: 종이, 명부는 대쪽. 낙관이 찍힐 때: 낙관
+  const OPEN={ ovKnow:'show', ovSquad:'show', ovChron:'show', menu75:'show', logWrap:'show', pp101:'show', save82:'show', w84:'show', set110:'on', name112:'on', end113:'on', roster110:'on' };
+  const was=new WeakMap(), wasS={};
+  new MutationObserver(ms=>{ ms.forEach(m=>{ const el=m.target, id=el.id; if(!id) return;
+    const c=el.classList;
+    if(OPEN[id]){ const on=c.contains(OPEN[id]); const w=was.get(el)||false; was.set(el,on); if(on&&!w) sfx(id==='roster110'?'bamboo':'paper', id==='end113'?.8:1); }
+    if(id==='title110'||id==='end113'){ const on=c.contains('stamp'); const w=!!wasS[id]; wasS[id]=on; if(on&&!w&&!onStart()) sfx('stamp'); }
+  }); }).observe(document.body,{attributes:true,attributeFilter:['class'],subtree:true});
+  // 장 선택 창은 hidden 속성으로 열린다
+  ['jump88','abMenu'].forEach(id=>{ const el=document.getElementById(id); if(el) new MutationObserver(()=>{ if(!el.hidden) sfx('paper'); }).observe(el,{attributes:true,attributeFilter:['hidden']}); });
+  // 죽음: 징, 묘비 글이 뜨는 때에 낙관
+  const death114=deathScene;
+  deathScene=function(title,lines){ const r=death114.apply(this,arguments); try{ sfx('gong'); sfx('stamp',1,((lines||[]).length*0.9+0.4)*1000+500); }catch(e){} return r; };
+  // 판정: 결과가 정해지는 순간 북, 실패면 둔탁한 소리
+  const chance114=chance105;
+  chance105=function(p){ const r=chance114(p); sfx(r?'success':'fail',1,120); return r; };
+  // 조공의 시선이 한 칸 오를 때 (불러오기·장 이동으로 바뀐 것은 빼고)
+  let sNow=null, quietUntil=0;
+  const load114=save82Load; save82Load=function(){ quietUntil=Date.now()+3000; return load114.apply(this,arguments); };
+  setInterval(()=>{ try{ const s=state.suspicion||0; if(sNow===null){ sNow=s; return; } const d=s-sNow; sNow=s;
+    if(d>0 && d<=2 && Date.now()>quietUntil && !onStart()) sfx('eye',.9,400); }catch(e){} },400);
+  // 본문: 칼이 맞부딪치거나 화살이 쏟아지는 줄, 말 울음
+  const CUE=[
+    [/쇠와 쇠가 맞부딪|방패가 맞부딪|맞붙었다\. 칼이 내려왔|관우의 칼이 돌아왔|문추의 칼이 내려왔|안량의 칼이 여포/, 'sword'],
+    [/화살이 쏟아졌|화살을 퍼붓|화살이 날아왔|화살이 떨어지기 시작|화살이 떨어졌|궁수들이 화살을 쏘았|화살 몇 발이/, 'volley'],
+    [/화살을 맞고 쓰러|화살에 맞고 쓰러|화살이 그의 방패에 박|화살이 방패에 부딪/, 'arrow'],
+    [/말 울음|말이 울었/, 'horse']
+  ];
+  const say114=say;
+  say=function(who,text){ try{ const t=String(text||''); for(const [re,n] of CUE){ if(re.test(t)){ sfx(n,n==='horse'?.8:1,250); break; } } }catch(e){} return say114.apply(this,arguments); };
+
+  /* ---------- 설정 창에 두 줄 ---------- */
+  const SET=document.getElementById('set110');
+  if(SET){
+    const ok=SET.querySelector('.ok'); const box=document.createElement('div');
+    box.innerHTML=`<div class="r">효과음<input type="range" min="0" max="100" data-k="sfx"></div><div class="r">장소의 소리<input type="range" min="0" max="100" data-k="amb"></div>`;
+    const vr=SET.querySelector('input[data-k=vol]'); const after=vr?vr.closest('.r'):null;
+    [...box.children].reverse().forEach(r=>after?after.after(r):ok.before(r));
+    const iS=SET.querySelector('input[data-k=sfx]'), iA=SET.querySelector('input[data-k=amb]');
+    iS.value=Math.round(V.sfx*100); iA.value=Math.round(V.amb*100);
+    iS.addEventListener('input',()=>{ V.sfx=iS.value/100; store.set('sfx114',iS.value); gains(); });
+    iS.addEventListener('change',()=>sfx('brush'));
+    iA.addEventListener('input',()=>{ V.amb=iA.value/100; store.set('amb114',iA.value); gains(); });
+  }
+})();
+
+/* ==========================================================
+   v115 · 「비단 족자」 시안: 먹 번짐 장면 전환, 관도 일대 지도, 終·歿 낙관 (?ui=6)
+   ========================================================== */
+(function(){
+  if(!/[?&]ui=6/.test(location.search)) return;
+  const css=`
+  /* 장면이 넘어갈 때 먹이 번져 화면을 덮는다 */
+  @keyframes ink115{from{-webkit-mask-size:18% auto;mask-size:18% auto}to{-webkit-mask-size:820% auto;mask-size:820% auto}}
+  body.ui110 #black.ink115{-webkit-mask-image:var(--ink);mask-image:var(--ink);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    -webkit-mask-position:var(--inkp);mask-position:var(--inkp);animation:ink115 .85s cubic-bezier(.55,0,.75,.55) both}
+  body.ui110 #black.ink115:not(.hide){transition:none}
+  body.ui110 #black.flip115{transform:scaleX(-1)}
+  @media (prefers-reduced-motion:reduce){ body.ui110 #black.ink115{animation:none;-webkit-mask-image:none;mask-image:none} }
+  /* 관도 일대 지도: 5장부터 장 제목 뒤에 깔린다 */
+  #title110 .map115{position:absolute;inset:0;z-index:-2;overflow:hidden;opacity:0;transition:opacity 1.6s ease}
+  #title110.on .map115{opacity:1}
+  #title110 .map115 .box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:max(100vw,calc(100vh * 1672 / 941));height:max(100vh,calc(100vw * 941 / 1672))}
+  #title110 .map115 .img{position:absolute;inset:0;background:url(assets/ui/map.webp) center/100% 100% no-repeat;filter:brightness(.4) sepia(.25) contrast(1.08)}
+  #title110 .map115 .pl{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:5px;
+    font-family:'Yuji Boku','Gowun Batang',serif;font-size:17px;letter-spacing:.12em;color:rgba(234,223,199,.6);text-shadow:0 1px 4px #000;white-space:nowrap}
+  #title110 .map115 .pl i{width:7px;height:7px;border-radius:50%;background:rgba(234,223,199,.45)}
+  #title110 .map115 .pl.river{color:rgba(190,205,215,.38);font-size:14px;letter-spacing:.6em}
+  #title110 .map115 .pl.now{color:#f0e2c2;font-size:23px}
+  #title110 .map115 .pl.now i{width:12px;height:12px;background:#b5473b;box-shadow:0 0 0 0 rgba(181,71,59,.7);animation:pulse115 1.8s ease-out infinite}
+  @keyframes pulse115{to{box-shadow:0 0 0 16px rgba(181,71,59,0)}}
+  #title110 .map115 .pl.out::after{content:'↓';font-family:serif;font-size:13px;color:rgba(234,223,199,.45)}
+  /* 죽음: 묘비 글 아래 歿 낙관 */
+  @keyframes stamp115{0%{opacity:0;transform:scale(1.9) rotate(-10deg)}100%{opacity:.92;transform:scale(1) rotate(-5deg)}}
+  body.ui110 #engrave .mo115{display:block;width:54px;margin:14px auto 0;opacity:0;animation:stamp115 .3s cubic-bezier(.3,1.6,.5,1) both}
+  `;
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+
+  /* ---------- 먹 번짐 ---------- */
+  const INK=[['assets/ui/ink1.webp','50% 48%'],['assets/ui/ink2.webp','33% 48%']];
+  [new Image(),new Image()].forEach((im,i)=>{ im.src=INK[i][0]; });
+  const bl=document.getElementById('black'); let inkI=0, shown=bl&&!bl.classList.contains('hide');
+  if(bl) new MutationObserver(()=>{
+    const on=!bl.classList.contains('hide');
+    if(on && !shown){
+      const [src,pos]=INK[inkI++%INK.length];
+      bl.style.setProperty('--ink',`url(${src})`); bl.style.setProperty('--inkp',pos);
+      if(bl.classList.contains('ink115')) bl.classList.remove('ink115');
+      bl.classList.toggle('flip115',Math.random()<.5);
+      void bl.offsetWidth; bl.classList.add('ink115');
+    }
+    shown=on;
+  }).observe(bl,{attributes:true,attributeFilter:['class']});
+
+  /* ---------- 장 제목 뒤 지도 ---------- */
+  const PL=[['黃河',52,26,'river'],['鄴',57,9],['延津',32,35],['白馬',61,41],['烏巢',73,52],['官渡',45,67],['許都',45,94,'out']];
+  const NOW={5:'白馬',6:'延津'};
+  const tt=document.getElementById('title110');
+  if(tt) new MutationObserver(()=>{
+    if(!tt.classList.contains('on') || tt.querySelector('.map115')) return;
+    const m=(tt.querySelector('.sub')||{}).textContent||''; const n=+((m.match(/제(\d+)장/)||[])[1]||0);
+    if(n<5) return;
+    const now=NOW[n]||'官渡';
+    const d=document.createElement('div'); d.className='map115';
+    d.innerHTML=`<div class="box"><div class="img"></div>${PL.map(([t,x,y,k])=>`<div class="pl${k?' '+k:''}${t===now?' now':''}" style="left:${x}%;top:${y}%">${k==='river'?'':'<i></i>'}${t}</div>`).join('')}</div>`;
+    tt.prepend(d);
+  }).observe(tt,{attributes:true,attributeFilter:['class']});
+
+  /* ---------- 장 끝 화면은 終, 죽음은 歿 ---------- */
+  const end=document.getElementById('end113');
+  if(end) new MutationObserver(()=>{ const s=end.querySelector('img.seal'); if(s && !/seal_zhong/.test(s.src)) s.src='assets/ui/seal_zhong.webp'; }).observe(end,{childList:true});
+  const death115=deathScene;
+  deathScene=function(title,lines){
+    const r=death115.apply(this,arguments);
+    try{ const ep=document.querySelector('#engrave .epitaph75'); if(ep){ const im=document.createElement('img'); im.className='mo115'; im.src='assets/ui/seal_mo.webp'; im.alt='';
+      im.style.animationDelay=(((lines||[]).length*0.9+0.4)+0.5)+'s'; ep.appendChild(im); } }catch(e){}
+    return r;
+  };
+})();
+
 /* 4장 · 공격 사흘 전, 사다리 */
 function ch5_ladderPrep100(){
   const J_=isAlive('jono'), W_=isAlive('wangsam'), S_=isAlive('sochil');
