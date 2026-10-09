@@ -15548,6 +15548,86 @@ ch2_road100=function(cb){
   window.sum105Clear=()=>{ P=null; };
 })();
 
+/* ==========================================================
+   v106 · 화면 다시 입히기 (시안: 주소 끝에 ?ui=2)
+   옻칠 바탕 · 금 테두리 · 주칠 인장. 따뜻한 검정으로 그림과 이어 붙인다.
+   ========================================================== */
+(function(){
+  const NOISE="url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .85 0 0 0 0 .72 0 0 0 0 .5 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E\")";
+  const css=`
+  body.ui106{--ink:#0c0a08;--ink2:#15110d;--lac1:#1c1712;--lac2:#120f0b;--silk:#efe6d2;--silk-dim:#a99c82;--faint:#6e6452;
+    --bronze:#c9a35c;--gold-hi:#f0d99a;--hair:rgba(201,163,92,.16);--cinnabar:#a3231d;}
+  body.ui106 html,body.ui106,body.ui106 #stage{background:#0c0a08}
+  /* 오른쪽 칸: 옻칠 바탕 + 비단 결 */
+  body.ui106.pc75 #stage #topBar,body.ui106.pc75 #stage #bottom{background:transparent!important;}
+  body.ui106.pc75 #stage{background:${NOISE},radial-gradient(60% 80% at calc(100% - var(--col)) 50%,rgba(70,46,22,.22),rgba(0,0,0,0) 70%),linear-gradient(180deg,#15110d,#0b0907)!important;}
+  body.ui106.pc75 #stage #topBar::before{display:none}
+  body.ui106.pc75 #stage #bottom::after{display:none}
+  /* 그림과 칸 사이: 딱딱한 선 대신 그림이 어둠으로 번지게, 가운데에 금 마름모 */
+  body.ui106.pc75 #visual::after{content:'';position:absolute;top:0;bottom:0;right:0;width:140px;pointer-events:none;z-index:6;
+    background:linear-gradient(90deg,rgba(12,10,8,0),rgba(12,10,8,.85) 80%,#0c0a08)}
+  body.ui106.pc75 #stage::after{content:'';position:fixed;top:8vh;bottom:8vh;right:var(--col);width:1px;z-index:40;pointer-events:none;
+    background:linear-gradient(180deg,rgba(201,163,92,0),rgba(201,163,92,.45) 20%,rgba(201,163,92,.45) 80%,rgba(201,163,92,0))}
+  body.ui106.pc75 #stage::before{content:'';position:fixed;top:50%;right:calc(var(--col) - 5px);width:9px;height:9px;z-index:41;pointer-events:none;
+    transform:translateY(-50%) rotate(45deg);border:1px solid rgba(201,163,92,.7);background:#0c0a08}
+  /* 머리: 장 이름은 붓글씨 금박, 밑에 금줄 */
+  body.ui106 #hud75{position:relative;padding-bottom:12px}
+  body.ui106 #hud75::after{content:'';position:absolute;left:0;bottom:0;width:180px;height:1px;background:linear-gradient(90deg,rgba(201,163,92,.7),rgba(201,163,92,0))}
+  body.ui106.pc75 #hudCh75{font-size:26px!important;letter-spacing:.32em!important}
+  body.ui106 #hudLoc75{color:var(--silk-dim)!important;letter-spacing:.14em}
+  body.ui106 #menuBtn75{border:1px solid rgba(201,163,92,.28);border-radius:2px;color:var(--bronze)}
+  /* 본문 */
+  body.ui106 #body{color:#efe6d2!important;text-shadow:0 1px 0 rgba(0,0,0,.6)}
+  body.ui106.pc75 .tr75{color:#7b715f!important}
+  body.ui106.pc75 .tr75 b{color:#9a8b6c!important;font-family:var(--serif)!important}
+  body.ui106 #who{color:var(--gold-hi)!important;font-weight:700}
+  body.ui106 #who::before{content:'';display:inline-block;width:14px;height:1px;margin-right:10px;background:var(--bronze);vertical-align:middle}
+  /* 선택지: 옻칠 패, 이중 금테, 주칠 인장 숫자 */
+  body.ui106 #stage #bottom #choices .ch{border-radius:0!important;background:linear-gradient(180deg,#1d1813,#130f0b)!important;
+    border:1px solid rgba(201,163,92,.26)!important;box-shadow:inset 0 0 0 3px #130f0b,inset 0 0 0 4px rgba(201,163,92,.10),0 10px 24px rgba(0,0,0,.45)!important}
+  body.ui106 #stage #bottom #choices .ch::before{border:0!important;border-radius:2px;background:#8e1f1a!important;color:#f3e6c8!important;
+    font-family:var(--serif);font-weight:700;box-shadow:inset 0 0 0 1px rgba(255,220,180,.25),0 1px 0 rgba(0,0,0,.5);transform:rotate(-3deg)}
+  body.ui106 #stage #bottom #choices .ch:hover,body.ui106 #stage #bottom #choices .ch:focus-visible{background:linear-gradient(180deg,#261e16,#17120d)!important;
+    border-color:rgba(232,196,120,.7)!important;transform:none!important;box-shadow:inset 0 0 0 3px #17120d,inset 0 0 0 4px rgba(232,196,120,.22),0 12px 28px rgba(0,0,0,.55),0 0 18px rgba(201,163,92,.12)!important}
+  body.ui106 #stage #bottom #choices .ch:hover::before{background:#b0281f!important}
+  body.ui106 #stage #bottom #choices .ch .sub{color:#a3967b!important}
+  body.ui106 #choices .ch .od103{border-radius:0;border:1px solid currentColor;padding:0 7px;letter-spacing:.08em;font-family:var(--serif);background:rgba(0,0,0,.25)}
+  /* 아래 단추줄 */
+  body.ui106.pc75 #ctl75{border-top:0!important;position:relative}
+  body.ui106.pc75 #ctl75::before{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,rgba(201,163,92,0),rgba(201,163,92,.4) 20%,rgba(201,163,92,.4) 80%,rgba(201,163,92,0))}
+  body.ui106 #ctl75 button{font-family:var(--serif)!important;letter-spacing:.12em!important;color:#a99c82!important}
+  body.ui106 #ctl75 button:hover{color:var(--gold-hi)!important}
+  body.ui106 #ctl75 button+button::before{content:'·';margin-right:14px;color:rgba(201,163,92,.5)}
+  /* 곁의 세 사람: 옻칠 현판 */
+  body.ui106 #st103.on{border-radius:0!important;border:1px solid rgba(201,163,92,.3)!important;
+    background:${NOISE},linear-gradient(180deg,rgba(24,19,14,.9),rgba(14,11,8,.82))!important;box-shadow:inset 0 0 0 3px rgba(14,11,8,.9),inset 0 0 0 4px rgba(201,163,92,.12),0 12px 30px rgba(0,0,0,.5)}
+  body.ui106:not(.pc75) #st103.on{padding:6px 8px;gap:4px}
+  body.ui106:not(.pc75) #st103 .p{padding:2px 4px 2px 2px!important;border-right:0!important;gap:6px} body.ui106:not(.pc75) #st103 .p .lv{font-size:10px;margin-left:3px}
+  body.ui106:not(.pc75) #stage #bottom #choices .ch{padding-top:11px!important;padding-bottom:11px!important}
+  body.ui106 #st103 .p{border:0!important;background:none!important;border-right:1px solid rgba(201,163,92,.14)!important;border-radius:0!important}
+  body.ui106 #st103 .p img{border:1px solid rgba(201,163,92,.65)!important;box-shadow:0 0 0 2px #120e0a,0 0 0 3px rgba(201,163,92,.2)}
+  body.ui106 #st103 .p .n{font-family:var(--serif);font-weight:700}
+  body.ui106 #st103 .p .pips i{border-radius:0!important;transform:rotate(45deg);width:6px!important;height:6px!important}
+  body.ui106 #st103 .g .lb{font-family:var(--serif);color:var(--bronze)!important;letter-spacing:.2em}
+  body.ui106 #st103 .g .bar{border-radius:0!important;height:4px!important;background:rgba(201,163,92,.12)!important}
+  body.ui106 #st103 .g .bar b{border-radius:0!important;background:linear-gradient(90deg,#5c1512,#b0281f)!important;box-shadow:0 0 8px rgba(176,40,31,.5)}
+  body.ui106 #st103 .g .bar u{background:var(--bronze)!important;width:2px!important}
+  body.ui106 #st103 .g .ht{font-family:var(--serif);color:#958a73!important}
+  /* 장 제목 카드: 붓글씨, 위아래 금줄과 마름모 */
+  body.ui106 #center .ct.card{font-family:var(--serif)!important;font-weight:900!important;font-size:40px!important;letter-spacing:.24em!important;
+    color:#f3e6c8!important;text-shadow:0 2px 18px rgba(0,0,0,.95),0 0 2px rgba(0,0,0,.9);padding:26px 60px;
+    background:radial-gradient(ellipse at center,rgba(8,6,4,.72),rgba(8,6,4,0) 70%)}
+  body.ui106 #center .ct.card::before,body.ui106 #center .ct.card::after{width:240px!important;height:1px!important;
+    background:linear-gradient(90deg,rgba(201,163,92,0),rgba(201,163,92,.9) 50%,rgba(201,163,92,0))!important}
+  /* 알림 */
+  body.ui106 .mk75{border-radius:0!important;background:${NOISE},linear-gradient(180deg,#1c1712,#120f0b)!important;border:1px solid rgba(201,163,92,.3)!important;
+    box-shadow:inset 0 0 0 3px #120f0b,inset 0 0 0 4px rgba(201,163,92,.1),0 12px 30px rgba(0,0,0,.55)!important}
+  body.ui106 .mk75 .sl{background:#8e1f1a!important;color:#f3e6c8!important;border:0!important}
+  `;
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+  try{ if(/[?&]ui=2/.test(location.search)) document.body.classList.add('ui106'); }catch(e){}
+})();
+
 /* 4장 · 공격 사흘 전, 사다리 */
 function ch5_ladderPrep100(){
   const J_=isAlive('jono'), W_=isAlive('wangsam'), S_=isAlive('sochil');
