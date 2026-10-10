@@ -16902,6 +16902,14 @@ Object.assign(SIZE90,{ guanyu:100, dianman:99, caohong:95, zhanghe:96, zhangliao
   /* 선택지가 뜨면 아래 조작 줄이 숨으니, 그 자리만큼 글 칸을 넓힌다 */
   body.ui110.pc75:has(#choices.show) #stage #bottom{padding-bottom:40px!important}
   body.ui110:has(#choices.show) #trail75{padding-bottom:6px!important}
+  /* 휴대폰: 선택지가 뜨면 바로 앞 글 세 줄을 선택지 위에 남긴다 (무엇을 고르는지 보이게) */
+  body.ui110:not(.pc75):has(#choices.show) #trail75{display:flex!important;flex-direction:column!important;justify-content:flex-end!important;gap:6px;
+    max-height:34vh;overflow:hidden!important;padding:0 2px 4px!important;margin-bottom:2px;
+    -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 22%)!important;mask-image:linear-gradient(180deg,transparent 0,#000 22%)!important}
+  body.ui110:not(.pc75):has(#choices.show) #trail75 .tr75{font-size:15px!important;line-height:1.65!important;color:#d6c9a9!important;font-family:'Gowun Batang',serif!important}
+  body.ui110:not(.pc75):has(#choices.show) #trail75 .tr75:not(:nth-last-child(-n+3)){display:none!important}
+  body.ui110:not(.pc75):has(#choices.show) #trail75 .tr75 b{margin-right:6px;color:#c9a46a!important}
+  @media (max-height:760px){ body.ui110:not(.pc75):has(#choices.show) :is(#actor,#card86){opacity:0!important;transition:opacity .3s} }
   `;
   const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
   const $i=id=>document.getElementById(id);
