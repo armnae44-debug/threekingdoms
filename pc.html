@@ -15388,7 +15388,19 @@ const PEOPLE101={
  jinqi:{n:'진기',fic:'이 게임에서 만든 인물이다. 귀가 밝은 병사.'},
  jango:{n:'장오',fic:'이 게임에서 만든 인물이다. 붉은 머릿수건을 맨 병사.'},
  duseok:{n:'두석',fic:'이 게임에서 만든 인물이다. 백마에서 다친 병사.'},
- mopal:{n:'모팔',fic:'이 게임에서 만든 인물이다. 물을 나르는 병사.'}
+ mopal:{n:'모팔',fic:'이 게임에서 만든 인물이다. 물을 나르는 병사.'},
+ iseok:{n:'이석',fic:'이 게임에서 만든 인물이다. 장오와 함께 붙잡혔던 병사. 다리를 다쳤다.'},
+ mao:{n:'마오',fic:'이 게임에서 만든 인물이다. 짝이 맞지 않는 신발을 신던 병사.'},
+ zhangxiu:{n:'장수',hz:'張繡',sa:'무위 사람. 숙부 장제가 죽은 뒤 그 군사를 이어받아 완성에 머물렀다. 건안 2년(197) 조조에게 항복했다가, 조조가 장제의 아내를 들이자 원한을 품고 기습했다. 이때 조앙과 전위가 죽었다. 건안 4년(199) 가후의 권유로 다시 조조에게 왔고, 관도에서 싸워 공을 세웠다.',yy:'사서와 같은 흐름이다. 가후의 꾀로 조조를 두 번 크게 괴롭힌다.'},
+ yanliang:{n:'안량',hz:'顔良',sa:'원소의 장수. 건안 5년(200) 백마를 에워쌌다가, 조조가 보낸 장료와 관우에게 졌다. 관우가 대군 속으로 말을 몰아 그를 찌르고 목을 베었다.',yy:'하북의 명장으로 나온다. 조조의 장수들을 잇달아 꺾지만, 관우가 적토마를 타고 달려들어 단번에 벤다.'},
+ wenchou:{n:'문추',hz:'文醜',sa:'원소의 장수. 백마 싸움 뒤 연진에서 조조를 쫓았다. 조조가 길에 버려 둔 짐에 기병이 흩어진 틈에 조조군에게 져서 죽었다.',yy:'안량과 함께 하북의 명장으로 나온다. 관우에게 죽는다.'},
+ xunyu:{n:'순욱',hz:'荀彧',ja:'문약(文若)',sa:'조조의 모사. 상서령으로 허도를 지켰다. 관도에서 군량이 떨어져 조조가 물러나려 하자, 지금 물러나면 안 된다는 편지를 보내 버티게 했다. 212년 조조와 뜻이 어긋난 뒤 죽었다.',yy:'조조가 보낸 빈 찬합을 받고 독을 마셔 죽는 것으로 나온다.'},
+ xuhuang:{n:'서황',hz:'徐晃',ja:'공명(公明)',sa:'양봉의 장수였다가 조조에게 왔다. 관도에서 사환과 함께 원소의 장수 한맹이 이끄는 군량 수레를 쳐서 불태웠다. 219년 번성에서 관우를 깨뜨렸다.',yy:'큰 도끼를 쓰는 장수로 나온다. 사서와 비슷한 활약을 한다.'},
+ simayi:{n:'사마의',hz:'司馬懿',ja:'중달(仲達)',sa:'하내 온현 사람. 사마방의 둘째 아들이고 형은 사마랑이다. 201년 조조가 불렀을 때 병을 핑계로 나오지 않았다고 한다. 뒤에 위나라의 권신이 되었고, 손자 사마염이 진나라를 세웠다.',yy:'제갈량의 맞수로 나온다. 빈 성 위에서 거문고를 타는 제갈량을 보고 물러나는 장면이 유명하다.'},
+ jiangqi:{n:'장기',hz:'蔣奇',sa:'원소의 장수. 저수가 오소 바깥에 장기의 군을 따로 두어 조조의 기습을 막자고 했으나, 원소는 듣지 않았다.',yy:'오소를 구하러 가다가 원소군으로 꾸민 조조군에게 속아 장료에게 죽는다.'},
+ houcheng:{n:'후성',hz:'侯成',sa:'여포의 장수. 건안 3년(198) 하비에서 송헌·위속과 함께 진궁을 묶어 조조에게 항복했다.',yy:'여포가 금주령을 어겼다고 꾸짖자 앙심을 품고 적토마를 훔쳐 조조에게 바친다.'},
+ songxian:{n:'송헌',hz:'宋憲',sa:'여포의 장수. 하비에서 후성·위속과 함께 조조에게 항복했다.',yy:'여포가 잠든 사이 그의 방천화극을 치우고 묶는다. 뒤에 백마에서 안량에게 죽는다.'},
+ weixu:{n:'위속',hz:'魏續',sa:'여포의 장수이자 인척. 하비에서 후성·송헌과 함께 조조에게 항복했다.',yy:'송헌과 함께 여포를 묶는다. 뒤에 백마에서 안량에게 죽는다.'}
 };
 (function(){
   const st=document.createElement('style');
@@ -15424,6 +15436,15 @@ const PEOPLE101={
   if(list){ list.insertAdjacentHTML('afterbegin','<button onclick="menu75Close();bookFate102()">책에 적힌 결말<small>바꾼 것과 그대로인 것</small></button><button onclick="menu75Close();peopleList101()">인물<small>사서와 연의에서는 어땠나</small></button>'); }
 })();
 const SEENP101=new Set();
+/* 말하지 않아도 본문에 이름이 나오면 인물 목록에 올린다 */
+const MENTION101={'안량':'yanliang','문추':'wenchou','순욱':'xunyu','서황':'xuhuang','사마의':'simayi','후성':'houcheng','송헌':'songxian','위속':'weixu','이석':'iseok','마오':'mao'};
+function seenMention101(t){
+  if(!t) return;
+  for(const [n,k] of Object.entries(MENTION101)) if(t.includes(n)) SEENP101.add(k);
+  for(const [n,k] of Object.entries(NAME85)) if(PEOPLE101[k]&&n.length>=2&&t.includes(n)) SEENP101.add(k);
+  if(/장기(는|가|에게|를|의|\()/.test(t)) SEENP101.add('jiangqi');
+  if(((state&&state.chapter)||0)<=4 && /장수(는|가|의|에게|를|도| 군| 쪽|\()/.test(t)) SEENP101.add('zhangxiu');
+}
 function pp101(html){ const d=document.getElementById('pp101'); d.querySelector('.card').innerHTML='<button class="x">닫기</button>'+html; d.classList.add('show'); }
 function people101(k){
   const p=PEOPLE101[k]; if(!p) return;
@@ -15434,7 +15455,7 @@ function people101(k){
 }
 function peopleList101(){
   const ks=[...SEENP101].filter(k=>PEOPLE101[k]);
-  pp101('<div class="nm">인물</div><div class="ja">지금까지 만난 사람들. 누르면 설명이 나온다.</div><div class="list">'+(ks.length?ks.map(k=>'<button data-p="'+k+'">'+PEOPLE101[k].n+'<small>'+(PEOPLE101[k].fic?'가상 인물':(PEOPLE101[k].hz||''))+'</small></button>').join(''):'<p>아직 만난 사람이 없다.</p>')+'</div>');
+  pp101('<div class="nm">인물</div><div class="ja">지금까지 이야기에 나온 사람들. 누르면 설명이 나온다.</div><div class="list">'+(ks.length?ks.map(k=>'<button data-p="'+k+'">'+PEOPLE101[k].n+'<small>'+(PEOPLE101[k].fic?'가상 인물':(PEOPLE101[k].hz||''))+'</small></button>').join(''):'<p>아직 만난 사람이 없다.</p>')+'</div>');
 }
 /* 말한 사람을 기억해 두고, 이름표를 누르면 설명을 연다 */
 let whoKey101=null;
@@ -15443,6 +15464,7 @@ say=function(who,...rest){
   const r=say102.call(this,who,...rest);
   try{ const n=String(who||'').replace(/\(.*$/,'').replace(/[^가-힣]/g,''); const k=NAME85[n];
     whoKey101 = (k&&PEOPLE101[k]) ? k : null; if(whoKey101) SEENP101.add(whoKey101);
+    seenMention101(String(rest[0]||''));
     dom.who.classList.toggle('click101',!!whoKey101); dom.who.title=whoKey101?'누르면 인물 설명':''; }catch(e){}
   return r;
 };
