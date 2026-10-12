@@ -14618,7 +14618,7 @@ const CH88=[
     e.stopPropagation();
     const t=e.target.closest('button'); if(!t){ if(e.target===box) open(false); return; }
     if(t.hasAttribute('data-close')){ open(false); return; }
-    open(false); dev75Go(t.dataset.r, Number(t.dataset.c));
+    open(false); const st=document.getElementById('start110'); if(st) st.classList.add('off'); dev75Go(t.dataset.r, Number(t.dataset.c));
   });
   window.addEventListener('keydown',e=>{
     if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName)) return;
@@ -16449,7 +16449,7 @@ ch2_road100=function(cb){
     if(a==='cont'){ close(); save82Load(auto); }
     if(a==='new'){ close(); const n=$i('nameInput'); if(n) n.value='조평'; $i('nameOk').click(); state.name=''; const sb=$i('startBtn'); if(sb) sb.click(); }
     if(a==='load'){ save82Open('load'); const ov=$i('save82'); if(ov){ const mo=new MutationObserver(()=>{ if(!ov.classList.contains('show')){ mo.disconnect(); if(document.body.classList.contains('a74Reading')||state.chapter) close(); } }); mo.observe(ov,{attributes:true}); } }
-    if(a==='jump'){ close(); const j=$i('jumpBtn88'); if(j) j.click(); }
+    if(a==='jump'){ const j=$i('jumpBtn88'); if(j) j.click(); }   /* 시작 화면은 장을 고른 뒤에 닫는다 */
     if(a==='rec'){ $i('recSub110').classList.toggle('on'); }
     if(a==='people'){ try{ peopleList101(); }catch(_){ } }
     if(a==='fate'){ try{ bookFate102(true); }catch(_){ } }
