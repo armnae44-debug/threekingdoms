@@ -1,0 +1,721 @@
+<title>백마 · 길목</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* 레이아웃: 전장이 화면 전부. 위에 목표 한 줄과 적장 군기, 아래에 얇은 명령판. 장식 대신 군용 지도 표식 */
+:root{
+  --ink:#14161b;            /* 판 바탕 */
+  --ink-a:rgba(20,22,27,.86);
+  --paper:#ece6d8;          /* 글 */
+  --dim:#a9a395;
+  --ours:#2e3f5c;           /* 조조군 깃발 */
+  --ours-hi:#9db8dc;        /* 우리 표식 강조 */
+  --theirs:#a5552e;         /* 원소군 */
+  --warn:#d9a441;
+  --bad:#d0644b;
+  --line:rgba(236,230,216,.18);
+  --f-head:"Noto Serif KR","Nanum Myeongjo",serif;
+  --f-ui:"IBM Plex Sans KR","Apple SD Gothic Neo",sans-serif;
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:var(--ink);color:var(--paper);font-family:var(--f-ui);font-size:14px;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+button{font-family:var(--f-ui);color:var(--paper);background:transparent;border:1px solid var(--line);border-radius:4px;padding:7px 11px;font-size:13px;cursor:pointer;line-height:1.2}
+button:hover,button:focus-visible{border-color:var(--ours-hi);outline:none}
+button.on{background:var(--ours);border-color:var(--ours-hi)}
+button:disabled{opacity:.35;cursor:default}
+kbd{font-family:var(--f-ui);font-size:10px;color:var(--dim);margin-left:4px}
+
+/* 위 띠 */
+#top{position:fixed;left:0;right:0;top:0;display:flex;align-items:center;gap:12px;background:var(--ink);border-bottom:1px solid var(--line);
+  padding:calc(8px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));
+  pointer-events:none}
+#top > *{pointer-events:auto}
+#goal{flex:1;min-width:0;font-size:13px;line-height:1.4}
+#goal b{font-family:var(--f-head);font-size:15px;font-weight:700;margin-right:8px}
+#foe{font-size:12px;color:var(--dim);white-space:nowrap}
+#foe b{color:var(--paper);font-weight:600}
+#clock{font-variant-numeric:tabular-nums;font-size:13px;min-width:44px;text-align:right}
+#ctl{display:flex;gap:6px}
+
+/* 전령 보고 */
+#toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(56px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;width:min(92vw,560px)}
+.toast{background:var(--ink-a);border-left:3px solid var(--ours-hi);padding:7px 12px;font-size:13px;line-height:1.45;border-radius:2px;animation:tin .25s ease}
+.toast.w{border-left-color:var(--warn)}.toast.b{border-left-color:var(--bad)}
+.toast i{font-style:normal;color:var(--dim);margin-right:6px}
+@keyframes tin{from{opacity:0;transform:translateY(-6px)}}
+
+/* 아래 판 */
+#bottom{position:fixed;left:0;right:0;bottom:0;background:var(--ink);border-top:1px solid var(--line);
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#sel{min-width:0;flex:1;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+#sel .nm{font-family:var(--f-head);font-weight:700;font-size:16px}
+.chip{font-size:11px;padding:2px 7px;border-radius:10px;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+.chip.w{color:var(--warn);border-color:var(--warn)}.chip.b{color:var(--bad);border-color:var(--bad)}.chip.g{color:var(--ours-hi);border-color:var(--ours-hi)}
+#units{display:flex;gap:6px;flex-wrap:wrap}
+.ub{display:flex;gap:6px;align-items:center;padding:5px 9px}
+.ub .gl{font-family:var(--f-head);font-weight:700;font-size:15px}
+.ub small{color:var(--dim);font-variant-numeric:tabular-nums}
+
+/* 편성판 */
+#setup{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.slot{border:1px solid var(--line);border-radius:4px;padding:7px;display:flex;flex-direction:column;gap:5px;min-width:0;background:rgba(20,22,27,.55)}
+.slot.off{opacity:.5}
+.slot select{font-family:var(--f-ui);font-size:12px;background:var(--ink);color:var(--paper);border:1px solid var(--line);border-radius:4px;padding:4px;min-width:0;flex:1;width:100%}
+.slot h4{margin:0;font-family:var(--f-head);font-size:14px;display:flex;justify-content:space-between;gap:6px}
+.slot h4 small{font-family:var(--f-ui);font-weight:400;color:var(--dim);font-size:11px}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg button{padding:4px 7px;font-size:12px}
+.cnt{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.cnt{font-size:12px;color:var(--dim)}
+.cnt b{color:var(--paper);min-width:30px;text-align:center;font-size:15px}
+.cnt button{padding:2px 9px;font-size:15px}
+#pool{font-size:12px;color:var(--dim)}
+#pool b{color:var(--paper)}
+@media (max-width:760px){#setup{grid-template-columns:repeat(2,minmax(0,1fr))}#foe{display:none}}
+@media (max-height:520px){#setup{grid-template-columns:repeat(4,minmax(150px,1fr));overflow-x:auto}.slot .seg button{padding:3px 5px}#goal span{display:none}}
+
+/* 덮개 */
+.ov{position:fixed;inset:0;background:rgba(14,15,19,.88);display:flex;align-items:center;justify-content:center;
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.card{width:100%;max-width:560px;max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:14px;line-height:1.65}
+.card h1{font-family:var(--f-head);font-size:clamp(26px,6vw,34px);margin:0;font-weight:700;letter-spacing:.04em}
+.card h2{font-family:var(--f-head);font-size:20px;margin:0}
+.card .eb{font-size:11px;letter-spacing:.14em;color:var(--dim)}
+.card p{margin:0}
+.card blockquote{margin:0;padding-left:12px;border-left:2px solid var(--ours-hi);color:var(--paper)}
+.foe{border:1px solid var(--line);border-radius:4px;padding:10px 12px;display:flex;gap:12px;align-items:center}
+.foe .fl{width:40px;height:48px;background:var(--theirs);color:#f4e7d4;display:grid;place-items:center;font-family:var(--f-head);font-size:24px;font-weight:700;flex:none}
+.foe div{min-width:0}
+.big{background:var(--ours);border-color:var(--ours-hi);font-size:15px;padding:11px 16px;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+td,th{padding:5px 4px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--dim);font-weight:400}
+#logv{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(56px + env(safe-area-inset-top,0px));width:min(92vw,340px);max-height:50vh;overflow:auto;background:var(--ink-a);border:1px solid var(--line);border-radius:4px;padding:8px 12px;font-size:12px;line-height:1.6}
+#logv div{border-bottom:1px solid var(--line);padding:3px 0}
+@media (prefers-reduced-motion:reduce){.toast{animation:none}}
+</style>
+
+<canvas id="cv"></canvas>
+
+<div id="top">
+  <div id="goal"><b>백마 · 길목</b><span id="goalT">편성: 깃발을 끌어 시작 위치를 정한다</span></div>
+  <div id="foe">원소군 선봉 · <b>안량</b></div>
+  <div id="clock">0:00</div>
+  <div id="ctl">
+    <button id="bPause" title="멈춤 (Space)">멈춤</button>
+    <button id="bSpeed" title="빠르기">×1</button>
+    <button id="bLog" title="지난 보고">보고</button>
+  </div>
+</div>
+<div id="toasts"></div>
+<div id="logv" hidden></div>
+
+<div id="bottom">
+  <div id="setupWrap">
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <div class="row"><span style="color:var(--dim);font-size:12px">편성 예시</span>
+        <button data-preset="steady">안정</button><button data-preset="shoot">사격</button><button data-preset="push">공격</button></div>
+      <div id="pool"></div>
+      <button class="big" id="bGo">출전</button>
+    </div>
+    <div id="setup"></div>
+  </div>
+  <div id="battleWrap" hidden>
+    <div class="row" style="justify-content:space-between;gap:12px">
+      <div id="sel"><span class="nm">부대를 고른다</span><span class="chip">깃발을 누르거나 1~4</span></div>
+      <div class="row" id="cmds">
+        <button data-c="move">이동<kbd>M</kbd></button>
+        <button data-c="hold">버티기<kbd>H</kbd></button>
+        <button data-c="back">물러나기<kbd>R</kbd></button>
+        <button data-c="swap">교대<kbd>S</kbd></button>
+        <button data-c="charge">돌격<kbd>C</kbd></button>
+      </div>
+    </div>
+    <div id="units" style="margin-top:8px"></div>
+  </div>
+</div>
+
+<div class="ov" id="brief"><div class="card">
+  <div class="eb">건안 5년 · 백마 · 장료의 보병</div>
+  <h1>길목을 지켜라</h1>
+  <blockquote>"기병 뒤에 붙으시오. 말에서 떨어진 아군이 돌아오면 길을 열어 받아들이고, 뒤쫓는 적은 막으시오."<br><span style="color:var(--dim);font-size:13px">— 장료</span></blockquote>
+  <div class="foe"><div class="fl">顔</div><div>
+    <b>원소군 선봉 · 안량</b><br>
+    <span style="color:var(--dim);font-size:13px">앞줄을 보내 배치를 떠본다. 예비가 움직이면 그 자리를 노린다. 대열이 흔들리면 군기를 앞으로 내고 뒷군을 쏟는다.</span>
+  </div></div>
+  <p style="font-size:14px">버티는 동안 기병이 안량에게 닿는다. 그때까지 길을 지키면 된다.</p>
+  <div class="row"><span style="color:var(--dim);font-size:12px">이 판에서 안량을 베는 사람</span>
+    <button id="pGuan" class="on">관우</button><button id="pLv">여포</button></div>
+  <div class="row" style="color:var(--dim);font-size:12px;line-height:1.6">
+    병력 200 (숙련 60 · 신병 140). 신병은 명령을 늦게 받고, 움직이면 대열이 벌어진다. 부대에서 멀리 있는 부대에는 명령이 더 늦게 닿는다.</div>
+  <button class="big" id="bBrief">편성하러 간다</button>
+</div></div>
+
+<div class="ov" id="result" hidden><div class="card">
+  <div class="eb" id="rEb"></div>
+  <h2 id="rT"></h2>
+  <p id="rX"></p>
+  <table id="rTab"></table>
+  <p id="rGrow" style="font-size:13px;color:var(--dim)"></p>
+  <div class="row"><button class="big" id="bAgain">다시 편성한다</button></div>
+</div></div>
+
+<script>
+/* ───────── 세계 ───────── */
+const W=2304,H=1296;
+const ROAD={x0:1035,x1:1275,c:1155};
+const RIVER_X=150;
+const DEPLOY={y0:860,y1:1250}, REAR_Y=1130;
+const SP=16;                       // 병사 간격
+const bg=new Image(); bg.src='assets/bg/baima_field.webp';
+
+const TY={
+  shield:{g:'盾',nm:'방패',ranks:2,spd:30,atk:{inf:.45,cav:.6},def:.55,adef:.3},
+  spear: {g:'槍',nm:'창',  ranks:3,spd:36,atk:{inf:.8,cav:1.7},def:1,adef:1},
+  bow:   {g:'弓',nm:'궁수',ranks:2,spd:40,atk:{inf:.3,cav:.3},def:1.3,adef:1,range:440},
+  espear:{g:'槍',nm:'창병',ranks:3,spd:34,atk:{inf:.8,cav:1.4},def:1,adef:1},
+  ebow:  {g:'弓',nm:'궁수',ranks:2,spd:36,atk:{inf:.3,cav:.3},def:1.3,adef:1,range:440},
+  ecav:  {g:'騎',nm:'기병',ranks:2,spd:150,atk:{inf:1.25,cav:1},def:.9,adef:.8,cav:true},
+  rider: {g:'騎',nm:'아군 기병',ranks:2,spd:175,atk:{inf:.4,cav:.4},def:.9,adef:.8,cav:true},
+};
+const CMDR={
+  none:{nm:'없음'},
+  wang:{nm:'왕삼',tip:'밀려도 대열을 다시 세운다'},
+  jono:{nm:'조노',tip:'물러나고 교대할 때 흩어지지 않는다'},
+  so:  {nm:'소칠',tip:'적의 우회와 기병 귀환을 먼저 알린다'},
+  me:  {nm:'나',tip:'명령이 빠르다. 다른 부대도 가까울수록 빨리 받는다'},
+};
+
+/* ───────── 상태 ───────── */
+let S=null;           // 전투 상태
+let phase='brief';    // brief | setup | battle | end
+let killer='관우';
+let slots=[];
+const PRESETS={
+  steady:[['shield',60,20,'wang'],['spear',60,20,'me'],['bow',40,10,'so'],['spear',40,10,'jono']],
+  shoot: [['shield',60,30,'wang'],['spear',30,10,'me'],['bow',70,10,'so'],['spear',40,10,'jono']],
+  push:  [['shield',40,20,'wang'],['spear',80,20,'me'],['bow',40,10,'so'],['spear',40,10,'jono']],
+};
+const STARTPOS=[[1155,930],[760,960],[1155,1080],[1500,1180]];
+function loadPreset(k){
+  slots=PRESETS[k].map((p,i)=>({type:p[0],n:p[1],vet:p[2],cmd:p[3],x:STARTPOS[i][0],y:STARTPOS[i][1]}));
+  if(k==='shoot'){ slots[2].x=780; slots[2].y=1010; slots[1].x=1500; slots[1].y=960; }
+  if(k==='push'){ slots[1].x=1155; slots[1].y=1010; slots[2].x=760; slots[2].y=1000; }
+  renderSetup();
+}
+
+/* ───────── 부대 ───────── */
+let uid=0;
+function mkUnit(side,type,n,x,y,o={}){
+  return Object.assign({id:++uid,side,type,n,n0:n,vet:0,x,y,tx:x,ty:y,order:'hold',morale:80,coh:1,fat:0,dmg:0,
+    cmd:'none',delay:0,pend:null,routed:false,gone:false,engaged:[],fireT:Math.random()*2,blocked:false,
+    disengage:0,charge:0,lastRally:-99,tag:'',start:{x,y},committed:false,seed:Math.random()*1000,
+    exitSaved:false,boostT:0},o);
+}
+const T=u=>TY[u.type];
+const cols=u=>Math.max(1,Math.ceil(u.n/T(u).ranks));
+function rect(u){ const w=cols(u)*SP, h=T(u).ranks*SP; return {x0:u.x-w/2,y0:u.y-h/2,x1:u.x+w/2,y1:u.y+h/2,w,h}; }
+const tr=u=>u.n?u.vet/u.n:0;
+function ov(a,b,m=0){ return a.x0-m<b.x1 && a.x1+m>b.x0 && a.y0-m<b.y1 && a.y1+m>b.y0; }
+function segHitsRect(x1,y1,x2,y2,r){
+  // 선분-사각형 교차 (리앙-바스키)
+  let t0=0,t1=1; const dx=x2-x1, dy=y2-y1;
+  const p=[-dx,dx,-dy,dy], q=[x1-r.x0,r.x1-x1,y1-r.y0,r.y1-y1];
+  for(let i=0;i<4;i++){ if(p[i]===0){ if(q[i]<0) return false; } else { const t=q[i]/p[i]; if(p[i]<0){ if(t>t1) return false; if(t>t0) t0=t; } else { if(t<t0) return false; if(t<t1) t1=t; } } }
+  return true;
+}
+const ours=()=>S.units.filter(u=>u.side==='us'&&!u.gone);
+const foes=()=>S.units.filter(u=>u.side==='them'&&!u.gone);
+const liveOurs=()=>ours().filter(u=>!u.routed&&u.n>0);
+function nameOf(u){ if(u.side!=='us') return (u.side==='ally'?'아군 기병':'원소군 '+T(u).nm); return `${u.no}대 · ${T(u).nm}`+(u.cmd!=='none'?` · ${CMDR[u.cmd].nm}`:''); }
+
+/* ───────── 전령 보고 ───────── */
+function report(txt,kind='',who='전령'){
+  if(!S) return;
+  S.log.unshift(`${fmt(S.t)} ${who}: ${txt}`);
+  const d=document.createElement('div'); d.className='toast '+kind; d.innerHTML=`<i>${who}</i>${txt}`;
+  const box=document.getElementById('toasts'); box.prepend(d);
+  while(box.children.length>3) box.lastChild.remove();
+  setTimeout(()=>d.remove(),5200);
+  if(!document.getElementById('logv').hidden) drawLog();
+}
+const fmt=t=>{ t=Math.max(0,Math.floor(t)); return Math.floor(t/60)+':'+String(t%60).padStart(2,'0'); };
+
+/* ───────── 전투 시작 ───────── */
+function startBattle(){
+  uid=0;
+  S={t:0,units:[],fx:[],log:[],sel:null,mode:null,speed:1,paused:false,
+     bannerY:150,boost:.12,waver:0,events:[],rescued:0,ridersSent:0,breakT:150,flankHit:false,
+     reserveSeen:false,over:false,lastWeak:null};
+  slots.forEach((s,i)=>{ if(s.n<=0) return;
+    const u=mkUnit('us',s.type,s.n,s.x,s.y,{vet:s.vet,cmd:s.cmd,no:i+1});
+    u.tag = s.y>=REAR_Y ? '예비' : '';
+    S.units.push(u); });
+  const sev=(t,f)=>S.events.push({t,f,done:false});
+  sev(6,()=>{ spawn('espear',50,ROAD.c,60,ROAD.c,620); report('안량이 앞줄을 내보냈습니다. 우리 배치를 떠보는 겁니다.','w'); });
+  sev(20,()=>{ spawn('ebow',40,ROAD.c+40,40,ROAD.c+40,360,{hold:true}); report('적 궁수가 길 위쪽에 자리를 잡습니다.','w'); });
+  riderEvent(30,12,16);
+  sev(42,()=>{ spawn('espear',40,560,40,560,880); report('왼쪽으로도 적 창병이 내려옵니다.','w'); });
+  sev(55,()=>mainPush(75));
+  riderEvent(78,14,20);
+  flankEvent(96);
+  riderEvent(112,10,26);
+  sev(122,()=>{ spawn('ecav',30,520,-20,560,980); report('왼쪽 물가를 따라 적 기병이 내려옵니다!','b'); });
+  sev(132,()=>mainPush(60));
+  phase='battle'; showPhase(); select(liveOurs()[0]||null);
+  report('장료: 기병 뒤에 붙으시오. 돌아오는 아군은 받고, 뒤쫓는 적은 막으시오.','', '장료');
+}
+function spawn(type,n,x,y,tx,ty,o={}){
+  const u=mkUnit(o.side||'them',type,n,x,y,Object.assign({tx,ty,order:'move',morale:75},o));
+  if(u.side==='them') u.vet=Math.round(n*.5);
+  S.units.push(u); return u;
+}
+function riderEvent(t,n,pn){
+  const hasSo=liveOursHas('so');
+  const warn=hasSo?8:4.5;
+  S.events.push({t:t-warn,done:false,f:()=>{ S.riderWarn={until:t,since:S.t};
+    report(hasSo?'소칠: 나리! 길 위로 우리 기병이 돌아옵니다. 뒤에 적이 붙었습니다!':'아군 기병이 돌아옵니다. 길을 여십시오!','w', hasSo?'소칠':'전령'); }});
+  S.events.push({t,done:false,f:()=>{ S.riderWarn=null; S.ridersSent+=n;
+    spawn('rider',n,ROAD.c,-30,ROAD.c,H+60,{side:'ally',morale:60});
+    S.events.push({t:S.t+2.4,done:false,f:()=>{ const c=spawn('ecav',pn,ROAD.c,-30,ROAD.c,H+60); c.pursuer=true; }}); }});
+}
+function liveOursHas(c){ return S.units.some(u=>u.side==='us'&&u.cmd===c&&!u.routed&&u.n>0); }
+function flankEvent(t){
+  S.events.push({t,done:false,f:()=>{ const f=spawn('espear',40,2190,40,2190,H+40); f.flank=true;
+    if(!liveOursHas('so')) report('오른쪽 둑 너머로 적 깃발이 돕니다. 관우 장군의 기병 뒤를 노립니다!','b'); }});
+  S.events.push({t:t-14,done:false,f:()=>{ if(liveOursHas('so')){ S.flankHint={x:2190,y:300,until:t+8};
+    report('소칠: 나리, 오른쪽 둑 너머 먼지가 이상합니다. 깃발이 돌아서 옵니다.','w','소칠'); } }});
+}
+function weakest(){
+  const L=liveOurs().filter(u=>u.tag!=='예비'||u.committed); if(!L.length) return null;
+  return L.reduce((a,b)=> (a.n*a.morale*(a.coh+.2)) < (b.n*b.morale*(b.coh+.2)) ? a : b);
+}
+function mainPush(n){
+  const w=weakest(); const x=w?Math.min(2100,Math.max(300,w.x)):ROAD.c;
+  spawn('espear',n,x,30,x,(w?w.y:900)); spawn('espear',Math.round(n*.6),x+(x<ROAD.c?160:-160),-20,x,(w?w.y:900));
+  report(w?`안량이 ${w.no}대 쪽을 찌릅니다. 약한 곳을 봤습니다.`:'안량의 본대가 내려옵니다.','b');
+}
+
+/* ───────── 명령 ───────── */
+function orderDelay(u){
+  let d=.3+(1-tr(u))*1.6;
+  const me=S.units.find(v=>v.side==='us'&&v.cmd==='me'&&!v.routed&&v.n>0);
+  if(u.cmd==='me') d*=.45;
+  else if(!me || Math.hypot(me.x-u.x,me.y-u.y)>420) d+=1;
+  return d;
+}
+function issue(u,o){
+  if(!u||u.routed||u.n<=0) return;
+  u.pend=o; u.delay=orderDelay(u);
+}
+function apply(u,o){
+  if(o.c==='move'){ u.order='move'; u.tx=clampX(o.x); u.ty=Math.min(H-20,Math.max(80,o.y)); }
+  if(o.c==='hold'){ u.order='hold'; u.tx=u.x; u.ty=u.y; }
+  if(o.c==='back'){ u.order='move'; u.tx=u.x; u.ty=Math.min(H-30,u.y+170); u.retreat=true;
+    if(u.engaged.length){ u.disengage=(1-tr(u))*3*(u.cmd==='jono'?.35:1)+.4; } }
+  if(o.c==='charge'){ const t=nearestFoe(u); if(t){ u.order='move'; u.tx=t.x; u.ty=t.y; u.charge=3; u.fat=Math.min(100,u.fat+15);} }
+  if(o.c==='swap'){ const v=o.with; if(!v) return;
+    const ax=u.x,ay=u.y; u.retreat=true; v.retreat=true; u.order='move'; u.tx=v.x; u.ty=v.y; v.order='move'; v.tx=ax; v.ty=ay;
+    [u,v].forEach(w=>{ if(w.engaged.length) w.disengage=(1-tr(w))*2.5*(w.cmd==='jono'||u.cmd==='jono'||v.cmd==='jono'?.3:1)+.3; });
+    if(u.cmd==='jono'||v.cmd==='jono') say(u.cmd==='jono'?u:v,'조노','천천히! 등 보이지 말고 한 줄씩 빠져!'); }
+  if(u.tag==='예비' && !u.committed && Math.hypot(u.tx-u.start.x,u.ty-u.start.y)>160) commitReserve(u);
+}
+function clampX(x){ return Math.min(W-40,Math.max(RIVER_X+40,x)); }
+function nearestFoe(u){ let best=null,bd=1e9; for(const f of foes()){ if(f.routed||f.n<=0) continue; const d=Math.hypot(f.x-u.x,f.y-u.y); if(d<bd){bd=d;best=f;} } return best; }
+function commitReserve(u){
+  u.committed=true;
+  if(S.reserveSeen) return; S.reserveSeen=true;
+  if(S.t<100){
+    report('안량이 우리 예비가 움직이는 걸 봤습니다. 비는 자리로 다음 공격이 앞당겨집니다.','b');
+    const x=u.start.x;
+    S.events.push({t:S.t+6,done:false,f:()=>{ spawn('espear',45,x,20,x,u.start.y-80); report(`비운 자리로 적 창병이 쏟아집니다.`,'b'); }});
+  }
+}
+function say(u,who,txt){ report(txt,'',who); }
+
+/* ───────── 한 틱 ───────── */
+function step(dt){
+  S.t+=dt;
+  for(const e of S.events) if(!e.done && S.t>=e.t){ e.done=true; e.f(); }
+  const U=S.units.filter(u=>!u.gone);
+  for(const u of U){ u.engaged=[]; }
+  // 교전 판정
+  const enemiesOf=u=> U.filter(v=>v!==u && !v.routed && v.n>0 && (u.side==='them' ? (v.side==='us'||v.side==='ally') : v.side==='them'));
+  for(const u of U){ if(u.routed||u.n<=0) continue; const ru=rect(u);
+    for(const v of enemiesOf(u)){ if(ov(ru,rect(v),5)) u.engaged.push(v); } }
+  // 명령 지연
+  for(const u of U){ if(u.pend){ u.delay-=dt; if(u.delay<=0){ const o=u.pend; u.pend=null; apply(u,o); } } }
+  // 근접 피해
+  for(const a of U){ if(a.routed||a.n<=0||!a.engaged.length) continue;
+    const share=1/a.engaged.length;
+    for(const b of a.engaged){
+      const front=Math.min(cols(a),cols(b))*(a.type==='spear'||a.type==='espear'?1.4:1);
+      const eff=(.45+.55*a.coh)*(.55+.45*a.morale/100)*(1-a.fat/260)*(a.side==='them'?1+S.boost:1)*(a.charge>0?1.9:1);
+      let k=.02*front*T(a).atk[T(b).cav?'cav':'inf']*eff/T(b).def*share;
+      const behind = b.side==='them' ? a.y < b.y-6 : a.y > b.y+6;
+      if(behind){ k*=1.7; b.morale-=dt*6; }
+      if(b.disengage>0) k*=1.4;
+      b.dmg+=k*dt;
+    }
+    a.fat=Math.min(100,a.fat+dt*4);
+  }
+  // 사격
+  for(const u of U){ const R=T(u).range; if(!R||u.routed||u.n<=0) continue;
+    u.blocked=false; u.target=null;
+    if(u.engaged.length) continue;
+    const tgts=(u.side==='us'?foes():U.filter(v=>v.side!=='them')).filter(v=>!v.routed&&v.n>0&&!v.gone&&Math.hypot(v.x-u.x,v.y-u.y)<R);
+    if(!tgts.length) continue;
+    tgts.sort((a,b)=>Math.hypot(a.x-u.x,a.y-u.y)-Math.hypot(b.x-u.x,b.y-u.y));
+    let tgt=null;
+    for(const t of tgts){ const fy=u.side==='us'?rect(u).y0:rect(u).y1;
+      const blockers=U.filter(v=>v!==u&&v.side===u.side&&!v.routed&&v.n>0&&segHitsRect(u.x,fy,t.x,t.y,rect(v)));
+      if(!blockers.length){ tgt=t; break; } }
+    if(!tgt){ u.blocked=true; continue; }
+    u.target=tgt;
+    if(u.order==='move' && Math.hypot(u.tx-u.x,u.ty-u.y)>4) continue;
+    u.fireT-=dt;
+    if(u.fireT<=0){ u.fireT=2.8;
+      const kills=u.n*.032*(.6+.4*u.coh)*(u.side==='them'?1+S.boost:1)*T(tgt).adef;
+      tgt.dmg+=kills; tgt.morale-=kills*1.2;
+      for(let i=0;i<Math.min(10,u.n/4);i++) S.fx.push({k:'arrow',x0:u.x+(Math.random()-.5)*rect(u).w,y0:u.y,x1:tgt.x+(Math.random()-.5)*rect(tgt).w,y1:tgt.y+(Math.random()-.5)*20,t:0,d:.7+Math.random()*.3,side:u.side});
+    }
+  }
+  // 사상
+  for(const u of U){ while(u.dmg>=1 && u.n>0){ u.dmg-=1;
+      if(u.vet>0 && Math.random()<u.vet/u.n) u.vet--; u.n--;
+      u.morale-=(100/u.n0)*1.1*(1-.4*tr(u));
+      if(Math.random()<.25) S.fx.push({k:'hit',x:u.x+(Math.random()-.5)*rect(u).w,y:u.y+(Math.random()-.5)*rect(u).h,t:0,d:.5}); }
+    if(u.n<=0 && !u.gone){ u.gone=true; if(u.side==='us') report(`${u.no}대가 무너졌습니다. 남은 사람이 없습니다.`,'b'); } }
+  // 사기·대열·지휘관
+  for(const u of U){ if(u.n<=0||u.routed) continue;
+    const fighting=u.engaged.length>0;
+    if(fighting){ // 수에 밀리면 사기가 꺾인다
+      const foeN=u.engaged.reduce((a,v)=>a+v.n,0), ratio=foeN/Math.max(1,u.n);
+      if(ratio>1.5) u.morale-=dt*Math.min(3.5,(ratio-1.5)*1.0)*(1-.35*tr(u)); }
+    if(!fighting){ u.fat=Math.max(0,u.fat-dt*(u.cmd==='jono'?4:2.4)); if(u.morale<80) u.morale=Math.min(80,u.morale+dt*2.2); }
+    const moving=Math.hypot(u.tx-u.x,u.ty-u.y)>4;
+    if(moving) u.coh=Math.max(.25,u.coh-dt*(1-tr(u))*.16*(u.cmd==='jono'?.4:1));
+    else u.coh=Math.min(1,u.coh+dt*(.12+.2*tr(u)));
+    if(u.charge>0) u.charge-=dt;
+    if(u.disengage>0) u.disengage-=dt;
+    if(u.side==='us' && u.cmd==='wang' && u.morale<32 && S.t-u.lastRally>30){
+      u.lastRally=S.t; u.morale+=16; u.coh=Math.min(1,u.coh+.4);
+      say(u,'왕삼','물러서지 마라! 방패 붙여! 내 등 보고 다시 서!');
+      S.fx.push({k:'rally',x:u.x,y:u.y,t:0,d:1.2});
+    }
+    if(u.side==='us' && u.morale<35 && S.waver<3 && S.t-(S.lastWaver||-99)>20){ S.waver++; S.lastWaver=S.t; S.bannerY+=70; S.boost+=.1;
+      report(`${u.no}대가 흔들립니다. 안량의 군기가 앞으로 나옵니다.`,'b'); }
+    if(u.morale<=0){ u.routed=true; u.order='rout';
+      if(u.side==='us') report(`${u.no}대가 흩어집니다!`,'b'); }
+  }
+  // 이동
+  for(const u of U){ if(u.gone) continue;
+    let tx=u.tx,ty=u.ty, spd=T(u).spd;
+    if(u.routed){ ty=u.side==='them'?-200:H-40; tx=u.x; spd*=1.25;
+      if(u.side==='us' && u.y>=H-60 && !S.over){ u.routT=(u.routT||0)+dt;
+        const jono=S.units.some(v=>v.side==='us'&&v.cmd==='jono'&&!v.routed&&v.n>0);
+        if(u.routT>(jono?4:9)){ const lost=Math.round(u.n*(jono?.1:.25)); u.n-=lost; u.vet=Math.min(u.vet,u.n);
+          u.routed=false; u.routT=0; u.morale=32; u.coh=.4; u.order='hold'; u.tx=u.x; u.ty=u.y;
+          if(u.n>0) report(jono?`조노가 흩어진 ${u.no}대를 다시 모았습니다. ${lost}명은 돌아오지 않았습니다.`:`${u.no}대가 뒤에서 겨우 다시 모였습니다. ${lost}명이 달아났습니다.`, '', jono?'조노':'전령'); } } }
+    else if(u.side==='them' && !u.hold){
+      if(u.pursuer){ // 길을 따라 내려오다 막히면 붙는다
+        const prey=S.units.find(v=>v.side==='ally'&&!v.gone&&v.y>u.y-10&&!v.routed);
+        tx=ROAD.c; ty=prey?prey.y:H+80;
+      } else if(u.flank){ tx=2190; ty=H+60; }
+      else if(!u.engaged.length && u.y>380){ // 길목을 뚫고 아래로 내려가는 게 목표. 가까운 적만 친다
+        const t=nearestFoe2(u);
+        if(t && Math.hypot(t.x-u.x,t.y-u.y)<300){ tx=t.x; ty=t.y; }
+        else { tx = u.x + (ROAD.c-u.x)*.6; ty=H+80; } }
+    }
+    if(u.side==='ally'){ tx=ROAD.c; ty=H+80; }
+    const blockedMove = u.engaged.length && !(u.retreat&&u.disengage<=0) && !u.routed && u.side!=='ally';
+    if(u.side==='ally' && U.some(v=>v.side==='us'&&!v.routed&&v.n>0&&ov(rect(u),rect(v),2))) spd=22;
+    if(u.engaged.length && u.side==='ally') spd*=.5;
+    if(blockedMove && !(u.side==='us'&&u.retreat)) continue;
+    if(u.side==='us' && u.retreat && u.disengage>0) continue;
+    const dx=tx-u.x, dy=ty-u.y, d=Math.hypot(dx,dy);
+    const sp=spd*(.55+.45*(1-u.fat/100))*dt;
+    if(d>1){ const m=Math.min(d,sp); u.x+=dx/d*m; u.y+=dy/d*m; }
+    else if(u.side==='us'){ u.order='hold'; u.retreat=false; }
+    if(u.x<RIVER_X+30) u.x=RIVER_X+30;
+    // 나간 부대
+    if(u.y>H+40){ u.gone=true;
+      if(u.side==='ally'){ S.rescued+=u.n; report(`아군 기병 ${u.n}기가 길을 빠져나왔습니다.`); }
+      else if(u.side==='them' && !u.routed){
+        if(u.flank){ S.flankHit=true; S.breakT+=25; report('오른쪽으로 돈 적이 관우 장군 기병의 뒤를 찔렀습니다. 돌파가 늦어집니다.','b'); }
+        else if(u.pursuer||u.type==='ecav'){ report('적 기병이 우리 뒤로 빠져나갔습니다. 대열 뒤가 어수선합니다.','b'); liveOurs().forEach(v=>v.morale-=12); }
+        else { S.leak=(S.leak||0)+u.n; report(`적 창병 ${u.n}명이 길목을 지나 뒤로 빠졌습니다. (${S.leak}/90)`,'b');
+          liveOurs().forEach(v=>v.morale-=6);
+          if(S.leak>=90) lose('대열이 뚫렸다','적 창병이 길목을 지나 우리 뒤로 쏟아졌다. 돌아올 아군이 지날 길이 사라졌다.'); }
+      } }
+    if(u.y<-220) u.gone=true;
+  }
+  // 같은 편끼리 밀어내기
+  const L=U.filter(u=>!u.gone&&!u.routed);
+  for(let i=0;i<L.length;i++) for(let j=i+1;j<L.length;j++){ const a=L[i],b=L[j]; if(a.side!==b.side) continue;
+    const ra=rect(a), rb=rect(b); if(!ov(ra,rb,-2)) continue;
+    const pushx=Math.min(ra.x1-rb.x0, rb.x1-ra.x0), pushy=Math.min(ra.y1-rb.y0, rb.y1-ra.y0);
+    if(a.side!=='us') continue;
+    if(pushy<pushx){ const s=a.y<b.y?-1:1; a.y+=s*pushy*.25; b.y-=s*pushy*.25; } else { const s=a.x<b.x?-1:1; a.x+=s*pushx*.25; b.x-=s*pushx*.25; } }
+  // 효과
+  for(const f of S.fx) f.t+=dt; S.fx=S.fx.filter(f=>f.t<f.d);
+  // 끝
+  if(S.t>=S.breakT && !S.over) win();
+  const live=liveOurs().reduce((a,u)=>a+u.n,0);
+  if(!S.over && S.t>8 && live<40) lose('부대가 흩어졌다','남은 사람이 너무 적었다. 길목은 원소군에게 넘어갔다.');
+}
+function nearestFoe2(u){ let best=null,bd=1e9; for(const v of S.units){ if(v.gone||v.routed||v.n<=0||v.side!=='us') continue; const d=Math.hypot(v.x-u.x,v.y-u.y); if(d<bd){bd=d;best=v;} } return best; }
+
+/* ───────── 끝 ───────── */
+function win(){
+  S.over=true;
+  foes().forEach(f=>{ f.routed=true; });
+  report(killer==='여포' ? '여포가 안량의 군기 아래로 뛰어들었습니다. 안량의 목이 떨어졌습니다!' : '관우가 안량의 군기 아래로 말을 몰았습니다. 안량이 베였습니다!','', '전령');
+  S.bannerFall=S.t;
+  setTimeout(()=>finish(true),3200);
+}
+function lose(t,x){ if(S.over) return; S.over=true; S.loseT=t; S.loseX=x; setTimeout(()=>finish(false),1800); }
+function finish(won){
+  phase='end';
+  const U=S.units.filter(u=>u.side==='us');
+  const lost=U.reduce((a,u)=>a+(u.n0-u.n),0), total=U.reduce((a,u)=>a+u.n0,0);
+  document.getElementById('rEb').textContent=`백마 · ${fmt(S.t)} 동안`;
+  document.getElementById('rT').textContent= won ? '길목을 지켰다' : S.loseT;
+  const zh = !won ? '' : (S.rescued>=S.ridersSent*.7 && lost<total*.3) ? '장료: "길을 열 때와 닫을 때를 알았구려. 적어 두겠소."'
+    : (S.rescued<S.ridersSent*.4) ? '장료: "길목은 지켰소. 다만 돌아오던 기병을 길 위에서 많이 잃었소."'
+    : '장료: "버텼소. 잃은 사람 이름은 오늘 밤 안에 적어 올리시오."';
+  document.getElementById('rX').innerHTML = won
+    ? `${killer}가 안량을 베는 동안 길목을 내주지 않았다. 돌아온 아군 기병 <b>${S.rescued}</b> / ${S.ridersSent}기.${S.flankHit?' 오른쪽 우회를 놓쳐 돌파가 늦어졌다.':''}<br>${zh}`
+    : S.loseX;
+  let rows='<tr><th>부대</th><th>출전</th><th>남음</th><th>숙련</th></tr>';
+  let grown=0;
+  U.forEach(u=>{ const rec=u.n-u.vet; const up=won?Math.round(rec*.5):0; grown+=up;
+    rows+=`<tr><td>${nameOf(u)}</td><td>${u.n0}</td><td>${u.routed?u.n+' (흩어짐)':u.n}</td><td>${u.vet}${up?` → ${u.vet+up}`:''}</td></tr>`; });
+  document.getElementById('rTab').innerHTML=rows;
+  document.getElementById('rGrow').textContent = won
+    ? `살아 돌아온 신병 가운데 ${grown}명이 이번 싸움으로 숙련병이 되었다. 다음 출전에서는 숙련병만 추려 작게 나갈지, 신병을 받아 크게 나갈지 정해야 한다.`
+    : '편성이나 배치를 바꿔 다시 해 볼 수 있다.';
+  document.getElementById('result').hidden=false; document.getElementById('bAgain').focus();
+}
+
+/* ───────── 그리기 ───────── */
+const cv=document.getElementById('cv'), cx=cv.getContext('2d');
+let view={s:1,ox:0,oy:0};
+function resize(){
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  cv.width=innerWidth*dpr; cv.height=innerHeight*dpr;
+  const topH=document.getElementById('top').offsetHeight;
+  const botH=document.getElementById('bottom').offsetHeight;
+  const avail=Math.max(120,innerHeight-topH-botH);
+  const s=Math.min(innerWidth/W, avail/H);
+  view.s=s*dpr; view.ox=(cv.width-W*view.s)/2; view.oy=(topH+(avail-H*s)/2)*dpr;
+}
+addEventListener('resize',resize);
+function toWorld(px,py){ const dpr=Math.min(2,window.devicePixelRatio||1); return {x:(px*dpr-view.ox)/view.s, y:(py*dpr-view.oy)/view.s}; }
+
+function hash(i){ const x=Math.sin(i*127.1)*43758.5453; return x-Math.floor(x); }
+function drawUnit(u,sel){
+  if(u.gone) return;
+  const r=rect(u), t=T(u), n=u.n, c=cols(u);
+  const col = u.side==='them' ? '#7e3a1f' : u.side==='ally' ? '#4a6a96' : '#22324c';
+  const rim = u.side==='them' ? '#e3b48f' : '#d9e2ef';
+  const jit=(1-u.coh)*7 + (u.routed?10:0);
+  const face = u.side==='them' ? 1 : -1;
+  for(let i=0;i<n;i++){
+    const cc=i%c, rr=Math.floor(i/c);
+    const x=r.x0+(cc+.5)*SP+(hash(u.seed+i)-.5)*jit*2, y=(face<0?r.y0:r.y1)+(-face)*(rr+.5)*SP+(hash(u.seed+i+77)-.5)*jit*2;
+    if(t.cav){ cx.fillStyle=col; cx.beginPath(); cx.ellipse(x,y,5,7.5,0,0,7); cx.fill(); cx.strokeStyle=rim; cx.lineWidth=.8; cx.stroke(); continue; }
+    cx.fillStyle=col; cx.beginPath(); cx.arc(x,y,4.6,0,7); cx.fill();
+    cx.strokeStyle=rim; cx.lineWidth=.7; cx.stroke();
+    if((u.type==='shield') && rr===0){ cx.fillStyle='#8c6a3f'; cx.fillRect(x-5,y+face*5-1.5,10,3); }
+    if(u.type==='spear'||u.type==='espear'){ cx.strokeStyle='rgba(40,30,20,.75)'; cx.lineWidth=1; cx.beginPath(); cx.moveTo(x,y); cx.lineTo(x+1.5,y+face*11); cx.stroke(); }
+    if(u.type==='bow'||u.type==='ebow'){ cx.strokeStyle='rgba(40,30,20,.7)'; cx.lineWidth=1; cx.beginPath(); cx.arc(x,y+face*2,4.5,face<0?Math.PI*1.15:Math.PI*.15,face<0?Math.PI*1.85:Math.PI*.85); cx.stroke(); }
+  }
+  if(u.side==='ally') return;
+  // 깃발
+  const fx=r.x0-2, fy=r.y0-10;
+  cx.strokeStyle='rgba(30,25,20,.9)'; cx.lineWidth=3; cx.beginPath(); cx.moveTo(fx,fy+10); cx.lineTo(fx,fy-44); cx.stroke();
+  cx.fillStyle = u.side==='them' ? '#a5552e' : '#2e3f5c';
+  cx.fillRect(fx,fy-44,38,30);
+  cx.fillStyle = u.side==='them' ? '#f4e7d4' : '#eef2f8';
+  cx.font='700 21px "Noto Serif KR",serif'; cx.textAlign='center'; cx.textBaseline='middle';
+  cx.fillText(t.g,fx+19,fy-29);
+  // 인원
+  cx.font='600 19px "IBM Plex Sans KR",sans-serif'; cx.textAlign='left';
+  const label = u.side==='us' ? `${u.no} · ${n}` : `${n}`;
+  cx.lineWidth=3; cx.strokeStyle='rgba(20,22,27,.7)'; cx.strokeText(label,fx+44,fy-31); cx.fillStyle='#f3efe6'; cx.fillText(label,fx+44,fy-31);
+  if(u.side==='us'){
+    const st=statusOf(u); if(st){ cx.font='500 17px "IBM Plex Sans KR",sans-serif'; const tw=cx.measureText(st.t).width;
+      cx.fillStyle='rgba(20,22,27,.82)'; cx.fillRect(fx,fy-70,tw+14,23); cx.fillStyle=st.k==='b'?'#e88a73':st.k==='w'?'#e9c06d':'#c9d6e8'; cx.fillText(st.t,fx+7,fy-58); }
+    if(u.cmd!=='none'){ cx.font='500 16px "IBM Plex Sans KR",sans-serif'; cx.lineWidth=3; cx.strokeText(CMDR[u.cmd].nm,fx+44,fy-11); cx.fillStyle='#e7dcc4'; cx.fillText(CMDR[u.cmd].nm,fx+44,fy-11); }
+  }
+  if(sel){ cx.setLineDash([6,5]); cx.strokeStyle='#cfe0f7'; cx.lineWidth=2; cx.strokeRect(r.x0-8,r.y0-8,r.w+16,r.h+16); cx.setLineDash([]);
+    if(Math.hypot(u.tx-u.x,u.ty-u.y)>6 && !u.routed){ cx.strokeStyle='rgba(207,224,247,.8)'; cx.lineWidth=2; cx.beginPath(); cx.moveTo(u.x,u.y); cx.lineTo(u.tx,u.ty); cx.stroke();
+      cx.beginPath(); cx.arc(u.tx,u.ty,6,0,7); cx.stroke(); }
+    if(T(u).range){ cx.strokeStyle='rgba(207,224,247,.25)'; cx.setLineDash([3,6]); cx.beginPath(); cx.arc(u.x,u.y,T(u).range,Math.PI,2*Math.PI); cx.stroke(); cx.setLineDash([]); }
+  }
+  if(u.pend){ const p=u.pend; if(p.c==='move'){ cx.strokeStyle='rgba(233,192,109,.7)'; cx.setLineDash([4,4]); cx.beginPath(); cx.moveTo(u.x,u.y); cx.lineTo(p.x,p.y); cx.stroke(); cx.setLineDash([]); } }
+}
+function statusOf(u){
+  if(u.routed) return {t:'흩어짐',k:'b'};
+  if(u.pend) return {t:`명령 전달 중 ${Math.max(.1,u.delay).toFixed(1)}초`,k:'w'};
+  if(u.disengage>0 && u.engaged.length) return {t:'적과 붙어 물러나지 못함',k:'b'};
+  if(u.engaged.length) return {t:u.morale<35?'밀린다':'교전',k:u.morale<35?'b':'w'};
+  if(u.blocked) return {t:'사선 막힘',k:'w'};
+  if(u.coh<.6) return {t:'대열 벌어짐',k:'w'};
+  if(u.target) return {t:'사격',k:''};
+  if(u.tag==='예비'&&!u.committed) return {t:'예비',k:''};
+  return null;
+}
+function draw(){
+  cx.setTransform(1,0,0,1,0,0); cx.fillStyle='#14161b'; cx.fillRect(0,0,cv.width,cv.height);
+  cx.setTransform(view.s,0,0,view.s,view.ox,view.oy);
+  if(bg.complete) cx.drawImage(bg,0,0,W,H); else { cx.fillStyle='#8a7a52'; cx.fillRect(0,0,W,H); }
+  // 배치 구역
+  if(phase==='setup'){ cx.fillStyle='rgba(157,184,220,.10)'; cx.fillRect(RIVER_X,DEPLOY.y0,W-RIVER_X,DEPLOY.y1-DEPLOY.y0);
+    cx.strokeStyle='rgba(157,184,220,.5)'; cx.setLineDash([10,8]); cx.lineWidth=2; cx.strokeRect(RIVER_X,DEPLOY.y0,W-RIVER_X,DEPLOY.y1-DEPLOY.y0);
+    cx.beginPath(); cx.moveTo(RIVER_X,REAR_Y); cx.lineTo(W,REAR_Y); cx.stroke(); cx.setLineDash([]);
+    lbl('배치 구역',RIVER_X+20,DEPLOY.y0+24); lbl('이 선 아래는 예비',RIVER_X+20,REAR_Y+24); }
+  // 길 표시 (기병 귀환 경고)
+  const rw = S && S.riderWarn;
+  if(rw){ const a=.25+.2*Math.sin(performance.now()/180); cx.fillStyle=`rgba(157,184,220,${a})`; cx.fillRect(ROAD.x0,0,ROAD.x1-ROAD.x0,H);
+    lbl('아군 기병 귀환 · 길을 연다',ROAD.x0+10,40); arrowDown(ROAD.c,70); }
+  if(S && S.flankHint && S.t<S.flankHint.until){ lbl('먼지 · 깃발이 돈다',2020,260,'#e9c06d'); arrowDown(2190,300,'#e9c06d'); }
+  // 안량 군기
+  if(phase!=='setup'){ const by=S?S.bannerY:150; const fallen=S&&S.bannerFall;
+    cx.save(); cx.translate(ROAD.c+260,by); if(fallen){ const k=Math.min(1,(S.t-S.bannerFall)/1.2); cx.rotate(k*1.3); }
+    cx.strokeStyle='#2a2018'; cx.lineWidth=4; cx.beginPath(); cx.moveTo(0,40); cx.lineTo(0,-90); cx.stroke();
+    cx.fillStyle='#a5552e'; cx.fillRect(0,-90,58,70); cx.fillStyle='#f4e7d4'; cx.font='700 38px "Noto Serif KR",serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('顔',29,-55);
+    cx.restore(); lbl('안량',ROAD.c+330,by-60,'#f4e7d4'); }
+  // 부대
+  const list = (phase==='setup'||!S) ? slots.map((s,i)=>s.n>0?Object.assign(mkUnitPreview(s,i)):null).filter(Boolean) : S.units;
+  for(const u of list) drawUnit(u, phase==='setup' ? dragI===u.no-1 : !!S && S.sel===u);
+  // 효과
+  if(S) for(const f of S.fx){ const k=f.t/f.d;
+    if(f.k==='arrow'){ const x=f.x0+(f.x1-f.x0)*k, y=f.y0+(f.y1-f.y0)*k-Math.sin(k*Math.PI)*80; cx.strokeStyle=f.side==='us'?'rgba(30,40,60,.9)':'rgba(90,40,20,.9)'; cx.lineWidth=1.4; cx.beginPath(); cx.moveTo(x,y); cx.lineTo(x-(f.x1-f.x0)*.02,y-(f.y1-f.y0)*.02-6); cx.stroke(); }
+    if(f.k==='hit'){ cx.fillStyle=`rgba(120,20,10,${.6*(1-k)})`; cx.beginPath(); cx.arc(f.x,f.y,3+k*5,0,7); cx.fill(); }
+    if(f.k==='rally'){ cx.strokeStyle=`rgba(233,192,109,${1-k})`; cx.lineWidth=3; cx.beginPath(); cx.arc(f.x,f.y,30+k*90,0,7); cx.stroke(); }
+  }
+  if(S && S.paused && phase==='battle'){ cx.setTransform(1,0,0,1,0,0); cx.fillStyle='rgba(20,22,27,.35)'; cx.fillRect(0,0,cv.width,cv.height); }
+}
+function lbl(t,x,y,c='#eef2f8'){ cx.font='600 24px "IBM Plex Sans KR",sans-serif'; cx.textAlign='left'; cx.textBaseline='middle'; cx.lineWidth=5; cx.strokeStyle='rgba(20,22,27,.75)'; cx.strokeText(t,x,y); cx.fillStyle=c; cx.fillText(t,x,y); }
+function arrowDown(x,y,c='#cfe0f7'){ cx.fillStyle=c; cx.beginPath(); cx.moveTo(x-16,y); cx.lineTo(x+16,y); cx.lineTo(x,y+24); cx.closePath(); cx.fill(); }
+function mkUnitPreview(s,i){ const u=mkUnit('us',s.type,s.n,s.x,s.y,{vet:s.vet,cmd:s.cmd,no:i+1,seed:i*91+7}); u.tag=s.y>=REAR_Y?'예비':''; return u; }
+
+/* ───────── 입력 ───────── */
+let dragI=-1, dragOff={x:0,y:0};
+function unitAt(w,list){ for(let i=list.length-1;i>=0;i--){ const u=list[i]; if(!u||u.gone) continue; const r=rect(u); if(w.x>r.x0-16&&w.x<r.x1+16&&w.y>r.y0-50&&w.y<r.y1+12) return u; } return null; }
+cv.addEventListener('pointerdown',e=>{
+  const w=toWorld(e.clientX,e.clientY);
+  if(phase==='setup'){
+    const prev=slots.map((s,i)=>s.n>0?mkUnitPreview(s,i):null);
+    const u=unitAt(w,prev); if(u){ dragI=u.no-1; dragOff={x:w.x-u.x,y:w.y-u.y}; cv.setPointerCapture(e.pointerId); }
+    return;
+  }
+  if(phase!=='battle'||!S) return;
+  const mine=S.units.filter(u=>u.side==='us'&&!u.gone);
+  const u=unitAt(w,mine);
+  if(S.mode==='swap' && S.sel){ if(u && u!==S.sel){ issue(S.sel,{c:'swap',with:u}); S.mode=null; renderSel(); } return; }
+  if(u){ select(u); return; }
+  if(S.sel){ issue(S.sel,{c:'move',x:w.x,y:w.y}); S.mode=null; renderSel(); }
+});
+cv.addEventListener('pointermove',e=>{ if(dragI<0) return; const w=toWorld(e.clientX,e.clientY); const s=slots[dragI];
+  s.x=Math.min(W-60,Math.max(RIVER_X+80,w.x-dragOff.x)); s.y=Math.min(DEPLOY.y1-20,Math.max(DEPLOY.y0+30,w.y-dragOff.y)); });
+cv.addEventListener('pointerup',()=>{ if(dragI>=0){ dragI=-1; renderSetup(); } });
+
+function select(u){ if(!S) return; S.sel=u; S.mode=null; renderSel(); renderUnits(); }
+document.getElementById('cmds').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||!S||!S.sel) return; cmd(b.dataset.c); });
+function cmd(c){
+  const u=S.sel; if(!u) return;
+  if(c==='move'){ S.mode='move'; report('땅을 눌러 갈 곳을 정한다.','', '안내'); }
+  else if(c==='swap'){ S.mode='swap'; report('바꿔 설 부대의 깃발을 누른다.','', '안내'); }
+  else if(c==='charge'){ if(u.type!=='spear') return; issue(u,{c:'charge'}); }
+  else issue(u,{c});
+  renderSel();
+}
+addEventListener('keydown',e=>{
+  if(phase!=='battle'||!S) return;
+  if(e.code==='Space'){ e.preventDefault(); togglePause(); return; }
+  const n=parseInt(e.key); if(n>=1&&n<=4){ const u=S.units.find(v=>v.side==='us'&&v.no===n&&!v.gone); if(u) select(u); return; }
+  const m={KeyM:'move',KeyH:'hold',KeyR:'back',KeyS:'swap',KeyC:'charge'}[e.code]; if(m) cmd(m);
+});
+function togglePause(){ if(!S) return; S.paused=!S.paused; document.getElementById('bPause').textContent=S.paused?'계속':'멈춤'; document.getElementById('bPause').classList.toggle('on',S.paused); }
+document.getElementById('bPause').onclick=togglePause;
+document.getElementById('bSpeed').onclick=()=>{ if(!S) return; S.speed=S.speed===1?2:1; document.getElementById('bSpeed').textContent='×'+S.speed; };
+document.getElementById('bLog').onclick=()=>{ const v=document.getElementById('logv'); v.hidden=!v.hidden; if(!v.hidden) drawLog(); };
+function drawLog(){ document.getElementById('logv').innerHTML = S&&S.log.length ? S.log.map(l=>`<div>${l}</div>`).join('') : '<div>아직 보고가 없다.</div>'; }
+
+/* ───────── 화면 판 ───────── */
+function renderSel(){
+  const el=document.getElementById('sel'); const u=S&&S.sel;
+  document.querySelectorAll('#cmds button').forEach(b=>{ b.disabled=!u||u.routed||u.gone||(b.dataset.c==='charge'&&u.type!=='spear'); b.classList.toggle('on',S&&S.mode===b.dataset.c); });
+  if(!u){ el.innerHTML='<span class="nm">부대를 고른다</span><span class="chip">깃발을 누르거나 1~4</span>'; return; }
+  const st=statusOf(u); const trn=Math.round(tr(u)*100);
+  el.innerHTML=`<span class="nm">${nameOf(u)}</span><span class="chip">${u.n}명 · 숙련 ${trn}%</span>`+
+   `<span class="chip ${u.morale<35?'b':u.morale<55?'w':''}">사기 ${Math.max(0,Math.round(u.morale))}</span>`+
+   `<span class="chip ${u.fat>60?'w':''}">피로 ${Math.round(u.fat)}</span>`+
+   (st?`<span class="chip ${st.k}">${st.t}</span>`:'')+
+   (u.cmd!=='none'?`<span class="chip g">${CMDR[u.cmd].tip}</span>`:'');
+}
+function renderUnits(){
+  if(!S) return;
+  const box=document.getElementById('units');
+  box.innerHTML=S.units.filter(u=>u.side==='us').map(u=>`<button class="ub ${S.sel===u?'on':''}" data-id="${u.id}" ${u.gone?'disabled':''}><span class="gl">${T(u).g}</span>${u.no}대<small>${u.n}</small></button>`).join('');
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>select(S.units.find(v=>v.id==+b.dataset.id)));
+}
+function renderSetup(){
+  const used=slots.reduce((a,s)=>a+s.n,0), usedV=slots.reduce((a,s)=>a+s.vet,0);
+  document.getElementById('pool').innerHTML=`남은 병력 <b>${200-used}</b> · 숙련 <b>${60-usedV}</b> 남음`;
+  const box=document.getElementById('setup');
+  box.innerHTML=slots.map((s,i)=>`<div class="slot ${s.n?'':'off'}">
+    <h4>${i+1}대 <small>${s.n?`${s.n}명`:'비움'}${s.y>=REAR_Y&&s.n?' · 예비':''}</small></h4>
+    <div class="seg">${['shield','spear','bow'].map(t=>`<button data-i="${i}" data-t="${t}" class="${s.type===t?'on':''}">${TY[t].g} ${TY[t].nm}</button>`).join('')}</div>
+    <div class="cnt">인원<button data-i="${i}" data-d="-10" aria-label="인원 줄이기">−</button><b>${s.n}</b><button data-i="${i}" data-d="10" aria-label="인원 늘리기">+</button>
+      숙련<button data-i="${i}" data-v="-10" aria-label="숙련 줄이기">−</button><b>${s.vet}</b><button data-i="${i}" data-v="10" aria-label="숙련 늘리기">+</button></div>
+    <label class="cnt">지휘 <select data-i="${i}" id="cmd${i}">${Object.keys(CMDR).map(k=>`<option value="${k}" ${s.cmd===k?'selected':''}>${CMDR[k].nm}${CMDR[k].tip?' — '+CMDR[k].tip:''}</option>`).join('')}</select></label>
+  </div>`).join('');
+  box.querySelectorAll('select').forEach(sel=>sel.onchange=()=>{ const s=slots[+sel.dataset.i], k=sel.value;
+    if(k!=='none') slots.forEach(o=>{ if(o!==s&&o.cmd===k) o.cmd='none'; }); s.cmd=k; renderSetup(); });
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const s=slots[+b.dataset.i];
+    if(b.dataset.t) s.type=b.dataset.t;
+    if(b.dataset.d){ const d=+b.dataset.d; const left=200-slots.reduce((a,x)=>a+x.n,0); if(d>0&&left<d) return; s.n=Math.max(0,s.n+d); s.vet=Math.min(s.vet,s.n); }
+    if(b.dataset.v){ const d=+b.dataset.v; const leftV=60-slots.reduce((a,x)=>a+x.vet,0); if(d>0&&(leftV<d||s.vet+d>s.n)) return; s.vet=Math.max(0,s.vet+d); }
+    if(b.dataset.c){ const k=b.dataset.c; if(k!=='none') slots.forEach(o=>{ if(o!==s&&o.cmd===k) o.cmd='none'; }); s.cmd=k; }
+    renderSetup();
+  });
+  document.getElementById('bGo').disabled = used===0;
+  resize();
+}
+function showPhase(){
+  document.getElementById('setupWrap').hidden = phase!=='setup';
+  document.getElementById('battleWrap').hidden = phase!=='battle';
+  document.getElementById('goalT').textContent = phase==='setup' ? '편성: 병종과 인원, 지휘관을 정하고 깃발을 끌어 시작 위치를 잡는다'
+    : '돌아오는 아군 기병은 길을 열어 받고, 뒤쫓는 적은 막는다';
+  renderUnits(); renderSel(); resize();
+}
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>loadPreset(b.dataset.preset));
+document.getElementById('bGo').onclick=()=>{ startBattle(); };
+document.getElementById('bBrief').onclick=()=>{ document.getElementById('brief').hidden=true; phase='setup'; showPhase(); };
+document.getElementById('pGuan').onclick=()=>{ killer='관우'; document.getElementById('pGuan').classList.add('on'); document.getElementById('pLv').classList.remove('on'); };
+document.getElementById('pLv').onclick=()=>{ killer='여포'; document.getElementById('pLv').classList.add('on'); document.getElementById('pGuan').classList.remove('on'); };
+document.getElementById('bAgain').onclick=()=>{ document.getElementById('result').hidden=true; S=null; phase='setup'; showPhase(); document.getElementById('clock').textContent='0:00'; };
+
+/* ───────── 돌리기 ───────── */
+let last=performance.now(), uiT=0;
+function loop(now){
+  const dt=Math.min(.05,(now-last)/1000); last=now;
+  if(phase==='battle' && S && !S.paused && !S.over){ const steps=S.speed; for(let i=0;i<steps;i++) step(dt); }
+  else if(phase==='battle' && S && S.over){ step(dt*.5); }
+  uiT+=dt; if(uiT>.25 && S && phase==='battle'){ uiT=0; document.getElementById('clock').textContent=fmt(S.t); renderSel(); renderUnits(); }
+  draw(); requestAnimationFrame(loop);
+}
+resize(); loadPreset('steady'); requestAnimationFrame(loop);
+window.__baima={get S(){return S;}, startBattle, step, issue, loadPreset, slots:()=>slots, setPhase:p=>{phase=p;}};
+</script>
