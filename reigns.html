@@ -1,0 +1,405 @@
+<title>관도 회귀</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
+<style>
+/* 레이아웃: 한 화면 세로 기둥 — 위 네 게이지, 가운데 말과 카드, 아래 두 선택. 밤 진영의 등불빛 하나로 통일한 단일 테마 */
+:root{
+  --night:#191b22;      /* 진영의 밤 */
+  --night-2:#23252e;    /* 카드 받침 */
+  --paper:#ebe3d2;      /* 글 */
+  --dim:#a39c8c;        /* 흐린 글 */
+  --lamp:#d6a24a;       /* 등불 — 게이지와 강조 */
+  --blood:#b5483a;      /* 위험 */
+  --line:#3a3c46;
+  --f-disp:"Song Myung","Gowun Batang",serif;
+  --f-body:"Gowun Batang","Noto Serif KR",serif;
+  --f-ui:"IBM Plex Sans KR","Apple SD Gothic Neo",sans-serif;
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:var(--night);color:var(--paper);font-family:var(--f-body);overflow:hidden;
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#app{box-sizing:border-box;overflow:hidden;height:100%;display:flex;flex-direction:column;align-items:center;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px}
+.col{width:100%;max-width:440px;display:flex;flex-direction:column;height:100%;gap:12px}
+
+/* 게이지 */
+#top{display:flex;align-items:center;gap:10px}
+#gauges{display:flex;gap:8px;flex:1}
+.g{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.gbox{position:relative;width:100%;max-width:56px;aspect-ratio:1;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--night-2)}
+.gfill{position:absolute;left:0;right:0;bottom:0;background:var(--lamp);opacity:.32;transition:height .45s ease}
+.gch{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--f-disp);font-size:clamp(20px,6vw,28px);color:var(--paper)}
+.g.up .gbox{box-shadow:0 0 0 2px var(--lamp)}
+.g.down .gbox{box-shadow:0 0 0 2px var(--blood)}
+.g.warn .gfill{background:var(--blood);opacity:.5}
+.gname{font-family:var(--f-ui);font-size:11px;color:var(--dim);letter-spacing:.05em}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--paper);opacity:0;transition:opacity .15s,transform .15s}
+.dot.dS{opacity:.9;transform:scale(1)}
+.dot.dB{opacity:1;transform:scale(1.8)}
+#meta{font-family:var(--f-ui);font-size:12px;color:var(--dim);text-align:right;line-height:1.5;white-space:nowrap;font-variant-numeric:tabular-nums}
+#meta b{color:var(--paper);font-weight:600}
+
+/* 말 */
+#say{min-height:6.4em;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;text-align:center}
+#memo{font-family:var(--f-ui);font-size:12px;color:var(--lamp);letter-spacing:.03em}
+#text{font-size:clamp(16px,4.4vw,19px);line-height:1.6;text-wrap:balance}
+
+/* 카드 */
+#stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative}
+#card{position:relative;height:min(100%,400px);aspect-ratio:4/5;max-width:100%;border-radius:10px;overflow:hidden;
+  background:var(--night-2) center/cover no-repeat;border:1px solid var(--line);touch-action:none;cursor:grab;
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.8);transition:transform .25s ease}
+#card.drag{transition:none;cursor:grabbing}
+#card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(25,27,34,.15),rgba(25,27,34,.55) 70%,rgba(25,27,34,.92))}
+#por{position:absolute;left:50%;top:7%;transform:translateX(-50%);height:140%;max-width:none;object-fit:contain;object-position:top center;z-index:1;pointer-events:none}
+#who{position:absolute;left:0;right:0;bottom:10px;text-align:center;font-family:var(--f-disp);font-size:22px;z-index:2;letter-spacing:.08em}
+.tag{position:absolute;top:14px;z-index:3;max-width:60%;padding:6px 10px;background:var(--paper);color:var(--night);font-family:var(--f-body);font-weight:700;
+  font-size:15px;line-height:1.35;border-radius:4px;opacity:0;transition:opacity .1s}
+#tagL{left:12px}#tagR{right:12px;text-align:right}
+
+/* 선택 */
+#btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.b{font-family:var(--f-body);font-size:15px;line-height:1.35;color:var(--paper);background:var(--night-2);border:1px solid var(--line);border-radius:8px;
+  padding:12px 10px;min-height:56px;cursor:pointer;text-align:center}
+.b:hover,.b:focus-visible{border-color:var(--lamp);outline:none}
+.b small{display:block;font-family:var(--f-ui);font-size:11px;color:var(--dim);margin-bottom:2px}
+#foot{display:flex;justify-content:space-between;font-family:var(--f-ui);font-size:12px;color:var(--dim)}
+.lnk{background:none;border:0;color:var(--dim);font:inherit;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
+.lnk:hover,.lnk:focus-visible{color:var(--paper);outline:none}
+
+/* 덮개 화면 */
+.ov{position:fixed;inset:0;z-index:10;background:rgba(18,19,24,.94);display:flex;align-items:center;justify-content:center;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.ovin{width:100%;max-width:420px;display:flex;flex-direction:column;gap:14px;text-align:center;max-height:100%;overflow:auto}
+.ov h1{font-family:var(--f-disp);font-weight:400;font-size:clamp(40px,12vw,58px);margin:0;letter-spacing:.12em}
+.ov h2{font-family:var(--f-disp);font-weight:400;font-size:28px;margin:0;letter-spacing:.06em}
+.ov p{margin:0;line-height:1.7;font-size:16px}
+.ov .sub{font-family:var(--f-ui);font-size:12px;color:var(--dim);letter-spacing:.08em}
+.ov .big{font-family:var(--f-body);font-weight:700;font-size:17px;color:var(--night);background:var(--lamp);border:0;border-radius:8px;padding:14px;cursor:pointer}
+.ov .big:focus-visible{outline:2px solid var(--paper);outline-offset:3px}
+#deathOv{background:rgba(30,14,12,.95)}
+#deathOv h2{color:#e2a195}
+.mem{font-family:var(--f-ui);font-size:13px;color:var(--lamp)}
+.dex{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left}
+.dex div{border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:14px;min-width:0}
+.dex .no{color:var(--dim)}
+@media (prefers-reduced-motion:reduce){#card,.gfill,.dot{transition:none}}
+@media (max-height:640px){#say{min-height:5em}#text{font-size:15px}.gbox{max-width:44px}}
+</style>
+
+<div id="app"><div class="col">
+  <div id="top">
+    <div id="gauges"></div>
+    <div id="meta"><b id="day">관도 1일</b><br><span id="loop">첫 번째</span></div>
+  </div>
+  <div id="say"><div id="memo"></div><div id="text"></div></div>
+  <div id="stage">
+    <div id="card"><img id="por" alt=""><div id="who"></div><div class="tag" id="tagL"></div><div class="tag" id="tagR"></div></div>
+  </div>
+  <div id="btns">
+    <button class="b" id="bL"><small>← 왼쪽</small><span></span></button>
+    <button class="b" id="bR"><small>오른쪽 →</small><span></span></button>
+  </div>
+  <div id="foot"><button class="lnk" id="dexBtn">죽음 기록</button><button class="lnk" id="snd">소리 켜기</button></div>
+</div></div>
+
+<div class="ov" id="titleOv"><div class="ovin">
+  <div class="sub">건안 5년 · 관도 · 맛보기판</div>
+  <h1>관도 회귀</h1>
+  <p>나는 조조 진영의 말단 군관이다.<br>죽으면 관도 첫날 아침으로 돌아온다.</p>
+  <p class="sub" style="letter-spacing:0">兵 병사 · 曹 조조의 신임 · 糧 군량 · 疑 곽가의 의심<br>넷 중 하나라도 바닥나거나 가득 차면 죽는다.<br>카드를 좌우로 밀거나 ←/→ 키, 아래 버튼으로 고른다.</p>
+  <button class="big" id="startBtn">눈을 뜬다</button>
+</div></div>
+
+<div class="ov" id="deathOv" hidden><div class="ovin">
+  <div class="sub" id="dDay"></div>
+  <h2 id="dTitle"></h2>
+  <p id="dText"></p>
+  <div class="mem" id="dMem"></div>
+  <div class="sub" id="dCount"></div>
+  <button class="big" id="againBtn">다시 눈을 뜬다</button>
+</div></div>
+
+<div class="ov" id="winOv" hidden><div class="ovin">
+  <div class="sub">관도 20일</div>
+  <h2>토산을 넘겼다</h2>
+  <p id="wText"></p>
+  <p class="sub" style="letter-spacing:0">맛보기판은 여기까지다. 본편에서는 연진, 벽력거, 목책 밑의 굴, 허유, 오소의 밤까지 이어진다.</p>
+  <button class="big" id="winAgain">처음부터 다시</button>
+</div></div>
+
+<div class="ov" id="dexOv" hidden><div class="ovin">
+  <h2>죽음 기록</h2>
+  <div class="dex" id="dexList"></div>
+  <div class="sub" id="memList" style="letter-spacing:0"></div>
+  <button class="big" id="dexClose">닫기</button>
+</div></div>
+
+<audio id="bgm" src="assets/bgm/ch2_camp.m4a" loop preload="none"></audio>
+
+<script>
+const P = id => `assets/portrait/${id}.webp`;
+const BG = { camp:'assets/bg/ch2_camp_dusk.webp', baima:'assets/bg/ch6_battlefield.webp', tusan:'assets/bg/ch8_catapult.webp' };
+const NAME = { jono:'조노', wangsam:'왕삼', sochil:'소칠', caohong:'조홍', liuye:'유엽', guojia:'곽가', xunyou:'순유', duseok:'두석',
+  jinqi:'진기', caocao:'조조', lvbu:'여포', guanyu:'관우', zhangliao:'장료', dianwei:'전위', hujuer:'호거아' };
+const GA = [ {k:'s',ch:'兵',n:'병사'}, {k:'c',ch:'曹',n:'조조'}, {k:'g',ch:'糧',n:'군량'}, {k:'d',ch:'疑',n:'의심'} ];
+
+const DEATH = {
+  s0:  {t:'등 뒤의 칼', x:'밤에 막사 뒤에서 누가 내 이름을 불렀다. 돌아보기 전에 칼이 들어왔다. 내 부대 병사였다.'},
+  s100:{t:'앞세워진 자', x:'병사들이 나를 대장이라 부르며 군량 창고로 몰려갔다. 말렸지만 아무도 듣지 않았다. 주동자로 내 목이 걸렸다.'},
+  c0:  {t:'맨 앞줄', x:'조공은 나를 강등해 맨 앞줄로 보냈다. 첫 화살이 날아왔을 때, 내 이름을 아는 사람은 없었다.'},
+  c100:{t:'자네밖에 없네', x:'"이 일은 자네밖에 못 하네." 원소 진영으로 가는 밀사였다. 돌아오지 못했다.'},
+  g0:  {t:'빈 솥', x:'솥이 비었다. 병사들이 창고 문을 부쉈고, 그 앞을 막아선 내가 먼저 밟혔다.'},
+  g100:{t:'창고 뒤의 곡식', x:'막사 뒤에 쌓아 둔 곡식이 들켰다. 군량을 빼돌린 죄는 참수였다.'},
+  d0:  {t:'아무도 듣지 않았다', x:'원소가 어디로 올지 알았지만, 내 말을 들어 줄 사람이 없었다. 무너진 목책 아래서 죽었다.'},
+  d100:{t:'첩자', x:'곽가가 내 막사를 뒤졌다. 아직 일어나지 않은 일을 적어 둔 종이가 나왔다. 원소의 첩자로 처형되었다.', mem:'spy'},
+  baima:{t:'백마의 기병', x:'안량의 기병이 대열 앞을 쓸고 지나갔다. 방패가 모자랐다.', mem:'baima'},
+  tusan:{t:'흙산 아래', x:'불을 들고 목책을 넘었다. 흙산 위에서 화살이 비처럼 내려왔다.', mem:'tusan'},
+};
+const MEMO = { baima:'백마에서 방패가 모자랐다.', tusan:'흙산 위에서 화살이 쏟아졌다.', spy:'곽가가 내 막사를 뒤졌다.' };
+
+/* 카드: L/R = {t:선택 문구, fx:{s,c,g,d}, set:[표시], res:결과 한 줄}. fx·res는 함수여도 된다. need는 조건 함수. */
+const CARDS = [
+ {id:'intro', who:'jono', need:()=>false,
+  text:()=> M.loops<=1 ? '나리, 일어나셨습니까. 오늘부터 관도 진영입니다. 병사들이 나리 말씀을 기다립니다.'
+                       : '나리, 일어나셨습니까. …어디 편찮으십니까? 얼굴이 하얗습니다.',
+  L:{t:()=>M.loops<=1?'병사들을 모으게 한다':'아무것도 아니라고 한다'}, R:{t:()=>M.loops<=1?'조금 더 눕는다':'병사들을 모으게 한다'}},
+
+ {id:'ration', who:'jono', text:'나리, 배식이 또 줄었습니다. 병사들이 수군댑니다.',
+  L:{t:'참으라고 한다', fx:{s:-10}}, R:{t:'내 몫을 덜어 나눈다', fx:{s:10,g:-10}}},
+ {id:'wood', who:'wangsam', text:'옆 십인대가 우리 장작을 가져갔소. 가서 찾아올까요?',
+  L:{t:'그냥 둔다', fx:{s:-10}}, R:{t:'찾아오게 한다', fx:{s:10,c:-5}, res:'다툼 소식이 장료의 귀에 들어갔다.'}},
+ {id:'letters', who:'sochil', text:'나리, 글을 가르쳐 주신다던 거, 오늘 됩니까?',
+  L:{t:'다음에 하자고 한다', fx:{s:-5}}, R:{t:'가르친다', fx:{s:10,c:-5}, res:'그날 보초 교대가 늦었다.'}},
+ {id:'watch', who:'caohong', text:'자네 부대가 보초를 가장 늦게 섰다더군.',
+  L:{t:'병사들을 다그친다', fx:{s:-10,c:10}}, R:{t:'제 탓이라고 한다', fx:{s:5,c:-10}}},
+ {id:'liuye', who:'liuye', text:'목책 일에 일손이 모자라오. 자네 부대를 빌려 주겠소?',
+  L:{t:'거절한다', fx:{c:-10}}, R:{t:'보낸다', fx:{c:10,s:-10,g:5}, res:'유엽이 품삯으로 쌀 한 섬을 보냈다.'}},
+ {id:'guess', who:'guojia', text:'자네는 원소가 어디부터 칠 것 같은가?',
+  L:{t:'모르겠다고 한다', fx:{d:-10,c:-5}}, R:{t:'백마라고 한다', fx:{d:15,c:10}}},
+ {id:'ledger', who:'xunyou', text:'장부를 보니 자네 부대 몫이 한 섬 남는구려. 돌려 놓겠소?',
+  L:{t:'돌려 놓는다', fx:{g:-10,c:5}}, R:{t:'모른 척한다', fx:{g:15,d:10}}},
+ {id:'deserter', who:'jono', text:'도망치던 신병을 잡았습니다. 군율대로라면 목을 베야 합니다.',
+  L:{t:'군율대로 한다', fx:{s:-15,c:10}}, R:{t:'몰래 돌려보낸다', fx:{s:10,d:10}}},
+ {id:'duseok', who:'duseok', text:'나리, 집에서 편지가 왔는데 좀 읽어 주실 수 있습니까?',
+  L:{t:'바쁘다고 한다', fx:{s:-5}}, R:{t:'읽어 준다', fx:{s:10,c:-5}, res:'편지를 읽어 주느라 점호에 늦었다.'}},
+ {id:'escort', who:'caohong', text:'군량 수레가 늦네. 자네 부대가 마중 나가게.',
+  L:{t:'부대가 지쳤다고 한다', fx:{c:-10,s:5}}, R:{t:'나간다', fx:{g:15,s:-10}, res:'수레꾼이 고맙다며 한 자루를 떼어 주었다.'}},
+ {id:'gamble', who:'wangsam', text:'병사들이 노름판을 벌였소. 걷어 낼까요?',
+  L:{t:'걷어 낸다', fx:{s:-10,c:5}}, R:{t:'모른 척한다', fx:{s:10,g:-10}, res:'판돈으로 쌀이 오갔다.'}},
+ {id:'buy', who:'jono', text:'나리, 마을에서 쌀을 사 올 수 있습니다. 값이 비쌉니다.',
+  L:{t:'그만둔다', fx:{g:-5}}, R:{t:'사 오게 한다', fx:{g:15,c:-10}, res:'영도 없이 한 거래였다. 장부에 남았다.'}},
+ {id:'jinqi', who:'jinqi', text:'나리, 밤마다 막사 바닥에서 소리가 납니다.',
+  L:{t:'꿈을 꾼 거라고 한다', fx:{s:-5}}, R:{t:'같이 들어 본다', fx:{d:5}, set:['jinqiEar']}},
+ {id:'jinqi2', who:'jinqi', need:()=>F.jinqiEar && R.day>=6,
+  text:'나리, 그 소리가 어젯밤에 멎었습니다. 그런데 옆 막사 쪽에서 다시 납니다.',
+  L:{t:'그만 신경 쓰라고 한다', fx:{s:-10}}, R:{t:'순유에게 알린다', fx:{c:15,d:10}, res:'순유가 그 자리를 파 보게 했다. 원소 쪽에서 판 굴이 나왔다.'}},
+ {id:'lvAsk', who:'caocao', need:()=>R.day<=6,
+  text:'여포가 군사를 달라고 하네. 하비에서 그를 살리자고 한 게 자네였지. 자네 생각은 어떤가?',
+  L:{t:'주지 마시라고 한다', fx:{c:10}, set:['lvNo']}, R:{t:'주시라고 한다', fx:{c:-10}, set:['lvYes']}},
+ {id:'lvNo', who:'lvbu', need:()=>F.lvNo, text:'네가 내 군사를 막았다지.',
+  L:{t:'제 생각이었다고 한다', fx:{s:-10}, res:'그날 밤 여포의 종졸들이 우리 막사 앞 물통을 걷어찼다.'},
+  R:{t:'조공의 뜻이었다고 한다', fx:{c:-10}, res:'여포가 코웃음을 쳤다. 그 말은 조공의 귀에도 들어갔다.'}},
+ {id:'lvYes', who:'lvbu', need:()=>F.lvYes && R.day<8, text:'군사를 받았다. 네가 거들었다더군. 백마에서 내 옆에 서라.',
+  L:{t:'제 자리를 지키겠다고 한다', fx:{c:5}}, R:{t:'옆에 서겠다고 한다', fx:{s:-10}, set:['lvSide']}},
+ {id:'guanyu', who:'guanyu', text:'빌려 준 짐말은 잘 쓰고 있소? …혹시 형님 소식을 들은 것이 있소?',
+  L:{t:'들은 게 없다고 한다', fx:{d:-5}},
+  R:{t:'하북의 원소에게 계신다고 한다', fx:{d:15,c:-10}, res:'관우는 한참 나를 보다가 말없이 돌아섰다. 어디서 들었느냐고는 묻지 않았다.'}},
+ {id:'front', who:'zhangliao', need:()=>R.day<8, text:'백마로 갈 선봉을 뽑소. 자네 부대도 이름을 올리겠소?',
+  L:{t:'빠지겠다고 한다', fx:{c:-10,s:5}}, R:{t:'이름을 올린다', fx:{c:10,s:-10}, set:['front']}},
+ {id:'dianwei', who:'dianwei', text:'호거아란 놈이 자꾸 내 극을 쳐다본다. 너, 뭘 아는 눈치더군.',
+  L:{t:'모른다고 한다', fx:{d:-5}}, R:{t:'밤에 그를 조심하시라고 한다', fx:{d:15}, set:['warnDw']}},
+ {id:'hujuer', who:'hujuer', need:()=>F.warnDw, text:'자네가 전위 장군께 내 얘기를 했다지?',
+  L:{t:'아무 말도 안 했다고 한다', fx:{d:5}}, R:{t:'술이나 한잔하자고 한다', fx:{g:-10,d:-10}}},
+ {id:'guojia2', who:'guojia', need:()=>R.g.d>=60, text:'자네는 일이 터지기 전에 꼭 그 자리에 서 있더군.',
+  L:{t:'운이 좋았다고 한다', fx:{d:-5,c:-5}}, R:{t:'들은 것이 있었다고 한다', fx:{d:10,c:10}}},
+ {id:'task', who:'caocao', need:()=>R.g.c>=70, text:'요즘 자네 이름을 자주 듣네. 어려운 일을 하나 맡아 주겠나?',
+  L:{t:'아직 부족하다며 사양한다', fx:{c:-10}}, R:{t:'맡는다', fx:{c:15,s:-10}}},
+ {id:'mutter', who:'sochil', need:()=>R.g.s<=35, text:'나리, 병사들이 나리를 두고 수군댑니다. 저는 아니고요.',
+  L:{t:'누가 그러더냐고 묻는다', fx:{s:-10,d:5}}, R:{t:'술 한 동이를 사 온다', fx:{s:15,g:-15}}},
+ {id:'feast', who:'wangsam', need:()=>R.g.g>=70, text:'창고에 쌀이 넉넉하오. 오늘은 병사들 배 좀 불려 줍시다.',
+  L:{t:'아껴 두라고 한다', fx:{s:-5,g:5}}, R:{t:'푸짐하게 먹인다', fx:{s:10,g:-20}}},
+
+ /* 기억 카드 */
+ {id:'mShield', who:'jono', memo:'baima', need:()=>M.mem.baima && R.day<8,
+  text:'방패를 더 구하라굽쇼? 쌀을 내줘야 바꿔 올 수 있습니다.',
+  L:{t:'그만두라고 한다', fx:{}}, R:{t:'쌀을 내준다', fx:{g:-15}, set:['shields']}},
+ {id:'mRoof', who:'liuye', memo:'tusan', need:()=>M.mem.tusan && R.day>=9 && R.day<16,
+  text:'방패를 지붕처럼 이어 덮자고? 원소가 흙산을 쌓을 거라니, 어디서 그런 걸 보았소?',
+  L:{t:'그냥 떠오른 생각이라 한다', fx:{d:5}, set:['roof']}, R:{t:'흙을 나르는 걸 보았다고 한다', fx:{d:15,c:10}, set:['roof']}},
+ {id:'mGuo', who:'guojia', memo:'spy', need:()=>M.mem.spy && R.g.d>=40,
+  text:'자네 막사는 밤늦게까지 불이 켜져 있더군.',
+  L:{t:'편지를 썼다고 한다', fx:{d:5}}, R:{t:'적어 둔 종이를 태운다', fx:{d:-15}}},
+ {id:'mLoop', who:'jono', need:()=>M.loops>=3,
+  text:'나리는 꼭 겪어 본 일처럼 말씀하십니다.',
+  L:{t:'웃어넘긴다', fx:{d:-5}}, R:{t:'꿈에서 봤다고 한다', fx:{d:10,s:10}}},
+
+ /* 이정표 */
+ {id:'baima', ms:8, who:'zhangliao', bg:'baima',
+  text:()=> F.front ? '백마요. 안량의 군기가 보이오. 선봉은 앞으로!' : '백마요. 안량의 군기가 보이오. 자네 부대는 뒤를 받치시오.',
+  L:{t:()=>F.front?'대열을 지킨다':'자리를 지킨다', fx:()=> F.front ? (F.shields?{c:5}:{s:-15,c:-5}) : {c:-5,s:5},
+     res:()=> lvRes(F.front && !F.shields ? '방패 틈으로 기병이 파고들었다. 버텼지만 많이 잃었다.' : '대열은 무너지지 않았다.')},
+  R:{t:'앞으로 나간다', fx:()=> (F.front && !F.shields && R.g.s<60) ? {death:'baima'} : {c:F.front?20:10, s:-10},
+     res:()=> lvRes(F.shields ? '새로 구한 방패가 기병을 막아 냈다.' : '안량의 기병과 부딪쳤다. 물러서지 않았다.')}},
+ {id:'tusan', ms:16, who:null, bg:'tusan',
+  text:'원소가 흙산을 쌓았다. 그 위에서 화살이 쏟아진다. 병사들이 방패 밑에서 나를 본다.',
+  L:{t:'방패 아래서 버틴다', fx:()=> F.roof ? {s:-5} : {s:-20},
+     res:()=> F.roof ? '지붕처럼 이은 방패 아래서 모두 살았다.' : '방패 틈으로 화살이 들어왔다.'},
+  R:{t:'불을 들고 흙산 아래로 간다', fx:()=> (F.roof || R.g.s>=55) ? {c:20,s:-10} : {death:'tusan'},
+     res:'흙산을 받친 나무에 불이 붙었다.'}},
+];
+function lvRes(base){ return F.lvSide ? base+' 그날 안량의 목을 벤 것은 여포였다. 그 옆에 우리 부대가 있었다.' : base+' 그날 안량의 목을 벤 것은 여포였다.'; }
+
+/* 상태 */
+const KEY='gdr-meta-v1';
+let M={loops:0,deaths:{},mem:{},best:0};
+try{ const s=localStorage.getItem(KEY); if(s) M=Object.assign(M,JSON.parse(s)); }catch(e){}
+function saveM(){ try{ localStorage.setItem(KEY,JSON.stringify(M)); }catch(e){} }
+let R,F,cur,pending=null,busy=false;
+
+const $=id=>document.getElementById(id);
+const gEls={};
+GA.forEach(a=>{ const d=document.createElement('div'); d.className='g';
+  d.innerHTML=`<div class="gbox"><div class="gfill"></div><div class="gch">${a.ch}</div></div><div class="dot"></div><div class="gname">${a.n}</div>`;
+  $('gauges').appendChild(d); gEls[a.k]=d; });
+
+const SCALE=1.4; /* 수치 조절: 카드에 적은 값에 곱한다 */
+const sc=v=>Math.round(v*SCALE/5)*5;
+const val=(v)=>typeof v==='function'?v():v;
+function newRun(){
+  M.loops++; saveM();
+  R={day:1,g:{s:50,c:50,g:50,d:50},used:{},done:{}}; F={};
+  R.flags=F; drawGauges(); show(CARDS.find(c=>c.id==='intro'));
+}
+function drawGauges(changed){
+  GA.forEach(a=>{ const el=gEls[a.k], v=R.g[a.k];
+    el.querySelector('.gfill').style.height=v+'%';
+    el.classList.toggle('warn', v<=20||v>=80);
+    el.classList.remove('up','down');
+    if(changed&&changed[a.k]){ el.classList.add(changed[a.k]>0?'up':'down'); setTimeout(()=>el.classList.remove('up','down'),700); } });
+  $('day').textContent='관도 '+R.day+'일';
+  $('loop').textContent=numKo(M.loops)+' 번째';
+}
+function numKo(n){ return ['','첫','두','세','네','다섯','여섯','일곱','여덟','아홉','열'][n] || n; }
+
+function pick(){
+  const ms=CARDS.find(c=>c.ms && R.day>=c.ms && !R.done[c.id]);
+  if(ms){ R.done[ms.id]=1; return ms; }
+  let pool=CARDS.filter(c=>!c.ms && c.id!=='intro' && !R.used[c.id] && (!c.need||c.need()));
+  if(!pool.length){ R.used={}; pool=CARDS.filter(c=>!c.ms && c.id!=='intro' && !c.memo && (!c.need||c.need())); }
+  const mem=pool.filter(c=>c.memo);
+  if(mem.length && Math.random()<.6) pool=mem;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function show(c){
+  cur=c; R.used[c.id]=1;
+  $('memo').textContent=c.memo?'기억 — '+MEMO[c.memo]:'';
+  $('text').textContent=val(c.text);
+  const card=$('card');
+  card.style.backgroundImage=`url(${BG[c.bg||'camp']})`;
+  const por=$('por');
+  if(c.who){ por.src=P(c.who); por.hidden=false; $('who').textContent=NAME[c.who]; }
+  else { por.hidden=true; por.removeAttribute('src'); $('who').textContent=''; }
+  const lt=val(c.L.t), rt=val(c.R.t);
+  $('tagL').textContent=lt; $('tagR').textContent=rt;
+  $('bL').querySelector('span').textContent=lt; $('bR').querySelector('span').textContent=rt;
+  card.style.transform=''; setTags(0); preview(null);
+}
+function showRes(text){
+  cur={res:true}; $('memo').textContent=''; $('text').textContent=text;
+  $('tagL').textContent=$('tagR').textContent='계속';
+  $('bL').querySelector('span').textContent=$('bR').querySelector('span').textContent='계속';
+  $('card').style.transform=''; setTags(0); preview(null);
+}
+function fxOf(side){ if(!cur||cur.res) return null; const o=cur[side]; return val(o.fx)||{}; }
+function preview(side){
+  const fx=side?fxOf(side):null;
+  GA.forEach(a=>{ const dot=gEls[a.k].querySelector('.dot'); dot.className='dot';
+    if(fx && !fx.death && fx[a.k]) dot.classList.add(Math.abs(sc(fx[a.k]))>=15?'dB':'dS'); });
+}
+function setTags(dx){ $('tagL').style.opacity=dx<-20?Math.min(1,(-dx-20)/50):0; $('tagR').style.opacity=dx>20?Math.min(1,(dx-20)/50):0; }
+
+function choose(side){
+  if(busy || R.over) return; busy=true;
+  const card=$('card'); card.style.transform=`translateX(${side==='L'?-140:140}%) rotate(${side==='L'?-20:20}deg)`;
+  setTimeout(()=>{ busy=false; resolve(side); },230);
+}
+function resolve(side){
+  if(cur.res){ next(); return; }
+  const o=cur[side], fx=val(o.fx)||{};
+  if(fx.death){ die(fx.death); return; }
+  (o.set||[]).forEach(f=>F[f]=1);
+  const ch={};
+  GA.forEach(a=>{ if(fx[a.k]){ const v=sc(fx[a.k]); R.g[a.k]=Math.max(0,Math.min(100,R.g[a.k]+v)); ch[a.k]=v; } });
+  if(cur.ms){ M.best=Math.max(M.best,cur.ms); saveM(); }
+  R.day++; drawGauges(ch);
+  for(const a of GA){ const end=R.g[a.k]<=0?'0':R.g[a.k]>=100?'100':null;
+    if(end){ R.over=true; return setTimeout(()=>die(a.k+end),500); } }
+  const res=val(o.res);
+  if(res) showRes(res); else next();
+}
+function next(){
+  if(R.done.tusan && R.day>20){ return win(); }
+  show(pick());
+}
+function die(id){
+  R.over=true; const d=DEATH[id]; M.deaths[id]=1;
+  let memTxt='';
+  if(d.mem && !M.mem[d.mem]){ M.mem[d.mem]=1; memTxt='새 기억 — '+MEMO[d.mem]+' 다음 관도에서 쓸 수 있다.'; }
+  saveM();
+  $('dDay').textContent='관도 '+R.day+'일 · '+numKo(M.loops)+' 번째 관도';
+  $('dTitle').textContent=d.t; $('dText').textContent=d.x; $('dMem').textContent=memTxt;
+  $('dCount').textContent='죽음 기록 '+Object.keys(M.deaths).length+' / '+Object.keys(DEATH).length;
+  $('deathOv').hidden=false; $('againBtn').focus();
+}
+function win(){
+  R.over=true;
+  M.best=Math.max(M.best,20); saveM();
+  const n=M.loops;
+  $('wText').textContent=(n===1?'한 번도 죽지 않고':numKo(n)+' 번째 관도에서')+' 스무 날을 버텼다. 죽음 기록 '+Object.keys(M.deaths).length+'개, 기억 '+Object.keys(M.mem).length+'개.';
+  $('winOv').hidden=false; $('winAgain').focus();
+}
+
+/* 끌기 */
+(function(){
+  const card=$('card'); let x0=null,dx=0;
+  card.addEventListener('pointerdown',e=>{ if(busy) return; x0=e.clientX; dx=0; card.classList.add('drag'); card.setPointerCapture(e.pointerId); });
+  card.addEventListener('pointermove',e=>{ if(x0===null) return; dx=e.clientX-x0;
+    card.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`; setTags(dx); preview(dx<-20?'L':dx>20?'R':null); });
+  const end=()=>{ if(x0===null) return; card.classList.remove('drag'); x0=null;
+    if(Math.abs(dx)>80) choose(dx<0?'L':'R'); else { card.style.transform=''; setTags(0); preview(null); } };
+  card.addEventListener('pointerup',end); card.addEventListener('pointercancel',end);
+})();
+['L','R'].forEach(s=>{ const b=$('b'+s);
+  b.addEventListener('click',()=>choose(s));
+  b.addEventListener('mouseenter',()=>preview(s)); b.addEventListener('mouseleave',()=>preview(null));
+  b.addEventListener('focus',()=>preview(s)); b.addEventListener('blur',()=>preview(null)); });
+document.addEventListener('keydown',e=>{
+  const anyOv=['titleOv','deathOv','winOv','dexOv'].some(id=>!$(id).hidden);
+  if(anyOv) return;
+  if(e.key==='ArrowLeft'){ preview('L'); choose('L'); }
+  if(e.key==='ArrowRight'){ preview('R'); choose('R'); }
+});
+
+/* 화면 버튼 */
+const bgm=$('bgm'); let soundOn=false;
+try{ soundOn=localStorage.getItem('gdr-sound')==='1'; }catch(e){}
+function syncSnd(){ $('snd').textContent=soundOn?'소리 끄기':'소리 켜기'; if(soundOn){ bgm.volume=.45; bgm.play().catch(()=>{}); } else bgm.pause(); }
+$('snd').onclick=()=>{ soundOn=!soundOn; try{ localStorage.setItem('gdr-sound',soundOn?'1':'0'); }catch(e){} syncSnd(); };
+$('snd').textContent=soundOn?'소리 끄기':'소리 켜기';
+$('startBtn').onclick=()=>{ $('titleOv').hidden=true; syncSnd(); newRun(); };
+$('againBtn').onclick=()=>{ $('deathOv').hidden=true; newRun(); };
+$('winAgain').onclick=()=>{ $('winOv').hidden=true; newRun(); };
+$('dexBtn').onclick=()=>{
+  $('dexList').innerHTML=Object.keys(DEATH).map(k=>M.deaths[k]?`<div>${DEATH[k].t}</div>`:'<div class="no">아직 모름</div>').join('');
+  const ms=Object.keys(M.mem); $('memList').textContent=ms.length?'기억: '+ms.map(k=>MEMO[k]).join(' / '):'아직 얻은 기억이 없다.';
+  $('dexOv').hidden=false; $('dexClose').focus(); };
+$('dexClose').onclick=()=>{ $('dexOv').hidden=true; };
+R={day:1,g:{s:50,c:50,g:50,d:50},used:{},done:{}}; F={}; drawGauges();
+$('loop').textContent=M.loops?numKo(M.loops)+' 번째까지 겪음':'첫 번째';
+</script>
