@@ -4,18 +4,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Nanum+Myeongjo:wght@400;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
 <style>
-/* 레이아웃: 전장이 화면 대부분. 위 띠에 붓글씨 장 이름과 목표, 아래 옻칠 판에 명령. 『관도지로』 본편의 옻칠·비단·청동·주사 */
+/* 레이아웃: 장료의 군막에 펼친 작전 지도가 화면 대부분. 위 띠에 장 이름과 기병의 전진, 아래 옻칠 판에 진형과 명령, 오른쪽 아래 전령 카드 */
 :root{
-  --lac:#0e0c0a;            /* 옻칠 바탕 */
-  --lac2:#17140f;
-  --lac-a:rgba(14,12,10,.9);
-  --silk:#ece3cd;           /* 비단 글 */
-  --silk-dim:#a99c82;
-  --bronze:#c9a35c;         /* 청동 */
-  --bronze-lo:#6b5526;
-  --cin:#b02a25;            /* 주사 */
-  --cin-t:#e0564b;
-  --jade:#7fa999;
+  --lac:#0e0c0a; --lac2:#17140f; --lac-a:rgba(14,12,10,.92);
+  --silk:#ece3cd; --silk-dim:#a99c82;
+  --bronze:#c9a35c; --bronze-lo:#6b5526;
+  --cin:#b02a25; --cin-t:#e0564b; --jade:#7fa999;
   --hair:rgba(201,163,92,.2);
   --f-brush:"Ma Shan Zheng","Nanum Myeongjo",serif;
   --f-serif:"Nanum Myeongjo","Noto Serif KR",serif;
@@ -26,54 +20,59 @@
 html,body{height:100%;margin:0;overflow:hidden}
 body{background:var(--lac);color:var(--silk);font-family:var(--f-serif);font-size:14px;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #cv{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
-button{font-family:var(--f-serif);font-weight:700;color:var(--silk);background:transparent;border:0;border-bottom:1px solid transparent;border-radius:0;padding:6px 4px;font-size:14px;letter-spacing:.12em;cursor:pointer;line-height:1.2}
+button{font-family:var(--f-serif);font-weight:700;color:var(--silk);background:transparent;border:0;border-bottom:1px solid transparent;border-radius:0;padding:5px 2px;font-size:14px;letter-spacing:.1em;cursor:pointer;line-height:1.2}
 button:hover,button:focus-visible{color:var(--bronze);border-bottom-color:var(--bronze);outline:none}
 button.on{color:var(--bronze);border-bottom-color:var(--bronze)}
-button:disabled{opacity:.3;cursor:default;border-bottom-color:transparent;color:var(--silk)}
-kbd{font-family:var(--f-ui);font-size:10px;color:var(--silk-dim);margin-left:5px;letter-spacing:0;font-weight:400}
+button:disabled{opacity:.28;cursor:default;border-bottom-color:transparent;color:var(--silk)}
+kbd{font-family:var(--f-ui);font-size:10px;color:var(--silk-dim);margin-left:4px;letter-spacing:0;font-weight:400}
 
-/* 위 띠 */
 #top{position:fixed;left:0;right:0;top:0;display:flex;align-items:center;gap:18px;background:var(--lac);border-bottom:1px solid var(--hair);
   padding:calc(6px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 6px max(16px,env(safe-area-inset-left,0px))}
 #goal{flex:1;min-width:0;display:flex;align-items:baseline;gap:14px}
-#goal b{font-family:var(--f-brush);font-weight:400;font-size:30px;line-height:1;color:var(--silk)}
+#goal b{font-family:var(--f-brush);font-weight:400;font-size:30px;line-height:1}
 #goal span{font-size:13px;color:var(--silk-dim);line-height:1.4;min-width:0}
-#foe{font-size:13px;color:var(--silk-dim);white-space:nowrap;display:flex;align-items:center;gap:8px}
-#foe .seal{width:22px;height:22px;background:var(--cin);color:var(--silk);font-family:var(--f-brush);display:grid;place-items:center;font-size:16px}
+#cavbar{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--silk-dim);white-space:nowrap}
+#cavbar .tr{width:140px;height:4px;background:rgba(236,227,205,.12);position:relative}
+#cavbar .tr i{position:absolute;left:0;top:0;bottom:0;background:var(--bronze);width:0}
+#cavbar b{color:var(--silk);font-family:var(--f-ui);font-weight:600;font-variant-numeric:tabular-nums}
 #next{font-size:12px;color:var(--silk-dim);white-space:nowrap;font-family:var(--f-ui);font-variant-numeric:tabular-nums}
-#next b{color:var(--jade);font-weight:600}#next .k{color:var(--bronze)}
+#next b{color:var(--jade);font-weight:600}
 #clock{font-family:var(--f-ui);font-variant-numeric:tabular-nums;font-size:14px;min-width:40px;text-align:right}
 #ctl{display:flex;gap:10px}
 
-/* 전령 보고 — 붙여 내린 죽간 띠 */
-#toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(64px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;width:min(92vw,560px)}
-.toast{background:var(--lac-a);border:1px solid var(--hair);border-left:3px solid var(--bronze);padding:8px 14px;font-size:14px;line-height:1.5;animation:tin .25s ease}
-.toast.w{border-left-color:var(--bronze)}.toast.b{border-left-color:var(--cin)}
-.toast.n{border-left-color:var(--jade)}
-.toast i{font-style:normal;font-weight:700;color:var(--bronze);margin-right:8px;letter-spacing:.08em}
-.toast.b i{color:var(--cin-t)}
-@keyframes tin{from{opacity:0;transform:translateY(-6px)}}
+/* 전령 카드 */
+#herald{position:fixed;right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:8px;width:min(86vw,360px);pointer-events:none}
+.hc{display:flex;gap:10px;align-items:stretch;background:var(--lac-a);border:1px solid var(--hair);animation:tin .25s ease}
+.hc .ph{width:56px;flex:none;background:var(--lac2) center top/cover no-repeat;border-right:1px solid var(--hair)}
+.hc .ph.seal{display:grid;place-items:center;background:var(--cin);color:var(--silk);font-family:var(--f-brush);font-size:26px}
+.hc .tx{padding:7px 10px 8px 0;min-width:0;font-size:14px;line-height:1.5}
+.hc .tx i{display:block;font-style:normal;font-weight:800;font-size:12px;color:var(--bronze);letter-spacing:.08em}
+.hc.b{border-color:rgba(176,42,37,.6)}.hc.b .tx i{color:var(--cin-t)}
+.hc.n .tx i{color:var(--jade)}
+@keyframes tin{from{opacity:0;transform:translateX(8px)}}
+#logv{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(60px + env(safe-area-inset-top,0px));width:min(92vw,380px);max-height:50vh;overflow:auto;background:var(--lac-a);border:1px solid var(--hair);padding:8px 14px;font-size:13px;line-height:1.6}
+#logv div{border-bottom:1px solid var(--hair);padding:4px 0}
 
 /* 아래 옻칠 판 */
 #bottom{position:fixed;left:0;right:0;bottom:0;background:var(--lac);border-top:1px solid var(--hair);
-  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+  padding:9px max(16px,env(safe-area-inset-right,0px)) calc(9px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-#sel{min-width:0;flex:1;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+#sel{min-width:0;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
 #sel .nm{font-weight:800;font-size:17px;letter-spacing:.04em}
 .chip{font-family:var(--f-ui);font-size:12px;color:var(--silk-dim);white-space:nowrap}
 .chip.w{color:var(--bronze)}.chip.b{color:var(--cin-t)}.chip.g{color:var(--jade)}
 .chip+.chip::before{content:"·";margin-right:12px;color:var(--bronze-lo)}
-#units{display:flex;gap:14px;flex-wrap:wrap}
+.grp{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.grp > span{font-size:11px;color:var(--silk-dim);letter-spacing:.14em;font-family:var(--f-ui)}
+#units{display:flex;gap:16px;flex-wrap:wrap}
 .ub{display:flex;gap:6px;align-items:baseline;letter-spacing:.04em}
 .ub .gl{font-family:var(--f-brush);font-weight:400;font-size:20px;letter-spacing:0}
 .ub small{font-family:var(--f-ui);font-weight:400;color:var(--silk-dim);font-variant-numeric:tabular-nums;letter-spacing:0}
-
-/* 편성판 */
-#setup{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--hair)}
+#setup{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--hair)}
 .slot{padding:8px 12px;display:flex;flex-direction:column;gap:5px;min-width:0;border-left:1px solid var(--hair)}
 .slot:first-child{border-left:0}
 .slot.off{opacity:.45}
-.slot select{font-family:var(--f-serif);font-size:13px;background:var(--lac2);color:var(--silk);border:1px solid var(--hair);border-radius:0;padding:4px;min-width:0;flex:1;width:100%}
+.slot select{font-family:var(--f-serif);font-size:13px;background:var(--lac2);color:var(--silk);border:1px solid var(--hair);border-radius:0;padding:4px;min-width:0;width:100%}
 .slot h4{margin:0;font-size:15px;font-weight:800;display:flex;justify-content:space-between;gap:6px;align-items:baseline}
 .slot h4 small{font-family:var(--f-ui);font-weight:400;color:var(--silk-dim);font-size:12px}
 .seg{display:flex;gap:10px;flex-wrap:wrap}
@@ -85,55 +84,54 @@ kbd{font-family:var(--f-ui);font-size:10px;color:var(--silk-dim);margin-left:5px
 .cnt button:hover{border-color:var(--bronze)}
 #pool{font-size:13px;color:var(--silk-dim)}
 #pool b{color:var(--silk);font-family:var(--f-ui)}
-@media (max-width:760px){#setup{grid-template-columns:repeat(2,minmax(0,1fr))}#foe{display:none}.slot:nth-child(3){border-left:0}}
-@media (max-height:520px){#setup{grid-template-columns:repeat(4,minmax(160px,1fr));overflow-x:auto}#goal span{display:none}}
+@media (max-width:820px){#setup{grid-template-columns:repeat(2,minmax(0,1fr))}#cavbar .tr{width:70px}#goal span{display:none}.slot:nth-child(3){border-left:0}}
+@media (max-height:520px){#setup{grid-template-columns:repeat(4,minmax(160px,1fr));overflow-x:auto}}
 
-/* 덮개 — 본편 각인 화면처럼 */
 .ov{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(14,12,10,.86),rgba(8,7,6,.97));display:flex;align-items:center;justify-content:center;
   padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.card{width:100%;max-width:560px;max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:16px;line-height:1.75;font-size:15px}
-.card .brush{font-family:var(--f-brush);font-size:clamp(64px,14vw,96px);line-height:1;color:var(--silk)}
+.card{width:100%;max-width:580px;max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:16px;line-height:1.75;font-size:15px}
+.card .brush{font-family:var(--f-brush);font-size:clamp(64px,14vw,96px);line-height:1}
 .card h1{font-size:clamp(20px,4.6vw,24px);margin:0;font-weight:800;letter-spacing:.14em}
 .card h2{font-size:22px;margin:0;font-weight:800;letter-spacing:.08em}
 .card .eb{font-family:var(--f-ui);font-size:11px;letter-spacing:.2em;color:var(--silk-dim)}
 .card p{margin:0}
-.card blockquote{margin:0;padding-left:14px;border-left:1px solid var(--bronze);color:var(--silk)}
+.card blockquote{margin:0;padding-left:14px;border-left:1px solid var(--bronze)}
 .card .who{color:var(--silk-dim);font-size:13px}
 .foe{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:12px 0;display:flex;gap:14px;align-items:center}
 .foe .fl{width:44px;height:52px;background:var(--cin);color:var(--silk);display:grid;place-items:center;font-family:var(--f-brush);font-size:30px;flex:none}
-.foe div{min-width:0}
 .big{font-size:16px;padding:8px 2px;color:var(--bronze);border-bottom:1px solid var(--bronze);letter-spacing:.2em}
 .big:hover,.big:focus-visible{color:var(--silk);border-bottom-color:var(--silk)}
-.seal-big{width:76px;height:76px;background:var(--cin);color:var(--silk);font-family:var(--f-brush);font-size:54px;display:grid;place-items:center;transform:rotate(-4deg);box-shadow:inset 0 0 0 3px rgba(236,227,205,.18)}
+.seal-big{width:76px;height:76px;background:var(--cin);color:var(--silk);font-family:var(--f-brush);font-size:54px;display:grid;place-items:center;transform:rotate(-4deg);flex:none}
 .seal-big.lose{background:#3a3530;color:var(--silk-dim)}
+.howto{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13px;color:var(--silk-dim);line-height:1.6}
+.howto b{color:var(--silk);font-weight:700}
 table{width:100%;border-collapse:collapse;font-size:14px}
 td,th{padding:6px 4px;border-bottom:1px solid var(--hair);text-align:left}
 td{font-variant-numeric:tabular-nums}
 th{color:var(--silk-dim);font-weight:400;font-size:12px;font-family:var(--f-ui)}
-#logv{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(64px + env(safe-area-inset-top,0px));width:min(92vw,360px);max-height:50vh;overflow:auto;background:var(--lac-a);border:1px solid var(--hair);padding:8px 14px;font-size:13px;line-height:1.6}
-#logv div{border-bottom:1px solid var(--hair);padding:4px 0}
-@media (prefers-reduced-motion:reduce){.toast{animation:none}}
+@media (prefers-reduced-motion:reduce){.hc{animation:none}}
 </style>
 
 <canvas id="cv"></canvas>
 
 <div id="top">
-  <div id="goal"><b>白馬</b><span id="goalT">편성: 깃발을 끌어 시작 위치를 정한다</span></div>
-  <div id="foe"><span class="seal">顔</span>원소군 선봉 안량</div>
+  <div id="goal"><b>白馬</b><span id="goalT">편성: 패를 끌어 시작 자리를 정한다</span></div>
+  <div id="cavbar" hidden><span id="cavNm">관우 기병</span><div class="tr"><i id="cavI"></i></div><b id="cavP">0%</b></div>
   <div id="next"></div><div id="clock">0:00</div>
   <div id="ctl">
+    <button id="bSnd" title="소리">소리</button>
     <button id="bPause" title="멈춤 (Space)">멈춤</button>
     <button id="bSpeed" title="빠르기">×1</button>
     <button id="bLog" title="지난 보고">보고</button>
   </div>
 </div>
-<div id="toasts"></div>
+<div id="herald"></div>
 <div id="logv" hidden></div>
 
 <div id="bottom">
   <div id="setupWrap">
     <div class="row" style="justify-content:space-between;margin-bottom:8px">
-      <div class="row"><span style="color:var(--silk-dim);font-size:13px">편성 예시</span>
+      <div class="row" style="gap:14px"><span style="color:var(--silk-dim);font-size:13px">편성 예시</span>
         <button data-preset="steady">안정</button><button data-preset="shoot">사격</button><button data-preset="push">공격</button></div>
       <div id="pool"></div>
       <button class="big" id="bGo">출전한다</button>
@@ -141,14 +139,22 @@ th{color:var(--silk-dim);font-weight:400;font-size:12px;font-family:var(--f-ui)}
     <div id="setup"></div>
   </div>
   <div id="battleWrap" hidden>
-    <div class="row" style="justify-content:space-between;gap:16px">
-      <div id="sel"><span class="nm">부대를 고른다</span><span class="chip">깃발을 누르거나 1~4</span></div>
-      <div class="row" id="cmds" style="gap:16px">
-        <button data-c="move">이동<kbd>M</kbd></button>
-        <button data-c="hold">버티기<kbd>H</kbd></button>
-        <button data-c="back">물러나기<kbd>R</kbd></button>
-        <button data-c="swap">교대<kbd>S</kbd></button>
-        <button data-c="charge">돌격<kbd>C</kbd></button>
+    <div class="row" style="justify-content:space-between;gap:12px 22px;align-items:baseline">
+      <div id="sel"><span class="nm">부대를 고른다</span><span class="chip">패를 누르거나 1~4</span></div>
+      <div class="row" style="gap:12px 26px;align-items:baseline">
+        <div class="grp" id="stances"><span>진형</span>
+          <button data-s="square">방진<kbd>Q</kbd></button>
+          <button data-s="line">횡대<kbd>W</kbd></button>
+          <button data-s="dense">밀집<kbd>E</kbd></button>
+          <button data-s="brace">창 세우기<kbd>B</kbd></button>
+        </div>
+        <div class="grp" id="cmds"><span>명령</span>
+          <button data-c="move">이동<kbd>M</kbd></button>
+          <button data-c="attack">공격<kbd>A</kbd></button>
+          <button data-c="back">물러나기<kbd>R</kbd></button>
+          <button data-c="swap">교대<kbd>S</kbd></button>
+          <button data-c="volley">일제 사격<kbd>V</kbd></button>
+        </div>
       </div>
     </div>
     <div id="units" style="margin-top:6px"></div>
@@ -156,109 +162,122 @@ th{color:var(--silk-dim);font-weight:400;font-size:12px;font-family:var(--f-ui)}
 </div>
 
 <div class="ov" id="brief"><div class="card">
-  <div class="eb">건안 5년 · 백마 · 장료의 보병</div>
+  <div class="eb">건안 5년 · 백마 · 장료의 군막</div>
   <div class="brush">白馬</div>
   <h1>길목을 지켜라</h1>
-  <blockquote>"기병 뒤에 붙으시오. 말에서 떨어진 아군이 돌아오면 길을 열어 받아들이고, 뒤쫓는 적은 막으시오."<br><span class="who">장료</span></blockquote>
+  <blockquote>"기병이 먼저 나가오. 그대 부대는 길목을 맡으시오. 말에서 떨어진 아군이 돌아오면 길을 열어 받고, 뒤쫓는 적은 막으시오. 왼쪽과 오른쪽은 옆 부대가 선다."<br><span class="who">장료</span></blockquote>
   <div class="foe"><div class="fl">顔</div><div>
     <b style="letter-spacing:.06em">원소군 선봉 · 안량</b><br>
-    <span style="color:var(--silk-dim);font-size:14px">앞줄을 보내 배치를 떠본다. 예비가 움직이면 그 자리를 노린다. 대열이 흔들리면 군기를 앞으로 내고 뒷군을 쏟는다.</span>
+    <span style="color:var(--silk-dim);font-size:14px">앞줄로 배치를 떠본다. 예비가 움직이면 비운 자리를 친다. 대열이 흔들리는 곳에 뒷군을 쏟고, 오른쪽 둑 너머로 돌아 들어온다.</span>
   </div></div>
-  <p>버티는 동안 기병이 안량에게 닿는다. 그때까지 길을 지킨다.</p>
-  <div class="row"><span style="color:var(--silk-dim);font-size:13px">이 판에서 안량을 베는 사람</span>
+  <div class="howto">
+    <b>이기는 법</b><span>우리 기병이 안량의 군기에 닿을 때까지 길목을 지킨다. 길목이 흔들리면 기병의 전진이 느려진다.</span>
+    <b>공격</b><span>적 패를 눌러야 치러 간다. 명령이 없으면 붙어도 막기만 한다.</span>
+    <b>진형</b><span>방진은 단단하지만 못 움직인다. 횡대는 넓게 막는다. 밀집은 두껍지만 화살에 약하다. 창 세우기는 기병을 받아친다.</span>
+    <b>궁수</b><span>화살은 스물네 묶음. 일제 사격은 네 묶음을 써서 크게 맞히고 사기를 꺾는다. 다 쓰면 쏘지 못한다.</span>
+  </div>
+  <div class="row" style="gap:16px"><span style="color:var(--silk-dim);font-size:13px">안량을 베는 사람</span>
     <button id="pGuan" class="on">관우</button><button id="pLv">여포</button></div>
-  <p style="color:var(--silk-dim);font-size:13px;line-height:1.7">병력 이백. 숙련 육십, 신병 백사십. 신병은 명령을 늦게 받고, 움직이면 대열이 벌어진다. 내 부대에서 멀리 있는 부대에는 명령이 더 늦게 닿는다.</p>
   <div><button class="big" id="bBrief">편성하러 간다</button></div>
 </div></div>
 
 <div class="ov" id="result" hidden><div class="card">
   <div class="row" style="gap:18px;align-items:center"><div class="seal-big" id="rSeal">守</div><div style="min-width:0">
-    <div class="eb" id="rEb"></div>
-    <h2 id="rT"></h2></div></div>
+    <div class="eb" id="rEb"></div><h2 id="rT"></h2></div></div>
   <p id="rX"></p>
   <table id="rTab"></table>
   <p id="rGrow" style="font-size:13px;color:var(--silk-dim)"></p>
   <div><button class="big" id="bAgain">다시 편성한다</button></div>
 </div></div>
 
+<audio id="sfx_volley" src="assets/sfx/volley.mp3" preload="none"></audio>
+<audio id="sfx_sword" src="assets/sfx/sword.mp3" preload="none"></audio>
+<audio id="sfx_horse" src="assets/sfx/horse.mp3" preload="none"></audio>
+<audio id="sfx_gong" src="assets/sfx/gong.mp3" preload="none"></audio>
+<audio id="sfx_stamp" src="assets/sfx/stamp.mp3" preload="none"></audio>
+<audio id="sfx_paper" src="assets/sfx/paper.mp3" preload="none"></audio>
+
 <script>
-/* ───────── 세계 ───────── */
-const W=2304,H=1296;
-const ROAD={x0:1035,x1:1275,c:1155};
-const RIVER_X=150;
-const DEPLOY={y0:860,y1:1250}, REAR_Y=1130;
-const SP=24;                       // 병사 그림 간격 (그림 하나 = 두 사람)
-const bg=new Image(); bg.src='assets/bg/baima_field.webp';
+/* ───────── 지도 ───────── */
+const W=2000,H=1200;
+const ROAD={x0:935,x1:1065,c:1000};
+const SECTOR={x0:640,x1:1360};
+const DEPLOY={y0:700,y1:1110}, REAR_Y=985;
+const RIVER_X=170, DIKE_X=1840;
+const HQ={x:1000,y:170};
+const LINE_Y=820;
 
 const TY={
-  shield:{g:'盾',nm:'방패',ranks:2,spd:30,atk:{inf:.45,cav:.6},def:.55,adef:.3},
-  spear: {g:'槍',nm:'창',  ranks:3,spd:36,atk:{inf:.8,cav:1.7},def:1,adef:1},
-  bow:   {g:'弓',nm:'궁수',ranks:2,spd:40,atk:{inf:.3,cav:.3},def:1.3,adef:1,range:440},
-  espear:{g:'槍',nm:'창병',ranks:3,spd:34,atk:{inf:.8,cav:1.4},def:1,adef:1},
-  ebow:  {g:'弓',nm:'궁수',ranks:2,spd:36,atk:{inf:.3,cav:.3},def:1.3,adef:1,range:440},
-  ecav:  {g:'騎',nm:'기병',ranks:2,spd:150,atk:{inf:1.25,cav:1},def:.9,adef:.8,cav:true},
-  rider: {g:'騎',nm:'아군 기병',ranks:2,spd:175,atk:{inf:.4,cav:.4},def:.9,adef:.8,cav:true},
+  shield:{g:'盾',nm:'방패',atk:{inf:.5,cav:.6},def:1.45,adef:.35,spd:32},
+  spear: {g:'槍',nm:'창',  atk:{inf:.9,cav:1.5},def:1,adef:1,spd:36},
+  bow:   {g:'弓',nm:'궁수',atk:{inf:.35,cav:.35},def:.8,adef:1,spd:40,range:470},
+  aspear:{g:'步',nm:'보병',atk:{inf:.8,cav:1.2},def:1.1,adef:.8,spd:34},
+  espear:{g:'槍',nm:'창병',atk:{inf:.85,cav:1.3},def:1,adef:1,spd:34},
+  ebow:  {g:'弓',nm:'궁수',atk:{inf:.3,cav:.3},def:.8,adef:1,spd:36,range:460},
+  ecav:  {g:'騎',nm:'기병',atk:{inf:1.25,cav:1},def:.95,adef:.8,spd:140,cav:true},
+  guard: {g:'親',nm:'친위대',atk:{inf:1,cav:1.2},def:1.3,adef:.6,spd:20},
+  rider: {g:'騎',nm:'아군 기병',atk:{inf:.4,cav:.4},def:.9,adef:.8,spd:170,cav:true},
 };
 const CMDR={
   none:{nm:'없음'},
-  wang:{nm:'왕삼',tip:'밀려도 대열을 다시 세운다'},
+  wang:{nm:'왕삼',tip:'무너질 때 대열을 다시 세운다'},
   jono:{nm:'조노',tip:'물러나고 교대할 때 흩어지지 않는다'},
-  so:  {nm:'소칠',tip:'적의 우회와 기병 귀환을 먼저 알린다'},
-  me:  {nm:'나',tip:'명령이 빠르다. 다른 부대도 가까울수록 빨리 받는다'},
+  so:  {nm:'소칠',tip:'기병 귀환과 우회를 먼저 알린다'},
+  me:  {nm:'나',tip:'명령이 빠르다. 가까운 부대일수록 빨리 받는다'},
 };
+const FACE={'왕삼':'wangsam','조노':'jono','소칠':'sochil','장료':'zhangliao','관우':'guanyu','여포':'lvbu'};
 
 /* ───────── 상태 ───────── */
-let S=null;           // 전투 상태
-let phase='brief';    // brief | setup | battle | end
-let killer='관우';
-let slots=[];
+let S=null, phase='brief', killer='관우', slots=[], soundOn=false;
 const PRESETS={
-  steady:[['shield',60,20,'wang'],['spear',60,20,'me'],['bow',40,10,'so'],['spear',40,10,'jono']],
-  shoot: [['shield',60,30,'wang'],['spear',30,10,'me'],['bow',70,10,'so'],['spear',40,10,'jono']],
-  push:  [['shield',40,20,'wang'],['spear',80,20,'me'],['bow',40,10,'so'],['spear',40,10,'jono']],
+  steady:[['shield',60,20,'wang',1000,800],['spear',60,20,'me',760,830],['bow',40,10,'so',1000,920],['spear',40,10,'jono',1240,1040]],
+  shoot: [['shield',60,30,'wang',1000,800],['spear',30,10,'me',1240,830],['bow',70,10,'so',760,880],['spear',40,10,'jono',1000,1040]],
+  push:  [['shield',40,20,'wang',1000,800],['spear',80,20,'me',1000,880],['bow',40,10,'so',760,860],['spear',40,10,'jono',1240,1040]],
 };
-const STARTPOS=[[1155,930],[760,960],[1155,1080],[1500,1180]];
-function loadPreset(k){
-  slots=PRESETS[k].map((p,i)=>({type:p[0],n:p[1],vet:p[2],cmd:p[3],x:STARTPOS[i][0],y:STARTPOS[i][1]}));
-  if(k==='shoot'){ slots[2].x=780; slots[2].y=1010; slots[1].x=1500; slots[1].y=960; }
-  if(k==='push'){ slots[1].x=1155; slots[1].y=1010; slots[2].x=760; slots[2].y=1000; }
-  renderSetup();
-}
+function loadPreset(k){ slots=PRESETS[k].map(p=>({type:p[0],n:p[1],vet:p[2],cmd:p[3],x:p[4],y:p[5]})); renderSetup(); }
 
-/* ───────── 부대 ───────── */
 let uid=0;
 function mkUnit(side,type,n,x,y,o={}){
-  return Object.assign({id:++uid,side,type,n,n0:n,vet:0,x,y,tx:x,ty:y,order:'hold',morale:80,coh:1,fat:0,dmg:0,
-    cmd:'none',delay:0,pend:null,routed:false,gone:false,engaged:[],fireT:Math.random()*2,blocked:false,
-    disengage:0,charge:0,lastRally:-99,tag:'',start:{x,y},committed:false,seed:Math.random()*1000,
-    exitSaved:false,boostT:0},o);
+  return Object.assign({id:++uid,side,type,n,n0:n,vet:0,x,y,tx:x,ty:y,stance:'line',brace:false,target:null,
+    morale:80,coh:1,fat:0,dmg:0,ammo:TY[type].range?24:0,volleyCD:0,fireT:Math.random()*2,pend:null,delay:0,
+    routed:false,gone:false,engaged:[],retreat:false,disengage:0,label:'',cmd:'none',no:0,tag:'',
+    start:{x,y},committed:false,trail:[],trailT:0,seed:Math.random()*1000,lastRally:-99},o);
 }
 const T=u=>TY[u.type];
-const figs=u=>Math.ceil(u.n/2);
-const cols=u=>Math.max(1,Math.ceil(figs(u)/T(u).ranks));
-function rect(u){ const w=cols(u)*SP, h=T(u).ranks*SP; return {x0:u.x-w/2,y0:u.y-h/2,x1:u.x+w/2,y1:u.y+h/2,w,h}; }
 const tr=u=>u.n?u.vet/u.n:0;
-function ov(a,b,m=0){ return a.x0-m<b.x1 && a.x1+m>b.x0 && a.y0-m<b.y1 && a.y1+m>b.y0; }
-function segHitsRect(x1,y1,x2,y2,r){
-  // 선분-사각형 교차 (리앙-바스키)
-  let t0=0,t1=1; const dx=x2-x1, dy=y2-y1;
-  const p=[-dx,dx,-dy,dy], q=[x1-r.x0,r.x1-x1,y1-r.y0,r.y1-y1];
-  for(let i=0;i<4;i++){ if(p[i]===0){ if(q[i]<0) return false; } else { const t=q[i]/p[i]; if(p[i]<0){ if(t>t1) return false; if(t>t0) t0=t; } else { if(t<t0) return false; if(t<t1) t1=t; } } }
-  return true;
+function geom(u){
+  const n=Math.max(u.n,4);
+  if(T(u).cav) return {w:Math.min(170,Math.max(46,n*2)),h:34};
+  if(u.stance==='dense') return {w:Math.min(230,Math.max(56,n*1.05)),h:62};
+  if(u.stance==='square'||u.brace) return {w:Math.min(300,Math.max(60,n*1.4)),h:52};
+  return {w:Math.min(440,Math.max(70,n*2.2)),h:30};
 }
+function rect(u){ const g=geom(u); return {x0:u.x-g.w/2,y0:u.y-g.h/2,x1:u.x+g.w/2,y1:u.y+g.h/2,w:g.w,h:g.h}; }
+const ov=(a,b,m=0)=>a.x0-m<b.x1&&a.x1+m>b.x0&&a.y0-m<b.y1&&a.y1+m>b.y0;
+function segHitsRect(x1,y1,x2,y2,r){ let t0=0,t1=1; const dx=x2-x1,dy=y2-y1; const p=[-dx,dx,-dy,dy],q=[x1-r.x0,r.x1-x1,y1-r.y0,r.y1-y1];
+  for(let i=0;i<4;i++){ if(p[i]===0){ if(q[i]<0) return false; } else { const t=q[i]/p[i]; if(p[i]<0){ if(t>t1) return false; if(t>t0) t0=t; } else { if(t<t0) return false; if(t<t1) t1=t; } } } return true; }
+const friendly=u=>u.side==='us'||u.side==='ally';
+const isRider=u=>u.type==='rider';
 const ours=()=>S.units.filter(u=>u.side==='us'&&!u.gone);
 const foes=()=>S.units.filter(u=>u.side==='them'&&!u.gone);
 const liveOurs=()=>ours().filter(u=>!u.routed&&u.n>0);
-function nameOf(u){ if(u.side!=='us') return (u.side==='ally'?'아군 기병':'원소군 '+T(u).nm); return `${u.no}대 · ${T(u).nm}`+(u.cmd!=='none'?` · ${CMDR[u.cmd].nm}`:''); }
+function nameOf(u){
+  if(u.side==='us') return `${u.no}대 · ${T(u).nm}`+(u.cmd!=='none'?` · ${CMDR[u.cmd].nm}`:'');
+  return u.label||'부대';
+}
+function play(id){ if(!soundOn) return; const a=document.getElementById('sfx_'+id); if(!a) return; try{ a.currentTime=0; a.volume=.5; a.play().catch(()=>{}); }catch(e){} }
 
-/* ───────── 전령 보고 ───────── */
+/* ───────── 전령 ───────── */
 function report(txt,kind='',who='전령'){
   if(!S) return;
   S.log.unshift(`${fmt(S.t)} ${who}: ${txt}`);
-  const d=document.createElement('div'); d.className='toast '+kind; d.innerHTML=`<i>${who}</i>${txt}`;
-  const box=document.getElementById('toasts'); box.prepend(d);
-  while(box.children.length>3) box.lastChild.remove();
-  setTimeout(()=>d.remove(),5200);
+  const box=document.getElementById('herald');
+  const d=document.createElement('div'); d.className='hc '+kind;
+  const f=FACE[who];
+  d.innerHTML=(f?`<div class="ph" style="background-image:url(assets/portrait/${f}.webp)"></div>`:`<div class="ph seal">${who==='안내'?'令':'傳'}</div>`)+`<div class="tx"><i>${who}</i>${txt}</div>`;
+  box.prepend(d); while(box.children.length>3) box.lastChild.remove();
+  setTimeout(()=>d.remove(),6000);
+  if(kind!=='n') play('paper');
   if(!document.getElementById('logv').hidden) drawLog();
 }
 const fmt=t=>{ t=Math.max(0,Math.floor(t)); return Math.floor(t/60)+':'+String(t%60).padStart(2,'0'); };
@@ -266,547 +285,455 @@ const fmt=t=>{ t=Math.max(0,Math.floor(t)); return Math.floor(t/60)+':'+String(t
 /* ───────── 전투 시작 ───────── */
 function startBattle(){
   uid=0;
-  S={t:0,units:[],fx:[],dead:[],log:[],sel:null,mode:null,speed:1,paused:false,
-     bannerY:150,boost:.12,waver:0,events:[],rescued:0,ridersSent:0,breakT:150,flankHit:false,
-     reserveSeen:false,over:false,lastWeak:null};
-  slots.forEach((s,i)=>{ if(s.n<=0) return;
-    const u=mkUnit('us',s.type,s.n,s.x,s.y,{vet:s.vet,cmd:s.cmd,no:i+1});
-    u.tag = s.y>=REAR_Y ? '예비' : '';
-    S.units.push(u); });
-  const sev=(t,f)=>S.events.push({t,f,done:false});
-  sev(6,()=>{ spawn('espear',50,ROAD.c,60,ROAD.c,620); report('안량이 앞줄을 내보냈습니다. 우리 배치를 떠보는 겁니다.','w'); });
-  sev(20,()=>{ spawn('ebow',40,ROAD.c+40,40,ROAD.c+40,360,{hold:true}); report('적 궁수가 길 위쪽에 자리를 잡습니다.','w'); });
-  riderEvent(30,12,16);
-  sev(42,()=>{ spawn('espear',40,560,40,560,880); report('왼쪽으로도 적 창병이 내려옵니다.','w'); });
-  sev(55,()=>mainPush(75));
-  riderEvent(78,14,20);
+  S={t:0,units:[],fx:[],log:[],sel:null,mode:null,speed:1,paused:false,boost:.24,waver:0,events:[],rescued:0,ridersSent:0,
+     cav:0,cavLive:false,cavSlow:0,flankHit:false,reserveSeen:false,over:false,leak:0,riderTimes:[],bannerFall:null,stainT:0};
+  stainCtx.clearRect(0,0,W,H);
+  slots.forEach((s,i)=>{ if(s.n<=0) return; const u=mkUnit('us',s.type,s.n,s.x,s.y,{vet:s.vet,cmd:s.cmd,no:i+1});
+    u.tag=s.y>=REAR_Y?'예비':''; S.units.push(u); });
+  S.units.push(mkUnit('ally','aspear',150,430,LINE_Y,{label:'왼쪽 옆 부대',vet:60}));
+  S.units.push(mkUnit('ally','aspear',150,1570,LINE_Y,{label:'오른쪽 옆 부대',vet:60}));
+  const hq=mkUnit('them','guard',120,HQ.x,HQ.y+70,{label:'안량 친위대',hold:true,stance:'square',morale:95}); hq.vet=90; S.hq=hq; S.units.push(hq);
+  const ev=(t,f)=>S.events.push({t,f,done:false});
+  ev(1,()=>{ S.cavLive=true; report('기병이 나간다. 길을 비워 주시오!','', '장료'); play('horse'); });
+  ev(10,()=>{ spawn('espear',70,ROAD.c,60,ROAD.c,560,{label:'선봉 창병'}); report('안량이 앞줄을 내보냈습니다. 우리 배치를 떠보는 겁니다.','w'); });
+  ev(20,()=>{ spawn('ebow',40,ROAD.c+60,40,ROAD.c+60,360,{hold:true,label:'원소군 궁수'}); report('적 궁수가 길 위쪽에 자리를 잡습니다.','w'); });
+  riderEvent(32,12,16); riderEvent(80,14,20); riderEvent(116,10,26);
+  ev(45,()=>{ spawn('espear',80,430,40,430,LINE_Y,{label:'선봉 창병',lane:430}); report('왼쪽 옆 부대 쪽으로 적이 내려갑니다.','w'); });
+  ev(58,()=>mainPush(100));
+  ev(70,()=>{ spawn('espear',80,1570,40,1570,LINE_Y,{label:'선봉 창병',lane:1570}); report('오른쪽 옆 부대 쪽에도 적이 붙습니다.','w'); });
   flankEvent(96);
-  riderEvent(112,10,26);
-  sev(122,()=>{ spawn('ecav',30,520,-20,560,980); report('왼쪽 물가를 따라 적 기병이 내려옵니다!','b'); });
-  sev(132,()=>mainPush(60));
-  phase='battle'; showPhase(); select(liveOurs()[0]||null);
-  report('장료: 기병 뒤에 붙으시오. 돌아오는 아군은 받고, 뒤쫓는 적은 막으시오.','', '장료');
+  ev(124,()=>{ spawn('ecav',30,430,-20,430,LINE_Y,{label:'원소군 기병',lane:430}); report('왼쪽으로 적 기병이 내려옵니다!','b'); });
+  ev(135,()=>mainPush(90));
+  phase='battle'; showPhase(); select(liveOurs()[0]||null); play('gong');
 }
-function spawn(type,n,x,y,tx,ty,o={}){
-  const u=mkUnit(o.side||'them',type,n,x,y,Object.assign({tx,ty,order:'move',morale:75},o));
-  if(u.side==='them') u.vet=Math.round(n*.5);
-  S.units.push(u); return u;
-}
+function spawn(type,n,x,y,tx,ty,o={}){ const u=mkUnit(o.side||'them',type,n,x,y,Object.assign({tx,ty,morale:75},o)); if(u.side==='them') u.vet=Math.round(n*.5); S.units.push(u); return u; }
+function has(c){ return S.units.some(u=>u.side==='us'&&u.cmd===c&&!u.routed&&u.n>0); }
 function riderEvent(t,n,pn){
-  S.riderTimes=(S.riderTimes||[]); S.riderTimes.push(t);
-  const hasSo=liveOursHas('so');
-  const warn=hasSo?8:4.5;
-  S.events.push({t:t-warn,done:false,f:()=>{ S.riderWarn={until:t,since:S.t};
-    report(hasSo?'소칠: 나리! 길 위로 우리 기병이 돌아옵니다. 뒤에 적이 붙었습니다!':'아군 기병이 돌아옵니다. 길을 여십시오!','w', hasSo?'소칠':'전령'); }});
-  S.events.push({t,done:false,f:()=>{ S.riderWarn=null; S.ridersSent+=n;
-    spawn('rider',n,ROAD.c,-30,ROAD.c,H+60,{side:'ally',morale:60});
-    S.events.push({t:S.t+2.4,done:false,f:()=>{ const c=spawn('ecav',pn,ROAD.c,-30,ROAD.c,H+60); c.pursuer=true; }}); }});
+  S.riderTimes.push(t);
+  S.events.push({t:t-9,done:false,f:()=>{ const w=has('so')?9:5; S.events.push({t:t-w,done:false,f:()=>{ S.riderWarn={until:t};
+    report(has('so')?'나리! 길 위로 우리 기병이 돌아옵니다. 뒤에 적이 붙었습니다!':'아군 기병이 돌아옵니다. 길을 여십시오!','w',has('so')?'소칠':'전령'); }}); }});
+  S.events.push({t,done:false,f:()=>{ S.riderWarn=null; S.ridersSent+=n; play('horse');
+    spawn('rider',n,ROAD.c,-30,ROAD.c,H+60,{side:'ally',morale:60,label:'돌아오는 아군 기병'});
+    S.events.push({t:S.t+2.4,done:false,f:()=>{ spawn('ecav',pn,ROAD.c,-30,ROAD.c,H+60,{pursuer:true,label:'추격 기병'}); }}); }});
 }
-function liveOursHas(c){ return S.units.some(u=>u.side==='us'&&u.cmd===c&&!u.routed&&u.n>0); }
 function flankEvent(t){
-  S.events.push({t,done:false,f:()=>{ const f=spawn('espear',40,2190,40,2190,H+40); f.flank=true;
-    if(!liveOursHas('so')) report('오른쪽 둑 너머로 적 깃발이 돕니다. 관우 장군의 기병 뒤를 노립니다!','b'); }});
-  S.events.push({t:t-14,done:false,f:()=>{ if(liveOursHas('so')){ S.flankHint={x:2190,y:300,until:t+8};
-    report('소칠: 나리, 오른쪽 둑 너머 먼지가 이상합니다. 깃발이 돌아서 옵니다.','w','소칠'); } }});
+  S.events.push({t:t-15,done:false,f:()=>{ if(has('so')){ S.flankHint={until:t+10}; report('나리, 오른쪽 둑 너머 먼지가 이상합니다. 깃발이 돌아서 옵니다.','w','소칠'); } }});
+  S.events.push({t,done:false,f:()=>{ spawn('espear',45,1920,40,1920,H+40,{flank:true,label:'우회대'});
+    if(!has('so')) report('오른쪽 둑 너머로 적이 돌아 내려옵니다! 기병의 뒤를 노립니다.','b'); }});
 }
 function weakest(){
-  const L=liveOurs().filter(u=>u.tag!=='예비'||u.committed); if(!L.length) return null;
-  return L.reduce((a,b)=> (a.n*a.morale*(a.coh+.2)) < (b.n*b.morale*(b.coh+.2)) ? a : b);
+  const L=S.units.filter(u=>friendly(u)&&!isRider(u)&&!u.routed&&!u.gone&&u.n>0&&(u.tag!=='예비'||u.committed));
+  if(!L.length) return null; return L.reduce((a,b)=>(a.n*a.morale)<(b.n*b.morale)?a:b);
 }
 function mainPush(n){
-  const w=weakest(); const x=w?Math.min(2100,Math.max(300,w.x)):ROAD.c;
-  spawn('espear',n,x,30,x,(w?w.y:900)); spawn('espear',Math.round(n*.6),x+(x<ROAD.c?160:-160),-20,x,(w?w.y:900));
-  report(w?`안량이 ${w.no}대 쪽을 찌릅니다. 약한 곳을 봤습니다.`:'안량의 본대가 내려옵니다.','b');
+  const w=weakest(); const x=w?w.x:ROAD.c;
+  spawn('espear',n,x,30,x,w?w.y:LINE_Y,{label:'안량 본대',lane:x});
+  spawn('espear',Math.round(n*.6),x+(x<ROAD.c?150:-150),-20,x,w?w.y:LINE_Y,{label:'안량 본대',lane:x});
+  report(w?`안량이 ${w.side==='us'?w.no+'대':w.label} 쪽을 찌릅니다. 약한 곳을 봤습니다.`:'안량의 본대가 내려옵니다.','b');
 }
 
 /* ───────── 명령 ───────── */
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 function orderDelay(u){
   let d=.3+(1-tr(u))*1.6;
   const me=S.units.find(v=>v.side==='us'&&v.cmd==='me'&&!v.routed&&v.n>0);
-  if(u.cmd==='me') d*=.45;
-  else if(!me || Math.hypot(me.x-u.x,me.y-u.y)>420) d+=1;
+  if(u.cmd==='me') d*=.45; else if(!me||Math.hypot(me.x-u.x,me.y-u.y)>420) d+=1;
   return d;
 }
-function issue(u,o){
-  if(!u||u.routed||u.n<=0) return;
-  u.pend=o; u.delay=orderDelay(u);
-}
+function issue(u,o){ if(!u||u.routed||u.n<=0||u.side!=='us') return; u.pend=o; u.delay=orderDelay(u); }
+function loosen(u){ u.brace=false; if(u.stance==='square') u.stance='line'; }
 function apply(u,o){
-  if(o.c==='move'){ u.order='move'; u.tx=clampX(o.x); u.ty=Math.min(H-20,Math.max(80,o.y)); }
-  if(o.c==='hold'){ u.order='hold'; u.tx=u.x; u.ty=u.y; }
-  if(o.c==='back'){ u.order='move'; u.tx=u.x; u.ty=Math.min(H-30,u.y+170); u.retreat=true;
-    if(u.engaged.length){ u.disengage=(1-tr(u))*3*(u.cmd==='jono'?.35:1)+.4; } }
-  if(o.c==='charge'){ const t=nearestFoe(u); if(t){ u.order='move'; u.tx=t.x; u.ty=t.y; u.charge=3; u.fat=Math.min(100,u.fat+15);} }
-  if(o.c==='swap'){ const v=o.with; if(!v) return;
-    const ax=u.x,ay=u.y; u.retreat=true; v.retreat=true; u.order='move'; u.tx=v.x; u.ty=v.y; v.order='move'; v.tx=ax; v.ty=ay;
-    [u,v].forEach(w=>{ if(w.engaged.length) w.disengage=(1-tr(w))*2.5*(w.cmd==='jono'||u.cmd==='jono'||v.cmd==='jono'?.3:1)+.3; });
-    if(u.cmd==='jono'||v.cmd==='jono') say(u.cmd==='jono'?u:v,'조노','천천히! 등 보이지 말고 한 줄씩 빠져!'); }
-  if(u.tag==='예비' && !u.committed && Math.hypot(u.tx-u.start.x,u.ty-u.start.y)>160) commitReserve(u);
+  const c=o.c;
+  if(c==='move'){ u.target=null; loosen(u); u.tx=clamp(o.x,RIVER_X+40,DIKE_X-20); u.ty=clamp(o.y,260,H-30);
+    if(u.engaged.length){ u.retreat=true; u.disengage=(1-tr(u))*3*(u.cmd==='jono'?.35:1)+.4; } }
+  if(c==='attack'){ u.target=o.t; loosen(u); }
+  if(c==='back'){ u.target=null; loosen(u); u.tx=u.x; u.ty=Math.min(H-30,u.y+170); u.retreat=true;
+    if(u.engaged.length) u.disengage=(1-tr(u))*3*(u.cmd==='jono'?.35:1)+.4; }
+  if(c==='stance'){
+    if(o.s==='brace'){ if(u.type!=='spear') return; u.brace=true; u.stance='square'; u.tx=u.x; u.ty=u.y; u.target=null; }
+    else { u.brace=false; u.stance=o.s; if(o.s==='square'){ u.tx=u.x; u.ty=u.y; u.target=null; } }
+    u.coh=Math.max(.5,u.coh-.15); }
+  if(c==='volley') volley(u);
+  if(c==='swap'){ const v=o.with; if(!v||v.routed||v.gone) return; const ax=u.x,ay=u.y; u.tx=v.x; u.ty=v.y; v.tx=ax; v.ty=ay; u.target=v.target=null;
+    const j=u.cmd==='jono'||v.cmd==='jono';
+    [u,v].forEach(w=>{ w.retreat=true; loosen(w); if(w.engaged.length) w.disengage=(1-tr(w))*2.5*(j?.3:1)+.3; });
+    if(j) report('천천히! 등 보이지 말고 한 줄씩 빠져!','', '조노'); }
+  if(u.tag==='예비'&&!u.committed&&(Math.hypot(u.tx-u.start.x,u.ty-u.start.y)>160||u.target)) commitReserve(u);
 }
-function clampX(x){ return Math.min(W-40,Math.max(RIVER_X+40,x)); }
-function nearestFoe(u){ let best=null,bd=1e9; for(const f of foes()){ if(f.routed||f.n<=0) continue; const d=Math.hypot(f.x-u.x,f.y-u.y); if(d<bd){bd=d;best=f;} } return best; }
 function commitReserve(u){
-  u.committed=true;
-  if(S.reserveSeen) return; S.reserveSeen=true;
-  if(S.t<100){
-    report('안량이 우리 예비가 움직이는 걸 봤습니다. 비는 자리로 다음 공격이 앞당겨집니다.','b');
-    const x=u.start.x;
-    S.events.push({t:S.t+6,done:false,f:()=>{ spawn('espear',45,x,20,x,u.start.y-80); report(`비운 자리로 적 창병이 쏟아집니다.`,'b'); }});
-  }
+  u.committed=true; if(S.reserveSeen||S.t>100) return; S.reserveSeen=true;
+  report('안량이 우리 예비가 움직이는 걸 봤습니다. 비운 자리로 공격이 앞당겨집니다.','b');
+  const x=u.start.x; S.events.push({t:S.t+6,done:false,f:()=>{ spawn('espear',45,x,20,x,u.start.y-80,{label:'안량 본대',lane:x}); report('비운 자리로 적 창병이 쏟아집니다.','b'); }});
 }
-function say(u,who,txt){ report(txt,'',who); }
+function pickTarget(u){
+  const R=T(u).range, U=S.units.filter(v=>!v.gone);
+  let c=(u.side==='them'?U.filter(friendly):U.filter(v=>v.side==='them')).filter(v=>!v.routed&&v.n>0&&Math.hypot(v.x-u.x,v.y-u.y)<R);
+  if(!c.length) return null;
+  c.sort((a,b)=>Math.hypot(a.x-u.x,a.y-u.y)-Math.hypot(b.x-u.x,b.y-u.y));
+  if(u.focus&&c.includes(u.focus)) c=[u.focus].concat(c.filter(v=>v!==u.focus));
+  const fy=u.side==='them'?rect(u).y1:rect(u).y0;
+  const clear=t=>!U.some(v=>v!==u&&(u.side==='them'?v.side==='them':friendly(v))&&!v.routed&&v.n>0&&segHitsRect(u.x,fy,t.x,t.y,rect(v)));
+  if(clear(c[0])) return {u:c[0],arc:false};
+  if(!u.focus){ const o=c.find(clear); if(o) return {u:o,arc:false}; }
+  return {u:c[0],arc:true};
+}
+function arrowKills(u,t,mul){ return u.n*mul*(.6+.4*u.coh)*(u.side==='them'?1+S.boost:1)*T(t.u).adef*(t.arc?.7:1)*(t.u.stance==='dense'?1.5:1)*(t.u.stance==='square'?.8:1); }
+function volley(u){
+  if(!T(u).range||u.ammo<4||u.volleyCD>0||u.engaged.length) return;
+  const t=pickTarget(u); if(!t) { report(`${u.no}대 사거리 안에 적이 없습니다.`,'n','안내'); return; }
+  u.ammo-=4; u.volleyCD=8; u.fireT=4.5;
+  t.u.dmg+=arrowKills(u,t,.11*3.2); t.u.morale-=15; play('volley');
+  for(let i=0;i<Math.min(40,u.n);i++) S.fx.push({k:'arrow',x0:u.x+(Math.random()-.5)*rect(u).w,y0:u.y,x1:t.u.x+(Math.random()-.5)*rect(t.u).w,y1:t.u.y+(Math.random()-.5)*30,t:-Math.random()*.3,d:.8,arc:t.arc?220:110});
+  report(`${u.no}대 일제 사격! 화살이 비처럼 떨어집니다.`,'n','안내');
+}
 
 /* ───────── 한 틱 ───────── */
 function step(dt){
   S.t+=dt;
-  for(const e of S.events) if(!e.done && S.t>=e.t){ e.done=true; e.f(); }
+  for(const e of S.events) if(!e.done&&S.t>=e.t){ e.done=true; e.f(); }
   const U=S.units.filter(u=>!u.gone);
-  for(const u of U){ u.engaged=[]; }
-  // 교전 판정
-  const enemiesOf=u=> U.filter(v=>v!==u && !v.routed && v.n>0 && (u.side==='them' ? (v.side==='us'||v.side==='ally') : v.side==='them'));
+  for(const u of U) u.engaged=[];
   for(const u of U){ if(u.routed||u.n<=0) continue; const ru=rect(u);
-    for(const v of enemiesOf(u)){ if(ov(ru,rect(v),5)) u.engaged.push(v); } }
-  // 명령 지연
-  for(const u of U){ if(u.pend){ u.delay-=dt; if(u.delay<=0){ const o=u.pend; u.pend=null; apply(u,o); } } }
-  // 근접 피해
-  for(const a of U){ if(a.routed||a.n<=0||!a.engaged.length) continue;
-    const share=1/a.engaged.length;
-    for(const b of a.engaged){
-      const front=Math.min(cols(a),cols(b))*(a.type==='spear'||a.type==='espear'?1.4:1);
-      const eff=(.45+.55*a.coh)*(.55+.45*a.morale/100)*(1-a.fat/260)*(a.side==='them'?1+S.boost:1)*(a.charge>0?1.9:1);
-      let k=.04*front*T(a).atk[T(b).cav?'cav':'inf']*eff/T(b).def*share;
-      const behind = b.side==='them' ? a.y < b.y-6 : a.y > b.y+6;
-      if(behind){ k*=1.7; b.morale-=dt*6; }
+    for(const v of U){ if(v===u||v.routed||v.n<=0) continue;
+      if((u.side==='them'?friendly(v):v.side==='them')&&ov(ru,rect(v),5)) u.engaged.push(v); } }
+  for(const u of U) if(u.pend){ u.delay-=dt; if(u.delay<=0){ const o=u.pend; u.pend=null; apply(u,o); } }
+  // 근접: 붙으면 서로 싸운다 (먼저 치러 가는 건 명령으로만)
+  for(const a of U){ if(a.routed||a.n<=0||!a.engaged.length) continue; const share=1/a.engaged.length, ra=rect(a);
+    for(const b of a.engaged){ const rb=rect(b);
+      const front=Math.max(20,Math.min(ra.x1,rb.x1)-Math.max(ra.x0,rb.x0));
+      const eff=(.45+.55*a.coh)*(.55+.45*a.morale/100)*(1-a.fat/260)*(a.side==='them'?1+S.boost:1);
+      const sdef=b.brace&&T(a).cav?2:(b.stance==='square'?1.8:b.stance==='dense'?1.25:.85);
+      let k=.0032*front*T(a).atk[T(b).cav?'cav':'inf']*eff/(T(b).def*sdef)*share;
+      const behind=b.side==='them'? a.y<b.y-rb.h/2 : a.y>b.y+rb.h/2;
+      const side=!behind&&Math.abs(a.x-b.x)>rb.w/2+6;
+      if(b.stance!=='square'&&(behind||(side&&b.stance!=='line'))){ k*=1.6; b.morale-=dt*5; }
       if(b.disengage>0) k*=1.4;
       b.dmg+=k*dt;
+      if(b.brace&&T(a).cav) a.dmg+=.0032*front*2.4*dt;
     }
     a.fat=Math.min(100,a.fat+dt*4);
   }
   // 사격
-  for(const u of U){ const R=T(u).range; if(!R||u.routed||u.n<=0) continue;
-    u.blocked=false; u.target=null;
+  for(const u of U){ if(!T(u).range||u.routed||u.n<=0) continue;
+    u.shot=null; if(u.volleyCD>0) u.volleyCD-=dt;
     if(u.engaged.length) continue;
-    const tgts=(u.side==='us'?foes():U.filter(v=>v.side!=='them')).filter(v=>!v.routed&&v.n>0&&!v.gone&&Math.hypot(v.x-u.x,v.y-u.y)<R);
-    if(!tgts.length) continue;
-    tgts.sort((a,b)=>Math.hypot(a.x-u.x,a.y-u.y)-Math.hypot(b.x-u.x,b.y-u.y));
-    if(u.focus && tgts.includes(u.focus)){ tgts.splice(tgts.indexOf(u.focus),1); tgts.unshift(u.focus); }
-    else if(u.focus && (u.focus.gone||u.focus.routed)) u.focus=null;
-    const clear=t=>{ const fy=u.side==='us'?rect(u).y0:rect(u).y1;
-      return !U.some(v=>v!==u&&v.side===u.side&&!v.routed&&v.n>0&&segHitsRect(u.x,fy,t.x,t.y,rect(v))); };
-    let tgt=tgts[0], arc=false;
-    if(!clear(tgt)){ // 앞에 아군이 있으면 넘겨 쏜다. 덜 맞는다
-      const other=u.focus?null:tgts.find(clear);
-      if(other) tgt=other; else { arc=true; u.blocked=true; } }
-    u.target=tgt; u.arc=arc;
-    if(u.order==='move' && Math.hypot(u.tx-u.x,u.ty-u.y)>4) continue;
-    u.fireT-=dt;
-    if(u.fireT<=0){ u.fireT=2.8;
-      const kills=u.n*.032*(.6+.4*u.coh)*(u.side==='them'?1+S.boost:1)*T(tgt).adef*(arc?.55:1);
-      tgt.dmg+=kills; tgt.morale-=kills*1.2;
-      for(let i=0;i<Math.min(10,u.n/4);i++) S.fx.push({k:'arrow',arc:arc?220:80,x0:u.x+(Math.random()-.5)*rect(u).w,y0:u.y,x1:tgt.x+(Math.random()-.5)*rect(tgt).w,y1:tgt.y+(Math.random()-.5)*20,t:0,d:.7+Math.random()*.3,side:u.side});
-    }
+    if(u.side==='us'&&u.ammo<=0) continue;
+    const t=pickTarget(u); if(!t) continue; u.shot=t;
+    if(Math.hypot(u.tx-u.x,u.ty-u.y)>4) continue;
+    u.fireT-=dt; if(u.fireT>0) continue; u.fireT=4.5;
+    if(u.side==='us') u.ammo-=1;
+    const kills=arrowKills(u,t,u.side==='them'?.07:.11);
+    t.u.dmg+=kills; t.u.morale-=kills*1.1;
+    for(let i=0;i<Math.min(14,u.n/3);i++) S.fx.push({k:'arrow',x0:u.x+(Math.random()-.5)*rect(u).w,y0:u.y,x1:t.u.x+(Math.random()-.5)*rect(t.u).w,y1:t.u.y+(Math.random()-.5)*24,t:-Math.random()*.2,d:.7,arc:t.arc?200:80});
   }
   // 사상
-  for(const u of U){ while(u.dmg>=1 && u.n>0){ u.dmg-=1;
-      if(u.vet>0 && Math.random()<u.vet/u.n) u.vet--; u.n--;
-      u.morale-=(100/u.n0)*1.1*(1-.4*tr(u));
-      if(S.dead.length<900){ const rr=rect(u); S.dead.push({x:rr.x0+Math.random()*rr.w,y:rr.y0+Math.random()*rr.h,side:u.side,a:.9}); }
-      if(Math.random()<.25) S.fx.push({k:'hit',x:u.x+(Math.random()-.5)*rect(u).w,y:u.y+(Math.random()-.5)*rect(u).h,t:0,d:.5}); }
-    if(u.n<=0 && !u.gone){ u.gone=true; if(u.side==='us') report(`${u.no}대가 무너졌습니다. 남은 사람이 없습니다.`,'b'); } }
-  // 사기·대열·지휘관
+  for(const u of U){ while(u.dmg>=1&&u.n>0){ u.dmg-=1; if(u.vet>0&&Math.random()<u.vet/u.n) u.vet--; u.n--;
+      u.morale-=(100/u.n0)*1.1*(1-.4*tr(u))*(u.stance==='square'?.6:1); }
+    if(u.n<=0&&!u.gone){ u.gone=true; if(u.side==='us') report(`${u.no}대가 무너졌습니다. 남은 사람이 없습니다.`,'b'); if(u===S.hq) win(); } }
+  // 사기와 지휘관
   for(const u of U){ if(u.n<=0||u.routed) continue;
-    const fighting=u.engaged.length>0;
-    if(fighting){ // 수에 밀리면 사기가 꺾인다
-      const foeN=u.engaged.reduce((a,v)=>a+v.n,0), ratio=foeN/Math.max(1,u.n);
-      if(ratio>1.5) u.morale-=dt*Math.min(3.5,(ratio-1.5)*1.0)*(1-.35*tr(u)); }
-    if(!fighting){ u.fat=Math.max(0,u.fat-dt*(u.cmd==='jono'?4:2.4)); if(u.morale<80) u.morale=Math.min(80,u.morale+dt*2.2); }
-    const moving=Math.hypot(u.tx-u.x,u.ty-u.y)>4;
-    if(moving) u.coh=Math.max(.25,u.coh-dt*(1-tr(u))*.16*(u.cmd==='jono'?.4:1));
-    else u.coh=Math.min(1,u.coh+dt*(.12+.2*tr(u)));
-    if(u.charge>0) u.charge-=dt;
+    if(u.engaged.length){ const foeN=u.engaged.reduce((a,v)=>a+v.n,0), r=foeN/Math.max(1,u.n);
+      if(r>1.5) u.morale-=dt*Math.min(3.5,r-1.5)*(1-.35*tr(u))*(u.stance==='square'?.6:1); }
+    else { u.fat=Math.max(0,u.fat-dt*(u.cmd==='jono'?4:2.4)); if(u.morale<80) u.morale=Math.min(80,u.morale+dt*2.2); }
+    const moving=Math.hypot(u.tx-u.x,u.ty-u.y)>4||u.target;
+    if(moving) u.coh=Math.max(.25,u.coh-dt*(1-tr(u))*.16*(u.cmd==='jono'?.4:1)); else u.coh=Math.min(1,u.coh+dt*(.12+.2*tr(u)));
     if(u.disengage>0) u.disengage-=dt;
-    if(u.side==='us' && u.cmd==='wang' && u.morale<32 && S.t-u.lastRally>30){
-      u.lastRally=S.t; u.morale+=16; u.coh=Math.min(1,u.coh+.4);
-      say(u,'왕삼','물러서지 마라! 방패 붙여! 내 등 보고 다시 서!');
-      S.fx.push({k:'rally',x:u.x,y:u.y,t:0,d:1.2});
-    }
-    if(u.side==='us' && u.morale<35 && S.waver<3 && S.t-(S.lastWaver||-99)>20){ S.waver++; S.lastWaver=S.t; S.bannerY+=70; S.boost+=.1;
-      report(`${u.no}대가 흔들립니다. 안량의 군기가 앞으로 나옵니다.`,'b'); }
-    if(u.morale<=0){ u.routed=true; u.order='rout';
-      if(u.side==='us') report(`${u.no}대가 흩어집니다!`,'b'); }
+    if(u.side==='us'&&u.cmd==='wang'&&u.morale<32&&S.t-u.lastRally>30){ u.lastRally=S.t; u.morale+=16; u.coh=Math.min(1,u.coh+.4);
+      report('물러서지 마라! 방패 붙여! 내 등 보고 다시 서!','', '왕삼'); S.fx.push({k:'rally',x:u.x,y:u.y,t:0,d:1.2}); }
+    if(friendly(u)&&!isRider(u)&&u.morale<35&&S.waver<3&&S.t-(S.lastWaver||-99)>20){ S.waver++; S.lastWaver=S.t; S.boost+=.08;
+      report(`${u.side==='us'?u.no+'대':u.label}가 흔들립니다. 안량이 뒷군을 쏟습니다.`,'b'); }
+    if(u.morale<=0){ u.routed=true; u.target=null; u.brace=false; if(u.side!=='them') report(`${u.side==='us'?u.no+'대':u.label}가 흩어집니다!`,'b'); }
   }
   // 이동
   for(const u of U){ if(u.gone) continue;
-    let tx=u.tx,ty=u.ty, spd=T(u).spd;
+    let tx=u.tx,ty=u.ty,spd=T(u).spd;
     if(u.routed){ ty=u.side==='them'?-200:H-40; tx=u.x; spd*=1.25;
-      if(u.side==='us' && u.y>=H-60 && !S.over){ u.routT=(u.routT||0)+dt;
-        const jono=S.units.some(v=>v.side==='us'&&v.cmd==='jono'&&!v.routed&&v.n>0);
-        if(u.routT>(jono?4:9)){ const lost=Math.round(u.n*(jono?.1:.25)); u.n-=lost; u.vet=Math.min(u.vet,u.n);
-          u.routed=false; u.routT=0; u.morale=32; u.coh=.4; u.order='hold'; u.tx=u.x; u.ty=u.y;
-          if(u.n>0) report(jono?`조노가 흩어진 ${u.no}대를 다시 모았습니다. ${lost}명은 돌아오지 않았습니다.`:`${u.no}대가 뒤에서 겨우 다시 모였습니다. ${lost}명이 달아났습니다.`, '', jono?'조노':'전령'); } } }
-    else if(u.side==='them' && !u.hold){
-      if(u.pursuer){ // 길을 따라 내려오다 막히면 붙는다
-        const prey=S.units.find(v=>v.side==='ally'&&!v.gone&&v.y>u.y-10&&!v.routed);
-        tx=ROAD.c; ty=prey?prey.y:H+80;
-      } else if(u.flank){ tx=2190; ty=H+60; }
-      else if(!u.engaged.length && u.y>380){ // 길목을 뚫고 아래로 내려가는 게 목표. 가까운 적만 친다
-        const t=nearestFoe2(u);
-        if(t && Math.hypot(t.x-u.x,t.y-u.y)<300){ tx=t.x; ty=t.y; }
-        else { tx = u.x + (ROAD.c-u.x)*.6; ty=H+80; } }
+      if(u.side!=='them'&&u.y>=H-60&&!S.over){ u.routT=(u.routT||0)+dt; const j=has('jono')&&u.side==='us';
+        if(u.routT>(j?4:9)){ const lost=Math.round(u.n*(j?.1:.25)); u.n-=lost; u.vet=Math.min(u.vet,u.n); u.routed=false; u.routT=0; u.morale=32; u.coh=.4; u.tx=u.x; u.ty=u.y;
+          if(u.n>0) report(j?`흩어진 ${u.no}대를 다시 모았습니다. ${lost}명은 돌아오지 않았습니다.`:`${u.side==='us'?u.no+'대':u.label}가 뒤에서 겨우 다시 모였습니다. ${lost}명이 달아났습니다.`,'',j?'조노':'전령'); } } }
+    else if(u.side==='them'&&!u.hold){
+      if(u.pursuer){ const prey=S.units.find(v=>isRider(v)&&!v.gone&&v.y>u.y-10); tx=ROAD.c; ty=prey?prey.y:H+80; }
+      else if(u.flank){ tx=1920; ty=H+60; }
+      else if(!u.engaged.length&&u.y>330){ const t=nearestFriend(u,300); if(t){ tx=t.x; ty=t.y; } else { tx=u.lane!=null?u.lane:u.x; ty=H+80; } }
     }
-    if(u.side==='ally'){ tx=ROAD.c; ty=H+80; }
-    const blockedMove = u.engaged.length && !(u.retreat&&u.disengage<=0) && !u.routed && u.side!=='ally';
-    if(u.side==='ally' && U.some(v=>v.side==='us'&&!v.routed&&v.n>0&&ov(rect(u),rect(v),2))) spd=22;
-    if(u.engaged.length && u.side==='ally') spd*=.5;
-    if(blockedMove && !(u.side==='us'&&u.retreat)) continue;
-    if(u.side==='us' && u.retreat && u.disengage>0) continue;
-    const dx=tx-u.x, dy=ty-u.y, d=Math.hypot(dx,dy);
-    const sp=spd*(.55+.45*(1-u.fat/100))*dt;
-    if(d>1){ const m=Math.min(d,sp); u.x+=dx/d*m; u.y+=dy/d*m; }
-    else if(u.side==='us'){ u.order='hold'; u.retreat=false; }
+    else if(isRider(u)){ tx=ROAD.c; ty=H+80; }
+    else if(u.side==='us'&&u.target){ const t=u.target; if(t.gone||t.routed){ u.target=null; u.tx=u.x; u.ty=u.y; } else { tx=t.x; ty=t.y; u.tx=tx; u.ty=ty; } }
+    if((u.brace||u.stance==='square')&&u.side!=='them'&&!u.retreat) continue;
+    if(u.engaged.length&&!(u.retreat&&u.disengage<=0)&&!u.routed&&!isRider(u)) continue;
+    if(isRider(u)&&U.some(v=>friendly(v)&&!isRider(v)&&!v.routed&&v.n>0&&ov(rect(u),rect(v),2))) spd=22;
+    const dx=tx-u.x,dy=ty-u.y,d=Math.hypot(dx,dy), sp=spd*(.55+.45*(1-u.fat/100))*dt;
+    if(d>1){ const m=Math.min(d,sp); u.x+=dx/d*m; u.y+=dy/d*m; } else if(u.side==='us') u.retreat=false;
     if(u.x<RIVER_X+30) u.x=RIVER_X+30;
-    // 나간 부대
+    u.trailT+=dt; if(u.trailT>.4&&d>2){ u.trailT=0; u.trail.push([u.x,u.y]); if(u.trail.length>40) u.trail.shift(); }
     if(u.y>H+40){ u.gone=true;
-      if(u.side==='ally'){ S.rescued+=u.n; report(`아군 기병 ${u.n}기가 길을 빠져나왔습니다.`); }
-      else if(u.side==='them' && !u.routed){
-        if(u.flank){ S.flankHit=true; S.breakT+=25; report('오른쪽으로 돈 적이 관우 장군 기병의 뒤를 찔렀습니다. 돌파가 늦어집니다.','b'); }
-        else if(u.pursuer||u.type==='ecav'){ report('적 기병이 우리 뒤로 빠져나갔습니다. 대열 뒤가 어수선합니다.','b'); liveOurs().forEach(v=>v.morale-=12); }
-        else { S.leak=(S.leak||0)+u.n; report(`적 창병 ${u.n}명이 길목을 지나 뒤로 빠졌습니다. (${S.leak}/90)`,'b');
-          liveOurs().forEach(v=>v.morale-=6);
-          if(S.leak>=90) lose('대열이 뚫렸다','적 창병이 길목을 지나 우리 뒤로 쏟아졌다. 돌아올 아군이 지날 길이 사라졌다.'); }
+      if(isRider(u)){ S.rescued+=u.n; report(`아군 기병 ${u.n}기가 길을 빠져나왔습니다.`); }
+      else if(u.side==='them'&&!u.routed){
+        if(u.flank){ S.flankHit=true; report('오른쪽으로 돈 적이 기병의 뒤를 찔렀습니다. 돌파가 늦어집니다.','b'); }
+        else if(u.type==='ecav'){ report('적 기병이 우리 뒤로 빠져나갔습니다. 대열 뒤가 어수선합니다.','b'); S.units.filter(v=>friendly(v)&&!v.gone).forEach(v=>v.morale-=10); }
+        else if(u.x>SECTOR.x0&&u.x<SECTOR.x1){ S.leak+=u.n; report(`적 ${u.n}명이 우리 길목을 지나 뒤로 빠졌습니다. (${S.leak}/90)`,'b'); liveOurs().forEach(v=>v.morale-=6);
+          if(S.leak>=90) lose('길목이 뚫렸다','적 창병이 길목을 지나 우리 뒤로 쏟아졌다. 돌아올 아군이 지날 길이 사라졌다.'); }
+        else { report('옆 부대 쪽이 뚫렸습니다. 기병의 전진이 막힙니다.','b'); S.cavSlow+=8; }
       } }
     if(u.y<-220) u.gone=true;
   }
-  // 같은 편끼리 밀어내기
-  const L=U.filter(u=>!u.gone&&!u.routed);
-  for(let i=0;i<L.length;i++) for(let j=i+1;j<L.length;j++){ const a=L[i],b=L[j]; if(a.side!==b.side) continue;
-    const ra=rect(a), rb=rect(b); if(!ov(ra,rb,-2)) continue;
-    const pushx=Math.min(ra.x1-rb.x0, rb.x1-ra.x0), pushy=Math.min(ra.y1-rb.y0, rb.y1-ra.y0);
-    if(a.side!=='us') continue;
-    if(pushy<pushx){ const s=a.y<b.y?-1:1; a.y+=s*pushy*.25; b.y-=s*pushy*.25; } else { const s=a.x<b.x?-1:1; a.x+=s*pushx*.25; b.x-=s*pushx*.25; } }
-  // 효과
+  // 우리 패끼리 밀어내기
+  const L=U.filter(u=>!u.gone&&!u.routed&&u.side==='us');
+  for(let i=0;i<L.length;i++) for(let j=i+1;j<L.length;j++){ const a=L[i],b=L[j],ra=rect(a),rb=rect(b); if(!ov(ra,rb,-2)) continue;
+    const px=Math.min(ra.x1-rb.x0,rb.x1-ra.x0), py=Math.min(ra.y1-rb.y0,rb.y1-ra.y0);
+    if(py<px){ const s=a.y<b.y?-1:1; a.y+=s*py*.25; b.y-=s*py*.25; } else { const s=a.x<b.x?-1:1; a.x+=s*px*.25; b.x-=s*px*.25; } }
+  // 먹 번짐
+  S.stainT+=dt; if(S.stainT>.5){ S.stainT=0; for(const u of U) if(u.engaged.length&&u.side==='them'){ const v=u.engaged[0]; stain((u.x+v.x)/2,(u.y+v.y)/2,u.n+v.n); } }
+  // 기병의 전진
+  if(S.cavLive&&!S.over){
+    let rate=100/140;
+    if(S.units.some(u=>friendly(u)&&!isRider(u)&&u.routed)) rate*=.6;
+    if(S.flankHit) rate*=.7;
+    if(S.cavSlow>0){ S.cavSlow-=dt; rate*=.3; }
+    if(S.t>8) S.cav=Math.min(100,S.cav+rate*dt);
+    if(S.cav>=100&&!S.hqStruck){ S.hqStruck=true; S.hq.dmg+=999; }
+  }
   for(const f of S.fx) f.t+=dt; S.fx=S.fx.filter(f=>f.t<f.d);
-  // 끝
-  if(S.t>=S.breakT && !S.over) win();
-  const live=liveOurs().reduce((a,u)=>a+u.n,0);
-  const start=S.units.filter(u=>u.side==='us').reduce((a,u)=>a+u.n0,0);
-  if(!S.over && S.t>8 && live<start*.3) lose('부대가 무너졌다','서 있는 사람이 열에 셋도 안 남았다. 길목은 원소군에게 넘어갔다.');
+  const start=S.units.filter(u=>u.side==='us').reduce((a,u)=>a+u.n0,0)||1, live=liveOurs().reduce((a,u)=>a+u.n,0);
+  if(!S.over&&S.t>8&&live<start*.3) lose('부대가 무너졌다','서 있는 사람이 열에 셋도 안 남았다. 길목은 원소군에게 넘어갔다.');
 }
-function nearestFoe2(u){ let best=null,bd=1e9; for(const v of S.units){ if(v.gone||v.routed||v.n<=0||v.side!=='us') continue; const d=Math.hypot(v.x-u.x,v.y-u.y); if(d<bd){bd=d;best=v;} } return best; }
+function nearestFriend(u,R){ let best=null,bd=R; for(const v of S.units){ if(v.gone||v.routed||v.n<=0||!friendly(v)||isRider(v)) continue; const d=Math.hypot(v.x-u.x,v.y-u.y); if(d<bd){bd=d;best=v;} } return best; }
 
 /* ───────── 끝 ───────── */
 function win(){
+  if(S.over) return;
+  S.over=true; S.bannerFall=S.t; foes().forEach(f=>f.routed=true);
   const start=S.units.filter(u=>u.side==='us').reduce((a,u)=>a+u.n0,0), live=liveOurs().reduce((a,u)=>a+u.n,0);
-  if(live<start*.45){ S.over=true; foes().forEach(f=>{ f.routed=true; }); S.bannerFall=S.t;
-    report(`${killer}가 안량을 베었습니다. 그러나 우리 길목에는 서 있는 사람이 거의 없습니다.`,'b');
-    S.loseT='안량은 베였지만, 길목은 무너졌다'; S.loseX=`버틴 사람이 ${live}명뿐이었다. 돌아오던 기병은 무너진 대열 사이로 흩어졌고, 장료는 우리 부대를 셈에 넣지 않았다.`;
-    setTimeout(()=>finish(false),3200); return; }
-  S.over=true;
-  foes().forEach(f=>{ f.routed=true; });
-  report(killer==='여포' ? '여포가 안량의 군기 아래로 뛰어들었습니다. 안량의 목이 떨어졌습니다!' : '관우가 안량의 군기 아래로 말을 몰았습니다. 안량이 베였습니다!','', '전령');
-  S.bannerFall=S.t;
+  report(killer==='여포'?'안량의 군기 아래로 뛰어들었다. 안량의 목을 들었다!':'안량의 군기 아래로 말을 몰았다. 안량을 베었다!','',killer);
+  if(live<start*.45){ S.loseT='안량은 베였지만, 길목은 무너졌다'; S.loseX=`버틴 사람이 ${live}명뿐이었다. 돌아오던 기병은 무너진 대열 사이로 흩어졌고, 장료는 우리 부대를 셈에 넣지 않았다.`; setTimeout(()=>finish(false),3200); return; }
   setTimeout(()=>finish(true),3200);
 }
 function lose(t,x){ if(S.over) return; S.over=true; S.loseT=t; S.loseX=x; setTimeout(()=>finish(false),1800); }
 function finish(won){
-  phase='end';
+  phase='end'; play('stamp');
   const U=S.units.filter(u=>u.side==='us');
-  const lost=U.reduce((a,u)=>a+(u.n0-u.n),0), total=U.reduce((a,u)=>a+u.n0,0);
-  document.getElementById('rEb').textContent=`백마 · ${fmt(S.t)} 동안`;
   const keep=liveOurs().reduce((a,u)=>a+u.n,0)/Math.max(1,U.reduce((a,u)=>a+u.n0,0));
-  const seal=document.getElementById('rSeal'); seal.textContent= won?'守':'潰'; seal.classList.toggle('lose',!won);
-  document.getElementById('rT').textContent= won ? (keep>=.7?'길목을 지켰다':'값비싸게 지켰다') : S.loseT;
-  const zh = !won ? '' : (S.rescued>=S.ridersSent*.7 && lost<total*.3) ? '장료: "길을 열 때와 닫을 때를 알았구려. 적어 두겠소."'
-    : (S.rescued<S.ridersSent*.4) ? '장료: "길목은 지켰소. 다만 돌아오던 기병을 길 위에서 많이 잃었소."'
-    : '장료: "버텼소. 잃은 사람 이름은 오늘 밤 안에 적어 올리시오."';
-  document.getElementById('rX').innerHTML = won
-    ? `${killer}가 안량을 베는 동안 길목을 내주지 않았다. 돌아온 아군 기병 <b>${S.rescued}</b> / ${S.ridersSent}기.${S.flankHit?' 오른쪽 우회를 놓쳐 돌파가 늦어졌다.':''}<br>${zh}`
-    : S.loseX;
-  let rows='<tr><th>부대</th><th>출전</th><th>남음</th><th>숙련</th></tr>';
-  let grown=0;
-  U.forEach(u=>{ const rec=u.n-u.vet; const up=won?Math.round(rec*.5):0; grown+=up;
-    rows+=`<tr><td>${nameOf(u)}</td><td>${u.n0}</td><td>${u.routed?u.n+' (흩어짐)':u.n}</td><td>${u.vet}${up?` → ${u.vet+up}`:''}</td></tr>`; });
+  const seal=document.getElementById('rSeal'); seal.textContent=won?'守':'潰'; seal.classList.toggle('lose',!won);
+  document.getElementById('rEb').textContent=`백마 · ${fmt(S.t)} 동안`;
+  document.getElementById('rT').textContent=won?(keep>=.7?'길목을 지켰다':'값비싸게 지켰다'):S.loseT;
+  const zh=(S.rescued>=S.ridersSent*.7&&keep>=.7)?'"길을 열 때와 닫을 때를 알았구려. 적어 두겠소."':(S.rescued<S.ridersSent*.4)?'"길목은 지켰소. 다만 돌아오던 기병을 길 위에서 많이 잃었소."':'"버텼소. 잃은 사람 이름은 오늘 밤 안에 적어 올리시오."';
+  document.getElementById('rX').innerHTML=won?`${killer}가 안량을 베는 동안 길목을 내주지 않았다. 돌아온 아군 기병 <b>${S.rescued}</b> / ${S.ridersSent}기.${S.flankHit?' 오른쪽 우회를 놓쳐 돌파가 늦어졌다.':''}<br>장료: ${zh}`:S.loseX;
+  let rows='<tr><th>부대</th><th>출전</th><th>남음</th><th>숙련</th></tr>', grown=0;
+  U.forEach(u=>{ const up=won?Math.round((u.n-u.vet)*.5):0; grown+=up; rows+=`<tr><td>${nameOf(u)}</td><td>${u.n0}</td><td>${u.routed?u.n+' (흩어짐)':u.n}</td><td>${u.vet}${up?` → ${u.vet+up}`:''}</td></tr>`; });
   document.getElementById('rTab').innerHTML=rows;
-  document.getElementById('rGrow').textContent = won
-    ? `살아 돌아온 신병 가운데 ${grown}명이 이번 싸움으로 숙련병이 되었다. 다음 출전에서는 숙련병만 추려 작게 나갈지, 신병을 받아 크게 나갈지 정해야 한다.`
-    : '편성이나 배치를 바꿔 다시 해 볼 수 있다.';
+  document.getElementById('rGrow').textContent=won?`살아 돌아온 신병 가운데 ${grown}명이 이번 싸움으로 숙련병이 되었다.`:'편성이나 배치를 바꿔 다시 해 볼 수 있다.';
   document.getElementById('result').hidden=false; document.getElementById('bAgain').focus();
 }
 
-/* ───────── 그리기 ───────── */
+/* ───────── 지도 (한 번 그린다) ───────── */
 const cv=document.getElementById('cv'), cx=cv.getContext('2d');
+const mapC=document.createElement('canvas'); mapC.width=W; mapC.height=H;
+const stainC=document.createElement('canvas'); stainC.width=W; stainC.height=H; const stainCtx=stainC.getContext('2d');
+function rnd(seed){ let s=seed; return ()=>{ s=(s*16807)%2147483647; return (s-1)/2147483646; }; }
+function drawMap(){
+  const g=mapC.getContext('2d'), R=rnd(7);
+  g.clearRect(0,0,W,H); g.fillStyle='#d9c9a3'; g.fillRect(0,0,W,H);
+  for(let i=0;i<9000;i++){ const x=R()*W,y=R()*H,a=R()*.06; g.fillStyle=`rgba(${R()<.5?'90,70,40':'255,250,235'},${a})`; g.fillRect(x,y,1+R()*3,1+R()*3); }
+  for(let i=0;i<40;i++){ const x=R()*W,y=R()*H,r=60+R()*220; const gr=g.createRadialGradient(x,y,0,x,y,r); gr.addColorStop(0,'rgba(120,90,50,.07)'); gr.addColorStop(1,'rgba(120,90,50,0)'); g.fillStyle=gr; g.fillRect(x-r,y-r,r*2,r*2); }
+  const ink=a=>`rgba(34,26,18,${a})`;
+  const wob=(pts,w,a)=>{ g.strokeStyle=ink(a); g.lineWidth=w; g.lineCap='round'; g.beginPath(); pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1])); g.stroke(); };
+  // 물가
+  g.fillStyle='rgba(70,90,95,.18)'; g.beginPath(); g.moveTo(0,0); for(let y=0;y<=H;y+=40) g.lineTo(RIVER_X-20+Math.sin(y/90)*18,y); g.lineTo(0,H); g.fill();
+  for(let k=0;k<5;k++){ const pts=[]; for(let y=-20;y<=H+20;y+=30) pts.push([40+k*26+Math.sin(y/70+k)*10,y]); wob(pts,1.2,.35); }
+  { const pts=[]; for(let y=0;y<=H;y+=24) pts.push([RIVER_X-20+Math.sin(y/90)*18,y]); wob(pts,3,.75); }
+  // 둑
+  { const pts=[]; for(let y=0;y<=H;y+=24) pts.push([DIKE_X+Math.sin(y/120)*14,y]); wob(pts,3.5,.7); for(let y=10;y<H;y+=22){ const x=DIKE_X+Math.sin(y/120)*14; wob([[x,y],[x+16,y+10]],1.4,.45); } }
+  // 길
+  for(const s of [-1,1]){ const pts=[]; for(let y=-10;y<=H+10;y+=20) pts.push([ROAD.c+s*(64+Math.sin(y/140)*6+y*.02),y]); wob(pts,2.4,.8); }
+  for(let y=30;y<H;y+=46){ wob([[ROAD.c-14+R()*8,y],[ROAD.c-10+R()*8,y+18]],1,.25); wob([[ROAD.c+10+R()*8,y+10],[ROAD.c+14+R()*8,y+28]],1,.25); }
+  // 들풀
+  for(let i=0;i<500;i++){ const x=RIVER_X+R()*(DIKE_X-RIVER_X), y=R()*H; if(Math.abs(x-ROAD.c)<90) continue; wob([[x,y],[x+2,y-6]],1,.18+R()*.15); wob([[x+3,y],[x+6,y-5]],1,.15); }
+  // 안량 진영
+  g.save(); g.translate(HQ.x,HQ.y-40);
+  g.strokeStyle=ink(.75); g.lineWidth=3; g.beginPath(); g.ellipse(0,0,330,120,0,Math.PI*.05,Math.PI*.95,true); g.stroke();
+  for(let a=Math.PI*1.05;a<Math.PI*1.95;a+=.06){ const x=Math.cos(a)*330,y=Math.sin(a)*120; g.beginPath(); g.moveTo(x,y); g.lineTo(x*1.04,y*1.08-8); g.stroke(); }
+  for(let i=0;i<14;i++){ const x=-260+i*40, y=-40+((i*37)%50); g.fillStyle=ink(.55); g.beginPath(); g.moveTo(x,y); g.lineTo(x+12,y-16); g.lineTo(x+24,y); g.closePath(); g.fill(); }
+  g.restore();
+  // 우리 진영
+  g.strokeStyle=ink(.6); g.lineWidth=2; for(let x=200;x<1800;x+=18){ if(Math.abs(x-ROAD.c)<80) continue; g.beginPath(); g.moveTo(x,H-26); g.lineTo(x+6,H-44); g.stroke(); }
+  g.beginPath(); g.moveTo(200,H-30); g.lineTo(ROAD.c-80,H-30); g.moveTo(ROAD.c+80,H-30); g.lineTo(1800,H-30); g.stroke();
+  g.setLineDash([6,10]); g.strokeStyle=ink(.35); g.lineWidth=2; for(const x of [SECTOR.x0,SECTOR.x1]){ g.beginPath(); g.moveTo(x,560); g.lineTo(x,H-50); g.stroke(); } g.setLineDash([]);
+  const tx=(t,x,y,size,a,font='"Nanum Myeongjo",serif',rot=0)=>{ g.save(); g.translate(x,y); g.rotate(rot); g.fillStyle=ink(a); g.font=`${size}px ${font}`; g.textAlign='center'; g.textBaseline='middle'; g.fillText(t,0,0); g.restore(); };
+  tx('顔良營',HQ.x-430,HQ.y-20,46,.7,'"Ma Shan Zheng",serif');
+  tx('白馬道',ROAD.c+112,520,36,.55,'"Ma Shan Zheng",serif',-Math.PI/2);
+  tx('물가',95,620,26,.55,undefined,-Math.PI/2);
+  tx('둑',DIKE_X+60,460,28,.55);
+  tx('우리 길목',ROAD.c-240,H-70,22,.45);
+  tx('왼쪽 옆 부대 자리',420,H-70,20,.4); tx('오른쪽 옆 부대 자리',1580,H-70,20,.4);
+  g.strokeStyle=ink(.6); g.lineWidth=6; g.strokeRect(14,14,W-28,H-28); g.lineWidth=1.5; g.strokeRect(26,26,W-52,H-52);
+}
+function stain(x,y,n){ const r=Math.min(90,22+n*.12); const gr=stainCtx.createRadialGradient(x,y,0,x,y,r); gr.addColorStop(0,'rgba(40,24,16,.08)'); gr.addColorStop(1,'rgba(40,24,16,0)'); stainCtx.fillStyle=gr; stainCtx.beginPath(); stainCtx.arc(x+(Math.random()-.5)*20,y+(Math.random()-.5)*14,r,0,7); stainCtx.fill(); }
+
 let view={s:1,ox:0,oy:0};
 function resize(){
-  const dpr=Math.min(2,window.devicePixelRatio||1);
-  cv.width=innerWidth*dpr; cv.height=innerHeight*dpr;
-  const topH=document.getElementById('top').offsetHeight;
-  const botH=document.getElementById('bottom').offsetHeight;
-  const avail=Math.max(120,innerHeight-topH-botH);
-  const s=Math.min(innerWidth/W, avail/H);
+  const dpr=Math.min(2,window.devicePixelRatio||1); cv.width=innerWidth*dpr; cv.height=innerHeight*dpr;
+  const topH=document.getElementById('top').offsetHeight, botH=document.getElementById('bottom').offsetHeight;
+  const avail=Math.max(120,innerHeight-topH-botH), s=Math.min(innerWidth/W,avail/H);
   view.s=s*dpr; view.ox=(cv.width-W*view.s)/2; view.oy=(topH+(avail-H*s)/2)*dpr;
+  document.getElementById('herald').style.bottom=(botH+12)+'px';
 }
 addEventListener('resize',resize);
-function toWorld(px,py){ const dpr=Math.min(2,window.devicePixelRatio||1); return {x:(px*dpr-view.ox)/view.s, y:(py*dpr-view.oy)/view.s}; }
+function toWorld(px,py){ const dpr=Math.min(2,window.devicePixelRatio||1); return {x:(px*dpr-view.ox)/view.s,y:(py*dpr-view.oy)/view.s}; }
 
-function hash(i){ const x=Math.sin(i*127.1)*43758.5453; return x-Math.floor(x); }
-
-/* ───────── 병사 그림 (위에서 내려다본 모습, 미리 그려 둔다) ───────── */
-const PAL={
-  us:  {tunic:'#2a2f3a',line:'#12141a',helm:'#1b1b1e',trim:'#d8cdb3',shield:'#6e4c2a',boss:'#141416',bossT:'#d8cdb3',horse:'#4a3220'},
-  them:{tunic:'#7a2e1c',line:'#3e150c',helm:'#8a6a3a',trim:'#d9b56a',shield:'#7d5a32',boss:'#8f2a1c',bossT:'#e3c27a',horse:'#5e3f24'},
-  ally:{tunic:'#36405a',line:'#12141a',helm:'#1b1b1e',trim:'#d8cdb3',shield:'#6e4c2a',boss:'#141416',bossT:'#d8cdb3',horse:'#6a4a2c'},
-};
-const SPR={}, K=4;   // 세계 1단위 = 4화소
-function mkCanvas(w,h){ const c=document.createElement('canvas'); c.width=w*K; c.height=h*K; const g=c.getContext('2d'); g.scale(K,K); return [c,g]; }
-function soldier(g,P,kind){
-  // 중심(12,14), 북쪽을 본다
-  g.save(); g.translate(12,14);
-  g.fillStyle='rgba(0,0,0,.28)'; g.beginPath(); g.ellipse(1.4,2.2,5.6,3.8,0,0,7); g.fill();
-  if(kind==='bow'){ // 화살통
-    g.fillStyle='#4b3420'; g.fillRect(2.2,0.5,2.2,4.6); g.fillStyle=P.trim; g.fillRect(2.4,0,0.6,1.2); g.fillRect(3.4,0,0.6,1.2); }
-  // 어깨와 갑옷
-  g.fillStyle=P.tunic; g.beginPath(); g.ellipse(0,0.6,5.2,3.4,0,0,7); g.fill();
-  g.strokeStyle=P.line; g.lineWidth=.45; for(let y=-1.2;y<=2.4;y+=1.2){ g.beginPath(); g.moveTo(-4.4,y); g.lineTo(4.4,y); g.stroke(); }
-  g.strokeStyle=P.trim; g.lineWidth=.5; g.beginPath(); g.ellipse(0,0.6,5.2,3.4,0,0,7); g.stroke();
-  // 팔
-  g.fillStyle=P.tunic; g.beginPath(); g.arc(-4.6,-1.4,1.5,0,7); g.arc(4.6,-1.4,1.5,0,7); g.fill();
-  // 머리와 투구
-  g.fillStyle='#b88a62'; g.beginPath(); g.arc(0,-0.6,2.5,0,7); g.fill();
-  g.fillStyle=P.helm; g.beginPath(); g.arc(0,-0.2,2.6,Math.PI*.9,Math.PI*2.1); g.fill();
-  if(P===PAL.them){ g.fillStyle='#c23b22'; g.beginPath(); g.arc(0,0.8,1,0,7); g.fill(); }
-  else { g.fillStyle=P.trim; g.beginPath(); g.arc(0,0.8,.7,0,7); g.fill(); }
-  if(kind==='shield'){ // 큰 나무 방패
-    g.fillStyle=P.shield; g.fillRect(-6.4,-7.6,12.8,2.8);
-    g.strokeStyle='#2c1e10'; g.lineWidth=.6; g.strokeRect(-6.4,-7.6,12.8,2.8);
-    g.fillStyle=P.boss; g.beginPath(); g.ellipse(0,-6.2,2.2,1.1,0,0,7); g.fill();
-    g.fillStyle=P.bossT; g.beginPath(); g.arc(0,-6.2,.5,0,7); g.fill(); }
-  if(kind==='spear'){ // 긴 창
-    g.strokeStyle='#24170b'; g.lineWidth=1.3; g.beginPath(); g.moveTo(3.4,1); g.lineTo(3.4,-16); g.stroke();
-    g.fillStyle='#e4e4e8'; g.strokeStyle='#24170b'; g.lineWidth=.4; g.beginPath(); g.moveTo(2.1,-16); g.lineTo(4.7,-16); g.lineTo(3.4,-22); g.closePath(); g.fill(); g.stroke();
-    if(P===PAL.them){ g.fillStyle='#c23b22'; g.fillRect(2.6,-17,1.6,1.4); } }
-  if(kind==='bow'){ // 활
-    g.strokeStyle='#2a1a0c'; g.lineWidth=1.3; g.beginPath(); g.moveTo(-7.2,-3); g.quadraticCurveTo(-4.2,-9.5,-1.2,-3); g.stroke();
-    g.strokeStyle='rgba(230,220,200,.7)'; g.lineWidth=.3; g.beginPath(); g.moveTo(-7.2,-3); g.lineTo(-1.2,-3); g.stroke(); }
-  g.restore();
-}
-function rider(g,P,lance){
-  g.save(); g.translate(12,18);
-  g.fillStyle='rgba(0,0,0,.28)'; g.beginPath(); g.ellipse(1.6,3,5,11,0,0,7); g.fill();
-  // 말
-  g.fillStyle=P.horse; g.beginPath(); g.ellipse(0,2,4,9,0,0,7); g.fill();
-  g.beginPath(); g.ellipse(0,-8,2.1,4.2,0,0,7); g.fill();
-  g.strokeStyle='#1c120a'; g.lineWidth=.9; g.beginPath(); g.moveTo(0,-5); g.lineTo(0,-11); g.stroke();
-  g.beginPath(); g.moveTo(0,10.5); g.lineTo(0,14); g.stroke();
-  // 사람
-  g.fillStyle=P.tunic; g.beginPath(); g.ellipse(0,1,4.6,3,0,0,7); g.fill();
-  g.strokeStyle=P.trim; g.lineWidth=.45; g.stroke();
-  g.fillStyle='#b88a62'; g.beginPath(); g.arc(0,0.6,2.2,0,7); g.fill();
-  g.fillStyle=P.helm; g.beginPath(); g.arc(0,0.9,2.3,Math.PI*.9,Math.PI*2.1); g.fill();
-  if(lance){ g.strokeStyle='#24170b'; g.lineWidth=1.2; g.beginPath(); g.moveTo(3.6,4); g.lineTo(3.6,-16); g.stroke();
-    g.fillStyle='#cfcfd2'; g.beginPath(); g.moveTo(2.8,-16); g.lineTo(4.4,-16); g.lineTo(3.6,-20); g.closePath(); g.fill(); }
-  g.restore();
-}
-function corpse(g,P){
-  g.save(); g.translate(12,12);
-  g.fillStyle='rgba(92,14,8,.55)'; g.beginPath(); g.ellipse(1,1,6,4,.4,0,7); g.fill();
-  g.rotate(1.1); g.fillStyle=P.tunic; g.globalAlpha=.85; g.beginPath(); g.ellipse(0,0,3,5.2,0,0,7); g.fill();
-  g.fillStyle='#8a6a52'; g.beginPath(); g.arc(0,-5.6,1.8,0,7); g.fill();
-  g.restore();
-}
-function buildSprites(){
-  for(const side of ['us','them','ally']){ const P=PAL[side];
-    for(const kind of ['shield','spear','bow']){
-      const [c,g]=mkCanvas(24,28); soldier(g,P,kind);
-      const [c2,g2]=mkCanvas(24,28); g2.translate(12,14); g2.rotate(Math.PI); g2.translate(-12,-14); soldier(g2,P,kind);
-      SPR[side+kind+'N']=c; SPR[side+kind+'S']=c2; }
-    const [h,gh]=mkCanvas(24,36); rider(gh,P,side==='them');
-    const [h2,gh2]=mkCanvas(24,36); gh2.translate(12,18); gh2.rotate(Math.PI); gh2.translate(-12,-18); rider(gh2,P,side==='them');
-    SPR[side+'cavN']=h; SPR[side+'cavS']=h2;
-    const [d,gd]=mkCanvas(24,24); corpse(gd,P); SPR[side+'dead']=d; }
-}
-buildSprites();
-const KIND={shield:'shield',spear:'spear',bow:'bow',espear:'spear',ebow:'bow',ecav:'cav',rider:'cav'};
-
-function drawUnit(u,sel){
+/* ───────── 패 ───────── */
+function lblS(t,x,y,c,size=16,align='left'){ cx.font=`700 ${size}px "Nanum Myeongjo",serif`; cx.textAlign=align; cx.textBaseline='middle'; cx.lineWidth=4; cx.strokeStyle='rgba(225,210,175,.85)'; cx.strokeText(t,x,y); cx.fillStyle=c; cx.fillText(t,x,y); }
+function token(u,sel){
   if(u.gone) return;
-  const r=rect(u), t=T(u), n=u.n, c=cols(u);
-  const jit=(1-u.coh)*7 + (u.routed?12:0);
-  const south = u.side==='them' || (u.routed && u.side==='us');
-  const face = u.side==='them' ? 1 : -1;
-  const kind=KIND[u.type], sideK = u.side;
-  const img = SPR[sideK+kind+(south?'S':'N')];
-  const now=performance.now()/1000;
-  const fighting=u.engaged&&u.engaged.length>0, moving=Math.hypot(u.tx-u.x,u.ty-u.y)>4;
-  const cav=kind==='cav', sw=34, sh=cav?51:40;
-  const nf=figs(u);
-  for(let i=0;i<nf;i++){
-    const cc=i%c, rr=Math.floor(i/c);
-    let x=r.x0+(cc+.5)*SP+(hash(u.seed+i)-.5)*jit*2, y=(face<0?r.y0:r.y1)+(-face)*(rr+.5)*SP+(hash(u.seed+i+77)-.5)*jit*2;
-    if(fighting && rr<2) y+=face*Math.max(0,Math.sin(now*8+i*1.7))*2.4;
-    else if(moving) y+=Math.sin(now*9+i)*.6;
-    cx.drawImage(img,x-sw/2,y-sh/2,sw,sh);
-  }
-  if(u.side==='ally') return;
-  // 깃발
-  const fx=r.x0-4, fy=r.y0-6, ours=u.side==='us';
-  cx.strokeStyle='#2a1d12'; cx.lineWidth=3; cx.beginPath(); cx.moveTo(fx,fy+12); cx.lineTo(fx,fy-58); cx.stroke();
-  const wv=Math.sin(now*2.2+u.seed)*3;
-  cx.fillStyle = ours ? '#151517' : '#8f2a1c';
-  cx.beginPath(); cx.moveTo(fx,fy-58); cx.quadraticCurveTo(fx+22,fy-60+wv,fx+42,fy-57); cx.lineTo(fx+42+wv*.4,fy-22); cx.quadraticCurveTo(fx+22,fy-20+wv,fx,fy-24); cx.closePath(); cx.fill();
-  cx.strokeStyle = ours ? '#c9a35c' : '#e3c27a'; cx.lineWidth=1.4; cx.stroke();
-  cx.fillStyle='#ece3cd'; cx.font='34px "Ma Shan Zheng","Nanum Myeongjo",serif'; cx.textAlign='center'; cx.textBaseline='middle';
-  cx.fillText(t.g,fx+21,fy-39);
-  // 인원
-  cx.font='700 20px "Nanum Myeongjo",serif'; cx.textAlign='left';
-  const label = ours ? `${u.no}대 · ${n}` : `${n}`;
-  cx.lineWidth=4; cx.strokeStyle='rgba(14,12,10,.8)'; cx.strokeText(label,fx+50,fy-44); cx.fillStyle='#ece3cd'; cx.fillText(label,fx+50,fy-44);
-  if(ours){
-    if(u.cmd!=='none'){ cx.font='700 17px "Nanum Myeongjo",serif'; cx.lineWidth=4; cx.strokeText(CMDR[u.cmd].nm,fx+50,fy-22); cx.fillStyle='#c9a35c'; cx.fillText(CMDR[u.cmd].nm,fx+50,fy-22); }
-    const st=statusOf(u); if(st){ cx.font='700 17px "Nanum Myeongjo",serif'; const tw=cx.measureText(st.t).width;
-      cx.fillStyle='rgba(14,12,10,.86)'; cx.fillRect(fx,fy-88,tw+16,24); cx.fillStyle=st.k==='b'?'#e0564b':st.k==='w'?'#d9b56a':'#ece3cd'; cx.fillText(st.t,fx+8,fy-76); }
-  }
-  if(sel){ // 청동 꺾쇠
-    const x0=r.x0-10,y0=r.y0-10,x1=r.x1+10,y1=r.y1+10,L=16; cx.strokeStyle='#c9a35c'; cx.lineWidth=2.5;
-    cx.beginPath(); cx.moveTo(x0,y0+L); cx.lineTo(x0,y0); cx.lineTo(x0+L,y0); cx.moveTo(x1-L,y0); cx.lineTo(x1,y0); cx.lineTo(x1,y0+L);
-    cx.moveTo(x1,y1-L); cx.lineTo(x1,y1); cx.lineTo(x1-L,y1); cx.moveTo(x0+L,y1); cx.lineTo(x0,y1); cx.lineTo(x0,y1-L); cx.stroke();
-    if(Math.hypot(u.tx-u.x,u.ty-u.y)>6 && !u.routed){ cx.strokeStyle='rgba(201,163,92,.85)'; cx.lineWidth=2; cx.setLineDash([8,6]); cx.beginPath(); cx.moveTo(u.x,u.y); cx.lineTo(u.tx,u.ty); cx.stroke(); cx.setLineDash([]);
-      cx.beginPath(); cx.arc(u.tx,u.ty,7,0,7); cx.stroke(); }
-    if(T(u).range){ cx.strokeStyle='rgba(201,163,92,.28)'; cx.setLineDash([3,7]); cx.beginPath(); cx.arc(u.x,u.y,T(u).range,Math.PI,2*Math.PI); cx.stroke(); cx.setLineDash([]); }
-  }
-  if(u.pend){ const p=u.pend; if(p.c==='move'){ cx.strokeStyle='rgba(217,181,106,.6)'; cx.lineWidth=2; cx.setLineDash([4,6]); cx.beginPath(); cx.moveTo(u.x,u.y); cx.lineTo(p.x,p.y); cx.stroke(); cx.setLineDash([]); } }
+  const r=rect(u), now=performance.now()/1000;
+  const isUs=u.side==='us', isAlly=u.side==='ally', isThem=u.side==='them';
+  if(isRider(u)){ for(let i=0;i<Math.ceil(u.n/2);i++){ const x=u.x+Math.sin(u.seed+i*2.1)*r.w/2, y=u.y+Math.cos(u.seed+i*1.3)*10; cx.fillStyle='rgba(30,26,22,.85)'; cx.beginPath(); cx.ellipse(x,y,3,6,0,0,7); cx.fill(); }
+    lblS(`돌아오는 기병 ${u.n}`,u.x+r.w/2+10,u.y,'#2a2018',16); return; }
+  if(u.trail.length>1){ cx.strokeStyle=isThem?'rgba(120,30,20,.18)':'rgba(30,24,18,.2)'; cx.lineWidth=2; cx.setLineDash([2,6]); cx.beginPath(); u.trail.forEach((p,i)=>i?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1])); cx.lineTo(u.x,u.y); cx.stroke(); cx.setLineDash([]); }
+  cx.save(); cx.translate(u.x,u.y);
+  if(u.routed){ cx.rotate(.35); cx.globalAlpha=.55; }
+  if(u.engaged&&u.engaged.length) cx.translate(Math.sin(now*30+u.seed)*1.2,0);
+  cx.fillStyle='rgba(40,28,16,.28)'; cx.fillRect(-r.w/2+4,-r.h/2+5,r.w,r.h);
+  cx.fillStyle=isThem?'#8f2a1c':isAlly?'#3a332a':'#16120e'; cx.fillRect(-r.w/2,-r.h/2,r.w,r.h);
+  cx.strokeStyle=isThem?'rgba(255,220,180,.08)':'rgba(255,240,210,.06)'; cx.lineWidth=1; for(let y=-r.h/2+4;y<r.h/2;y+=5){ cx.beginPath(); cx.moveTo(-r.w/2+2,y); cx.lineTo(r.w/2-2,y+Math.sin(y+u.seed)*1.5); cx.stroke(); }
+  cx.strokeStyle=isThem?'#e3c27a':isAlly?'#a99c82':'#c9a35c'; cx.lineWidth=isUs?2.2:1.6; cx.strokeRect(-r.w/2,-r.h/2,r.w,r.h);
+  if(u.stance==='square'&&!u.brace){ cx.lineWidth=3; const L=8; for(const [sx,sy] of [[-1,-1],[1,-1],[1,1],[-1,1]]){ cx.beginPath(); cx.moveTo(sx*r.w/2,sy*(r.h/2-L)); cx.lineTo(sx*r.w/2,sy*r.h/2); cx.lineTo(sx*(r.w/2-L),sy*r.h/2); cx.stroke(); } }
+  if(u.brace){ cx.strokeStyle='#2a1d12'; cx.lineWidth=2; for(let x=-r.w/2+6;x<r.w/2;x+=10){ cx.beginPath(); cx.moveTo(x,-r.h/2); cx.lineTo(x+3,-r.h/2-14); cx.stroke(); } }
+  const gl=T(u).g, fs=Math.min(34,Math.max(18,r.h*.95));
+  cx.fillStyle='#ece3cd'; cx.font=`${fs}px "Ma Shan Zheng","Nanum Myeongjo",serif`; cx.textAlign='center'; cx.textBaseline='middle';
+  if(r.w>70){ cx.fillText(gl,-r.w/2+fs*.7,0); cx.font=`700 ${Math.min(20,Math.max(13,r.h*.6))}px "Nanum Myeongjo",serif`; cx.textAlign='right'; cx.fillText(String(u.n),r.w/2-8,1); }
+  else cx.fillText(gl,0,0);
+  cx.restore();
+  if(!u.routed){ const m=clamp(u.morale/100,0,1); cx.fillStyle='rgba(34,26,18,.35)'; cx.fillRect(r.x0,r.y1+4,r.w,4); cx.fillStyle=m<.35?'#b02a25':isThem?'#8f2a1c':'#6b5526'; cx.fillRect(r.x0,r.y1+4,r.w*m,4); }
+  if(isUs){ lblS(`${u.no}대`+(u.cmd!=='none'?` · ${CMDR[u.cmd].nm}`:''),r.x0,r.y0-(u.brace?24:14),'#1b140c',17);
+    const st=statusOf(u); if(st){ cx.font='700 15px "Nanum Myeongjo",serif'; const tw=cx.measureText(st.t).width, yy=r.y0-(u.brace?60:50); cx.fillStyle='rgba(22,18,14,.88)'; cx.fillRect(r.x0,yy,tw+14,22); cx.fillStyle=st.k==='b'?'#e0564b':st.k==='w'?'#d9b56a':'#ece3cd'; cx.textAlign='left'; cx.fillText(st.t,r.x0+7,yy+11); }
+    if(T(u).range) lblS(`화살 ${u.ammo}`,r.x1+8,u.y,'#2a2018',14); }
+  else if(isAlly) lblS(`${u.label} ${u.n}`,r.x0,r.y0-12,'#2a2018',15);
+  else lblS(u.label+(r.w<=70?` ${u.n}`:''),r.x0,r.y0-12,'#7a2418',15);
+  if(sel){ const x0=r.x0-10,y0=r.y0-10,x1=r.x1+10,y1=r.y1+14,L=14; cx.strokeStyle='#8a6a2a'; cx.lineWidth=3;
+    cx.beginPath(); cx.moveTo(x0,y0+L); cx.lineTo(x0,y0); cx.lineTo(x0+L,y0); cx.moveTo(x1-L,y0); cx.lineTo(x1,y0); cx.lineTo(x1,y0+L); cx.moveTo(x1,y1-L); cx.lineTo(x1,y1); cx.lineTo(x1-L,y1); cx.moveTo(x0+L,y1); cx.lineTo(x0,y1); cx.lineTo(x0,y1-L); cx.stroke();
+    if(u.target&&!u.target.gone){ cx.strokeStyle='rgba(176,42,37,.8)'; cx.lineWidth=3; cx.setLineDash([10,6]); cx.beginPath(); cx.moveTo(u.x,u.y); cx.lineTo(u.target.x,u.target.y); cx.stroke(); cx.setLineDash([]); }
+    else if(Math.hypot(u.tx-u.x,u.ty-u.y)>6){ cx.strokeStyle='rgba(60,44,20,.8)'; cx.lineWidth=2.5; cx.setLineDash([8,6]); cx.beginPath(); cx.moveTo(u.x,u.y); cx.lineTo(u.tx,u.ty); cx.stroke(); cx.setLineDash([]); cx.beginPath(); cx.arc(u.tx,u.ty,8,0,7); cx.stroke(); }
+    if(T(u).range){ cx.strokeStyle='rgba(60,44,20,.3)'; cx.setLineDash([3,8]); cx.lineWidth=2; cx.beginPath(); cx.arc(u.x,u.y,T(u).range,Math.PI,2*Math.PI); cx.stroke(); cx.setLineDash([]); } }
+  if(u.pend&&u.pend.c==='move'){ cx.strokeStyle='rgba(120,90,40,.6)'; cx.lineWidth=2; cx.setLineDash([4,6]); cx.beginPath(); cx.moveTo(u.x,u.y); cx.lineTo(u.pend.x,u.pend.y); cx.stroke(); cx.setLineDash([]); }
 }
 function statusOf(u){
   if(u.routed) return {t:'흩어짐',k:'b'};
   if(u.pend) return {t:`명령 전달 중 ${Math.max(.1,u.delay).toFixed(1)}초`,k:'w'};
-  if(u.disengage>0 && u.engaged.length) return {t:'적과 붙어 물러나지 못함',k:'b'};
-  if(u.engaged.length) return {t:u.morale<35?'밀린다':'교전',k:u.morale<35?'b':'w'};
-  if(u.target&&u.arc) return {t:'넘겨 쏘기 · 덜 맞는다',k:'w'};
-  if(u.focus&&u.target===u.focus) return {t:'집중 사격',k:''};
+  if(u.disengage>0&&u.engaged.length) return {t:'붙잡혀 못 빠짐',k:'b'};
+  if(u.engaged.length) return {t:u.morale<35?'밀린다':u.brace?'창으로 받는다':'교전',k:u.morale<35?'b':'w'};
+  if(u.target) return {t:'공격하러 간다',k:''};
+  if(u.shot&&u.shot.arc) return {t:'넘겨 쏘기',k:'w'};
+  if(u.shot) return {t:'사격',k:''};
   if(u.coh<.6) return {t:'대열 벌어짐',k:'w'};
-  if(u.target) return {t:'사격',k:''};
   if(u.tag==='예비'&&!u.committed) return {t:'예비',k:''};
   return null;
 }
 function draw(){
   cx.setTransform(1,0,0,1,0,0); cx.fillStyle='#0e0c0a'; cx.fillRect(0,0,cv.width,cv.height);
   cx.setTransform(view.s,0,0,view.s,view.ox,view.oy);
-  if(bg.complete) cx.drawImage(bg,0,0,W,H); else { cx.fillStyle='#6f5f3c'; cx.fillRect(0,0,W,H); }
-  // 가장자리를 어둡게
-  const vg=cx.createRadialGradient(W/2,H*.55,H*.35,W/2,H*.55,H*.95); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(8,6,4,.45)'); cx.fillStyle=vg; cx.fillRect(0,0,W,H);
-  // 쓰러진 사람
-  if(S) for(const d of S.dead){ cx.globalAlpha=d.a; cx.drawImage(SPR[d.side+'dead'],d.x-12,d.y-12,24,24); }
-  cx.globalAlpha=1;
-  // 배치 구역
-  if(phase==='setup'){ cx.fillStyle='rgba(201,163,92,.08)'; cx.fillRect(RIVER_X,DEPLOY.y0,W-RIVER_X,DEPLOY.y1-DEPLOY.y0);
-    cx.strokeStyle='rgba(201,163,92,.6)'; cx.setLineDash([12,9]); cx.lineWidth=2; cx.strokeRect(RIVER_X,DEPLOY.y0,W-RIVER_X,DEPLOY.y1-DEPLOY.y0);
-    cx.beginPath(); cx.moveTo(RIVER_X,REAR_Y); cx.lineTo(W,REAR_Y); cx.stroke(); cx.setLineDash([]);
-    lbl('배치 구역',RIVER_X+20,DEPLOY.y0+26,'#d9b56a'); lbl('이 선 아래는 예비',RIVER_X+20,REAR_Y+26,'#d9b56a'); }
-  // 길 표시 (기병 귀환)
-  const rw = S && S.riderWarn;
-  if(rw){ const a=.16+.14*Math.sin(performance.now()/180); cx.fillStyle=`rgba(127,169,153,${a})`; cx.fillRect(ROAD.x0,0,ROAD.x1-ROAD.x0,H);
-    lbl('아군 기병 귀환 · 길을 연다',ROAD.x0+10,44,'#cfe3da'); arrowDown(ROAD.c,76,'#cfe3da'); }
-  if(S && !rw){ const nr=(S.riderTimes||[]).find(t=>t>S.t); if(nr!==undefined && nr-S.t<15){ lbl(`아군 기병 ${Math.ceil(nr-S.t)}초 뒤 이 길로`,ROAD.x0+10,44,'#a9c9bc'); } }
-  if(S && S.flankHint && S.t<S.flankHint.until){ lbl('먼지 · 깃발이 돈다',2010,262,'#d9b56a'); arrowDown(2190,300,'#d9b56a'); }
+  cx.drawImage(mapC,0,0); cx.drawImage(stainC,0,0);
+  const now=performance.now()/1000;
+  if(phase==='setup'){ cx.fillStyle='rgba(120,90,40,.08)'; cx.fillRect(SECTOR.x0,DEPLOY.y0,SECTOR.x1-SECTOR.x0,DEPLOY.y1-DEPLOY.y0);
+    cx.strokeStyle='rgba(90,60,20,.6)'; cx.setLineDash([12,9]); cx.lineWidth=2.5; cx.strokeRect(SECTOR.x0,DEPLOY.y0,SECTOR.x1-SECTOR.x0,DEPLOY.y1-DEPLOY.y0);
+    cx.beginPath(); cx.moveTo(SECTOR.x0,REAR_Y); cx.lineTo(SECTOR.x1,REAR_Y); cx.stroke(); cx.setLineDash([]);
+    lblS('배치 구역',SECTOR.x0+12,DEPLOY.y0+22,'#5a3e14',20); lblS('이 선 아래는 예비',SECTOR.x0+12,REAR_Y+22,'#5a3e14',18); }
+  if(S&&S.riderWarn){ const a=.12+.1*Math.sin(now*6); cx.fillStyle=`rgba(60,110,95,${a})`; cx.fillRect(ROAD.x0-20,0,ROAD.x1-ROAD.x0+40,H); lblS('아군 기병 귀환 · 길을 연다',ROAD.x1+30,300,'#1f4a3e',22); }
+  else if(S){ const nr=S.riderTimes.find(t=>t>S.t); if(nr!==undefined&&nr-S.t<15) lblS(`아군 기병 ${Math.ceil(nr-S.t)}초 뒤 이 길로`,ROAD.x1+30,300,'#1f4a3e',20); }
+  if(S&&S.flankHint&&S.t<S.flankHint.until) lblS('먼지 · 깃발이 돈다',DIKE_X-260,240,'#7a5a1a',22);
   // 안량 군기
-  if(phase!=='setup'){ const by=S?S.bannerY:150; const fallen=S&&S.bannerFall; const now=performance.now()/1000;
-    cx.save(); cx.translate(ROAD.c+260,by); if(fallen){ const k=Math.min(1,(S.t-S.bannerFall)/1.2); cx.rotate(k*1.3); }
-    cx.strokeStyle='#22170e'; cx.lineWidth=5; cx.beginPath(); cx.moveTo(0,46); cx.lineTo(0,-110); cx.stroke();
-    const wv=Math.sin(now*1.8)*5;
-    cx.fillStyle='#8f2a1c'; cx.beginPath(); cx.moveTo(0,-110); cx.quadraticCurveTo(36,-114+wv,70,-108); cx.lineTo(70+wv*.5,-26); cx.quadraticCurveTo(36,-22+wv,0,-28); cx.closePath(); cx.fill();
-    cx.strokeStyle='#e3c27a'; cx.lineWidth=2; cx.stroke();
-    cx.fillStyle='#ece3cd'; cx.font='60px "Ma Shan Zheng",serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('顔',35,-66);
-    cx.restore(); lbl('안량',ROAD.c+345,by-70,'#ece3cd'); }
-  // 부대
-  const list = (phase==='setup'||!S) ? slots.map((s,i)=>s.n>0?Object.assign(mkUnitPreview(s,i)):null).filter(Boolean) : S.units;
-  for(const u of list) drawUnit(u, phase==='setup' ? dragI===u.no-1 : !!S && S.sel===u);
-  // 효과
-  if(S) for(const f of S.fx){ const k=f.t/f.d;
-    if(f.k==='arrow'){ const x=f.x0+(f.x1-f.x0)*k, y=f.y0+(f.y1-f.y0)*k-Math.sin(k*Math.PI)*(f.arc||80);
-      const k2=Math.min(1,k+.04), x2=f.x0+(f.x1-f.x0)*k2, y2=f.y0+(f.y1-f.y0)*k2-Math.sin(k2*Math.PI)*(f.arc||80);
-      const ang=Math.atan2(y2-y,x2-x);
-      cx.save(); cx.translate(x,y); cx.rotate(ang); cx.strokeStyle='#2a1d12'; cx.lineWidth=1.3; cx.beginPath(); cx.moveTo(-9,0); cx.lineTo(4,0); cx.stroke();
-      cx.fillStyle='#bdbdc2'; cx.beginPath(); cx.moveTo(4,-1.6); cx.lineTo(8,0); cx.lineTo(4,1.6); cx.fill();
-      cx.strokeStyle='#d8cdb3'; cx.lineWidth=1; cx.beginPath(); cx.moveTo(-9,0); cx.lineTo(-11,-2); cx.moveTo(-9,0); cx.lineTo(-11,2); cx.stroke(); cx.restore(); }
-    if(f.k==='hit'){ cx.fillStyle=`rgba(150,30,18,${.55*(1-k)})`; cx.beginPath(); cx.arc(f.x,f.y,3+k*6,0,7); cx.fill(); }
-    if(f.k==='dust'){ cx.fillStyle=`rgba(190,165,120,${.35*(1-k)})`; cx.beginPath(); cx.arc(f.x,f.y,6+k*16,0,7); cx.fill(); }
-    if(f.k==='rally'){ cx.strokeStyle=`rgba(201,163,92,${1-k})`; cx.lineWidth=3; cx.beginPath(); cx.arc(f.x,f.y,30+k*90,0,7); cx.stroke(); }
-  }
-  if(S && S.paused && phase==='battle'){ cx.setTransform(1,0,0,1,0,0); cx.fillStyle='rgba(14,12,10,.4)'; cx.fillRect(0,0,cv.width,cv.height);
-    cx.fillStyle='#ece3cd'; cx.font=`${Math.round(40*Math.min(2,devicePixelRatio||1))}px "Ma Shan Zheng",serif`; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('止',cv.width/2,cv.height/2); }
+  cx.save(); cx.translate(HQ.x+150,HQ.y-10); if(S&&S.bannerFall!=null){ const k=Math.min(1,(S.t-S.bannerFall)/1.2); cx.rotate(k*1.3); }
+  cx.strokeStyle='#22170e'; cx.lineWidth=5; cx.beginPath(); cx.moveTo(0,50); cx.lineTo(0,-110); cx.stroke();
+  const wv=Math.sin(now*1.8)*5; cx.fillStyle='#8f2a1c'; cx.beginPath(); cx.moveTo(0,-110); cx.quadraticCurveTo(36,-114+wv,70,-108); cx.lineTo(70+wv*.5,-26); cx.quadraticCurveTo(36,-22+wv,0,-28); cx.closePath(); cx.fill();
+  cx.strokeStyle='#e3c27a'; cx.lineWidth=2; cx.stroke(); cx.fillStyle='#ece3cd'; cx.font='60px "Ma Shan Zheng",serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('顔',35,-66); cx.restore();
+  lblS('안량',HQ.x+230,HQ.y-80,'#7a2418',22);
+  // 우리 기병의 전진
+  if(S&&S.cavLive){ const k=S.cav/100, y0=LINE_Y-130, y1=HQ.y+120;
+    const y=S.t<8?(H+40)+(y0-(H+40))*Math.min(1,S.t/8):y0+(y1-y0)*k, x=ROAD.c-40;
+    cx.strokeStyle='rgba(30,24,18,.5)'; cx.lineWidth=3; cx.setLineDash([2,8]); cx.beginPath(); cx.moveTo(x,Math.max(y,y1)); cx.lineTo(x,y1); cx.stroke(); cx.setLineDash([]);
+    if(S.t>8&&k<1) for(let i=0;i<3;i++){ const rr=70+i*14, gr=cx.createRadialGradient(x,y-34,0,x,y-34,rr); gr.addColorStop(0,'rgba(40,24,16,.13)'); gr.addColorStop(1,'rgba(40,24,16,0)'); cx.fillStyle=gr; cx.beginPath(); cx.arc(x+Math.sin(now*3+i)*8,y-34,rr,0,7); cx.fill(); }
+    cx.save(); cx.translate(x,y); cx.fillStyle='rgba(40,28,16,.3)'; cx.fillRect(-36,-14,80,34); cx.fillStyle='#16120e'; cx.fillRect(-40,-18,80,34); cx.strokeStyle='#c9a35c'; cx.lineWidth=2.2; cx.strokeRect(-40,-18,80,34);
+    cx.fillStyle='#ece3cd'; cx.font='30px "Ma Shan Zheng",serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('騎',-20,-1); cx.font='700 14px "Nanum Myeongjo",serif'; cx.fillText(killer,16,0); cx.restore();
+    lblS(`${killer}·장료 기병 ${Math.floor(S.cav)}%`,x-48,y+34,'#1b140c',16); }
+  const list=(phase==='setup'||!S)?slots.map((s,i)=>s.n>0?preview(s,i):null).filter(Boolean):S.units;
+  if(S&&phase!=='setup') for(const u of list) if(u.side!=='us') token(u,false);
+  for(const u of list) if(u.side==='us') token(u,phase==='setup'?dragI===u.no-1:!!S&&S.sel===u);
+  if(S) for(const f of S.fx){ if(f.t<0) continue; const k=f.t/f.d;
+    if(f.k==='arrow'){ const A=f.arc||80, x=f.x0+(f.x1-f.x0)*k, y=f.y0+(f.y1-f.y0)*k-Math.sin(k*Math.PI)*A;
+      const ang=Math.atan2((f.y1-f.y0)-Math.cos(k*Math.PI)*Math.PI*A,(f.x1-f.x0));
+      cx.save(); cx.translate(x,y); cx.rotate(ang); cx.strokeStyle='rgba(30,22,14,.75)'; cx.lineWidth=1.4; cx.beginPath(); cx.moveTo(-10,0); cx.lineTo(4,0); cx.stroke(); cx.restore(); }
+    if(f.k==='rally'){ cx.strokeStyle=`rgba(138,106,42,${1-k})`; cx.lineWidth=3; cx.beginPath(); cx.arc(f.x,f.y,30+k*90,0,7); cx.stroke(); } }
+  const vg=cx.createRadialGradient(W/2,H/2,H*.45,W/2,H/2,H*1.05); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(30,18,8,.35)'); cx.fillStyle=vg; cx.fillRect(0,0,W,H);
+  if(S&&S.paused&&phase==='battle'){ cx.setTransform(1,0,0,1,0,0); cx.fillStyle='rgba(14,12,10,.35)'; cx.fillRect(0,0,cv.width,cv.height);
+    cx.fillStyle='#ece3cd'; cx.font=`${Math.round(56*Math.min(2,devicePixelRatio||1))}px "Ma Shan Zheng",serif`; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('止',cv.width/2,cv.height/2); }
 }
-function lbl(t,x,y,c='#ece3cd'){ cx.font='800 26px "Nanum Myeongjo",serif'; cx.textAlign='left'; cx.textBaseline='middle'; cx.lineWidth=5; cx.strokeStyle='rgba(14,12,10,.8)'; cx.strokeText(t,x,y); cx.fillStyle=c; cx.fillText(t,x,y); }
-function arrowDown(x,y,c='#ece3cd'){ cx.fillStyle=c; cx.beginPath(); cx.moveTo(x-16,y); cx.lineTo(x+16,y); cx.lineTo(x,y+24); cx.closePath(); cx.fill(); }
-function mkUnitPreview(s,i){ const u=mkUnit('us',s.type,s.n,s.x,s.y,{vet:s.vet,cmd:s.cmd,no:i+1,seed:i*91+7}); u.tag=s.y>=REAR_Y?'예비':''; return u; }
+function preview(s,i){ const u=mkUnit('us',s.type,s.n,s.x,s.y,{vet:s.vet,cmd:s.cmd,no:i+1,seed:i*91+7}); u.tag=s.y>=REAR_Y?'예비':''; return u; }
 
 /* ───────── 입력 ───────── */
 let dragI=-1, dragOff={x:0,y:0};
-function unitAt(w,list){ for(let i=list.length-1;i>=0;i--){ const u=list[i]; if(!u||u.gone) continue; const r=rect(u); if(w.x>r.x0-16&&w.x<r.x1+16&&w.y>r.y0-50&&w.y<r.y1+12) return u; } return null; }
+function unitAt(w,list){ for(let i=list.length-1;i>=0;i--){ const u=list[i]; if(!u||u.gone) continue; const r=rect(u); if(w.x>r.x0-14&&w.x<r.x1+14&&w.y>r.y0-30&&w.y<r.y1+14) return u; } return null; }
 cv.addEventListener('pointerdown',e=>{
   const w=toWorld(e.clientX,e.clientY);
-  if(phase==='setup'){
-    const prev=slots.map((s,i)=>s.n>0?mkUnitPreview(s,i):null);
-    const u=unitAt(w,prev); if(u){ dragI=u.no-1; dragOff={x:w.x-u.x,y:w.y-u.y}; cv.setPointerCapture(e.pointerId); }
-    return;
-  }
+  if(phase==='setup'){ const u=unitAt(w,slots.map((s,i)=>s.n>0?preview(s,i):null)); if(u){ dragI=u.no-1; dragOff={x:w.x-u.x,y:w.y-u.y}; cv.setPointerCapture(e.pointerId); } return; }
   if(phase!=='battle'||!S) return;
-  const mine=S.units.filter(u=>u.side==='us'&&!u.gone);
-  const u=unitAt(w,mine);
-  if(S.mode==='swap' && S.sel){ if(u && u!==S.sel){ issue(S.sel,{c:'swap',with:u}); S.mode=null; renderSel(); } return; }
-  if(u){ select(u); return; }
-  const f=unitAt(w,S.units.filter(v=>v.side==='them'&&!v.gone&&!v.routed));
-  if(f && S.sel && T(S.sel).range){ S.sel.focus=f; report(`${S.sel.no}대가 ${T(f).nm} 쪽을 노린다.`,'n','안내'); return; }
-  if(S.sel){ issue(S.sel,{c:'move',x:w.x,y:w.y}); S.mode=null; renderSel(); }
+  const mine=unitAt(w,S.units.filter(u=>u.side==='us'&&!u.gone));
+  const foe=unitAt(w,S.units.filter(u=>u.side==='them'&&!u.gone&&!u.routed));
+  if(S.mode==='swap'&&S.sel){ if(mine&&mine!==S.sel){ issue(S.sel,{c:'swap',with:mine}); S.mode=null; renderSel(); } return; }
+  if(foe&&S.sel&&!mine){ if(T(S.sel).range){ S.sel.focus=foe; report(`${S.sel.no}대가 ${foe.label} 쪽을 노린다.`,'n','안내'); } else issue(S.sel,{c:'attack',t:foe}); S.mode=null; renderSel(); return; }
+  if(mine){ select(mine); return; }
+  if(S.sel&&S.mode!=='attack'){ issue(S.sel,{c:'move',x:w.x,y:w.y}); S.mode=null; renderSel(); }
 });
-cv.addEventListener('pointermove',e=>{ if(dragI<0) return; const w=toWorld(e.clientX,e.clientY); const s=slots[dragI];
-  s.x=Math.min(W-60,Math.max(RIVER_X+80,w.x-dragOff.x)); s.y=Math.min(DEPLOY.y1-20,Math.max(DEPLOY.y0+30,w.y-dragOff.y)); });
+cv.addEventListener('pointermove',e=>{ if(dragI<0) return; const w=toWorld(e.clientX,e.clientY), s=slots[dragI];
+  s.x=clamp(w.x-dragOff.x,SECTOR.x0+40,SECTOR.x1-40); s.y=clamp(w.y-dragOff.y,DEPLOY.y0+20,DEPLOY.y1-20); });
 cv.addEventListener('pointerup',()=>{ if(dragI>=0){ dragI=-1; renderSetup(); } });
-
 function select(u){ if(!S) return; S.sel=u; S.mode=null; renderSel(); renderUnits(); }
-document.getElementById('cmds').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||!S||!S.sel) return; cmd(b.dataset.c); });
-function cmd(c){
-  const u=S.sel; if(!u) return;
-  if(c==='move'){ S.mode='move'; report('땅을 눌러 갈 곳을 정한다.','n', '안내'); }
-  else if(c==='swap'){ S.mode='swap'; report('바꿔 설 부대의 깃발을 누른다.','n', '안내'); }
-  else if(c==='charge'){ if(u.type!=='spear') return; issue(u,{c:'charge'}); }
-  else issue(u,{c});
-  renderSel();
-}
+document.getElementById('cmds').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b&&S&&S.sel) cmd(b.dataset.c); });
+document.getElementById('stances').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b&&S&&S.sel){ issue(S.sel,{c:'stance',s:b.dataset.s}); renderSel(); } });
+function cmd(c){ const u=S.sel; if(!u) return;
+  if(c==='move'){ S.mode='move'; report('지도를 눌러 갈 곳을 정한다.','n','안내'); }
+  else if(c==='attack'){ S.mode='attack'; report('칠 적의 패를 누른다.','n','안내'); }
+  else if(c==='swap'){ S.mode='swap'; report('바꿔 설 우리 부대 패를 누른다.','n','안내'); }
+  else issue(u,{c}); renderSel(); }
 addEventListener('keydown',e=>{
   if(phase!=='battle'||!S) return;
   if(e.code==='Space'){ e.preventDefault(); togglePause(); return; }
   const n=parseInt(e.key); if(n>=1&&n<=4){ const u=S.units.find(v=>v.side==='us'&&v.no===n&&!v.gone); if(u) select(u); return; }
-  const m={KeyM:'move',KeyH:'hold',KeyR:'back',KeyS:'swap',KeyC:'charge'}[e.code]; if(m) cmd(m);
+  const m={KeyM:'move',KeyA:'attack',KeyR:'back',KeyS:'swap',KeyV:'volley'}[e.code]; if(m&&S.sel) cmd(m);
+  const st={KeyQ:'square',KeyW:'line',KeyE:'dense',KeyB:'brace'}[e.code]; if(st&&S.sel){ issue(S.sel,{c:'stance',s:st}); renderSel(); }
 });
-function togglePause(){ if(!S) return; S.paused=!S.paused; document.getElementById('bPause').textContent=S.paused?'계속':'멈춤'; document.getElementById('bPause').classList.toggle('on',S.paused); }
+function togglePause(){ if(!S) return; S.paused=!S.paused; const b=document.getElementById('bPause'); b.textContent=S.paused?'계속':'멈춤'; b.classList.toggle('on',S.paused); }
 document.getElementById('bPause').onclick=togglePause;
 document.getElementById('bSpeed').onclick=()=>{ if(!S) return; S.speed=S.speed===1?2:1; document.getElementById('bSpeed').textContent='×'+S.speed; };
 document.getElementById('bLog').onclick=()=>{ const v=document.getElementById('logv'); v.hidden=!v.hidden; if(!v.hidden) drawLog(); };
-function drawLog(){ document.getElementById('logv').innerHTML = S&&S.log.length ? S.log.map(l=>`<div>${l}</div>`).join('') : '<div>아직 보고가 없다.</div>'; }
+document.getElementById('bSnd').onclick=()=>{ soundOn=!soundOn; document.getElementById('bSnd').classList.toggle('on',soundOn); if(soundOn) play('gong'); };
+function drawLog(){ document.getElementById('logv').innerHTML=S&&S.log.length?S.log.map(l=>`<div>${l}</div>`).join(''):'<div>아직 보고가 없다.</div>'; }
 
-/* ───────── 화면 판 ───────── */
-function renderNext(){
-  const el=document.getElementById('next'); if(!S){ el.textContent=''; return; }
-  const nr=(S.riderTimes||[]).find(t=>t>S.t);
-  const left=Math.max(0,S.breakT-S.t);
-  el.innerHTML=(nr!==undefined?`아군 기병 <b>${Math.ceil(nr-S.t)}초</b> 뒤 · `:'')+`안량 돌파까지 <span class="k">${fmt(left)}</span>`;
+/* ───────── 판 ───────── */
+function renderTop(){
+  const nx=document.getElementById('next'), cb=document.getElementById('cavbar');
+  if(!S){ nx.textContent=''; cb.hidden=true; document.getElementById('clock').textContent='0:00'; return; }
+  cb.hidden=false; document.getElementById('cavNm').textContent=`${killer} 기병 → 안량`;
+  document.getElementById('cavI').style.width=S.cav+'%'; document.getElementById('cavP').textContent=Math.floor(S.cav)+'%';
+  const nr=S.riderTimes.find(t=>t>S.t); nx.innerHTML=nr!==undefined?`아군 기병 귀환 <b>${Math.ceil(nr-S.t)}초</b> 뒤`:'';
+  document.getElementById('clock').textContent=fmt(S.t);
 }
 function renderSel(){
-  const el=document.getElementById('sel'); const u=S&&S.sel;
-  document.querySelectorAll('#cmds button').forEach(b=>{ b.disabled=!u||u.routed||u.gone||(b.dataset.c==='charge'&&u.type!=='spear'); b.classList.toggle('on',S&&S.mode===b.dataset.c); });
-  if(!u){ el.innerHTML='<span class="nm">부대를 고른다</span><span class="chip">깃발을 누르거나 1~4</span>'; return; }
-  const st=statusOf(u); const trn=Math.round(tr(u)*100);
-  el.innerHTML=`<span class="nm">${nameOf(u)}</span><span class="chip">${u.n}명 · 숙련 ${trn}%</span>`+
-   `<span class="chip ${u.morale<35?'b':u.morale<55?'w':''}">사기 ${Math.max(0,Math.round(u.morale))}</span>`+
-   `<span class="chip ${u.fat>60?'w':''}">피로 ${Math.round(u.fat)}</span>`+
-   (st?`<span class="chip ${st.k}">${st.t}</span>`:'')+
-   (u.cmd!=='none'?`<span class="chip g">${CMDR[u.cmd].tip}</span>`:'');
+  const el=document.getElementById('sel'), u=S&&S.sel;
+  document.querySelectorAll('#cmds button').forEach(b=>{ const c=b.dataset.c;
+    b.disabled=!u||u.routed||u.gone||(c==='volley'&&(!T(u).range||u.ammo<4||u.volleyCD>0));
+    b.classList.toggle('on',!!S&&S.mode===c); });
+  document.querySelectorAll('#stances button').forEach(b=>{ const s=b.dataset.s;
+    b.disabled=!u||u.routed||u.gone||(s==='brace'&&u.type!=='spear')||(s==='square'&&u.type==='bow');
+    b.classList.toggle('on',!!u&&(s==='brace'?u.brace:(!u.brace&&u.stance===s))); });
+  if(!u){ el.innerHTML='<span class="nm">부대를 고른다</span><span class="chip">패를 누르거나 1~4</span>'; return; }
+  const st=statusOf(u);
+  el.innerHTML=`<span class="nm">${nameOf(u)}</span><span class="chip">${u.n}명 · 숙련 ${Math.round(tr(u)*100)}%</span>`+
+    `<span class="chip ${u.morale<35?'b':u.morale<55?'w':''}">사기 ${Math.max(0,Math.round(u.morale))}</span>`+
+    `<span class="chip ${u.fat>60?'w':''}">피로 ${Math.round(u.fat)}</span>`+
+    (T(u).range?`<span class="chip ${u.ammo<3?'b':''}">화살 ${u.ammo}${u.volleyCD>0?` · 일제 사격 ${Math.ceil(u.volleyCD)}초`:''}</span>`:'')+
+    (st?`<span class="chip ${st.k}">${st.t}</span>`:'')+(u.cmd!=='none'?`<span class="chip g">${CMDR[u.cmd].tip}</span>`:'');
 }
-function renderUnits(){
-  if(!S) return;
-  const box=document.getElementById('units');
+function renderUnits(){ if(!S) return; const box=document.getElementById('units');
   box.innerHTML=S.units.filter(u=>u.side==='us').map(u=>`<button class="ub ${S.sel===u?'on':''}" data-id="${u.id}" ${u.gone?'disabled':''}><span class="gl">${T(u).g}</span>${u.no}대<small>${u.n}</small></button>`).join('');
-  box.querySelectorAll('button').forEach(b=>b.onclick=()=>select(S.units.find(v=>v.id==+b.dataset.id)));
-}
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>select(S.units.find(v=>v.id==+b.dataset.id))); }
 function renderSetup(){
   const used=slots.reduce((a,s)=>a+s.n,0), usedV=slots.reduce((a,s)=>a+s.vet,0);
   document.getElementById('pool').innerHTML=`남은 병력 <b>${200-used}</b> · 숙련 <b>${60-usedV}</b> 남음`;
@@ -818,42 +745,37 @@ function renderSetup(){
       숙련<button data-i="${i}" data-v="-10" aria-label="숙련 줄이기">−</button><b>${s.vet}</b><button data-i="${i}" data-v="10" aria-label="숙련 늘리기">+</button></div>
     <label class="cnt">지휘 <select data-i="${i}" id="cmd${i}">${Object.keys(CMDR).map(k=>`<option value="${k}" ${s.cmd===k?'selected':''}>${CMDR[k].nm}${CMDR[k].tip?' — '+CMDR[k].tip:''}</option>`).join('')}</select></label>
   </div>`).join('');
-  box.querySelectorAll('select').forEach(sel=>sel.onchange=()=>{ const s=slots[+sel.dataset.i], k=sel.value;
-    if(k!=='none') slots.forEach(o=>{ if(o!==s&&o.cmd===k) o.cmd='none'; }); s.cmd=k; renderSetup(); });
-  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{
-    const s=slots[+b.dataset.i];
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{ const s=slots[+b.dataset.i];
     if(b.dataset.t) s.type=b.dataset.t;
-    if(b.dataset.d){ const d=+b.dataset.d; const left=200-slots.reduce((a,x)=>a+x.n,0); if(d>0&&left<d) return; s.n=Math.max(0,s.n+d); s.vet=Math.min(s.vet,s.n); }
-    if(b.dataset.v){ const d=+b.dataset.v; const leftV=60-slots.reduce((a,x)=>a+x.vet,0); if(d>0&&(leftV<d||s.vet+d>s.n)) return; s.vet=Math.max(0,s.vet+d); }
-    if(b.dataset.c){ const k=b.dataset.c; if(k!=='none') slots.forEach(o=>{ if(o!==s&&o.cmd===k) o.cmd='none'; }); s.cmd=k; }
-    renderSetup();
-  });
-  document.getElementById('bGo').disabled = used===0;
-  resize();
+    if(b.dataset.d){ const d=+b.dataset.d, left=200-slots.reduce((a,x)=>a+x.n,0); if(d>0&&left<d) return; s.n=Math.max(0,s.n+d); s.vet=Math.min(s.vet,s.n); }
+    if(b.dataset.v){ const d=+b.dataset.v, leftV=60-slots.reduce((a,x)=>a+x.vet,0); if(d>0&&(leftV<d||s.vet+d>s.n)) return; s.vet=Math.max(0,s.vet+d); }
+    renderSetup(); });
+  box.querySelectorAll('select').forEach(sel=>sel.onchange=()=>{ const s=slots[+sel.dataset.i], k=sel.value; if(k!=='none') slots.forEach(o=>{ if(o!==s&&o.cmd===k) o.cmd='none'; }); s.cmd=k; renderSetup(); });
+  document.getElementById('bGo').disabled=used===0; resize();
 }
 function showPhase(){
-  document.getElementById('setupWrap').hidden = phase!=='setup';
-  document.getElementById('battleWrap').hidden = phase!=='battle';
-  document.getElementById('goalT').textContent = phase==='setup' ? '편성: 병종과 인원, 지휘관을 정하고 깃발을 끌어 시작 위치를 잡는다'
-    : '돌아오는 아군 기병은 길을 열어 받고, 뒤쫓는 적은 막는다';
-  renderUnits(); renderSel(); resize();
+  document.getElementById('setupWrap').hidden=phase!=='setup'; document.getElementById('battleWrap').hidden=phase!=='battle';
+  document.getElementById('goalT').textContent=phase==='setup'?'편성: 병종·인원·지휘관을 정하고 패를 끌어 자리를 잡는다':'기병이 안량에게 닿을 때까지 길목을 지킨다. 돌아오는 아군은 받고, 뒤쫓는 적은 막는다';
+  renderTop(); renderUnits(); renderSel(); resize();
 }
 document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>loadPreset(b.dataset.preset));
-document.getElementById('bGo').onclick=()=>{ startBattle(); };
+document.getElementById('bGo').onclick=()=>startBattle();
 document.getElementById('bBrief').onclick=()=>{ document.getElementById('brief').hidden=true; phase='setup'; showPhase(); };
-document.getElementById('pGuan').onclick=()=>{ killer='관우'; document.getElementById('pGuan').classList.add('on'); document.getElementById('pLv').classList.remove('on'); };
-document.getElementById('pLv').onclick=()=>{ killer='여포'; document.getElementById('pLv').classList.add('on'); document.getElementById('pGuan').classList.remove('on'); };
-document.getElementById('bAgain').onclick=()=>{ document.getElementById('result').hidden=true; S=null; phase='setup'; showPhase(); document.getElementById('clock').textContent='0:00'; };
+const pG=document.getElementById('pGuan'), pL=document.getElementById('pLv');
+pG.onclick=()=>{ killer='관우'; pG.classList.add('on'); pL.classList.remove('on'); };
+pL.onclick=()=>{ killer='여포'; pL.classList.add('on'); pG.classList.remove('on'); };
+document.getElementById('bAgain').onclick=()=>{ document.getElementById('result').hidden=true; S=null; stainCtx.clearRect(0,0,W,H); document.getElementById('herald').innerHTML=''; phase='setup'; showPhase(); };
 
 /* ───────── 돌리기 ───────── */
 let last=performance.now(), uiT=0;
 function loop(now){
   const dt=Math.min(.05,(now-last)/1000); last=now;
-  if(phase==='battle' && S && !S.paused && !S.over){ const steps=S.speed; for(let i=0;i<steps;i++) step(dt); }
-  else if(phase==='battle' && S && S.over){ step(dt*.5); }
-  uiT+=dt; if(uiT>.25 && S && phase==='battle'){ uiT=0; document.getElementById('clock').textContent=fmt(S.t); renderNext(); renderSel(); renderUnits(); }
+  if(phase==='battle'&&S&&!S.paused&&!S.over){ for(let i=0;i<S.speed;i++) step(dt); }
+  else if(phase==='battle'&&S&&S.over) step(dt*.5);
+  uiT+=dt; if(uiT>.25&&S&&phase==='battle'){ uiT=0; renderTop(); renderSel(); renderUnits(); }
   draw(); requestAnimationFrame(loop);
 }
-resize(); loadPreset('steady'); requestAnimationFrame(loop);
-window.__baima={get S(){return S;}, startBattle, step, issue, loadPreset, slots:()=>slots, setPhase:p=>{phase=p;}};
+if(document.fonts) document.fonts.ready.then(()=>drawMap());
+drawMap(); resize(); loadPreset('steady'); requestAnimationFrame(loop);
+window.__baima={get S(){return S;},startBattle,step,issue,loadPreset};
 </script>
