@@ -39,6 +39,7 @@ kbd{font-family:var(--f-ui);font-size:10px;color:var(--dim);margin-left:4px}
 #goal b{font-family:var(--f-head);font-size:15px;font-weight:700;margin-right:8px}
 #foe{font-size:12px;color:var(--dim);white-space:nowrap}
 #foe b{color:var(--paper);font-weight:600}
+#next{font-size:12px;color:var(--dim);white-space:nowrap;font-variant-numeric:tabular-nums}#next b{color:var(--ours-hi);font-weight:600}#next .k{color:var(--warn)}
 #clock{font-variant-numeric:tabular-nums;font-size:13px;min-width:44px;text-align:right}
 #ctl{display:flex;gap:6px}
 
@@ -106,7 +107,7 @@ th{color:var(--dim);font-weight:400}
 <div id="top">
   <div id="goal"><b>백마 · 길목</b><span id="goalT">편성: 깃발을 끌어 시작 위치를 정한다</span></div>
   <div id="foe">원소군 선봉 · <b>안량</b></div>
-  <div id="clock">0:00</div>
+  <div id="next"></div><div id="clock">0:00</div>
   <div id="ctl">
     <button id="bPause" title="멈춤 (Space)">멈춤</button>
     <button id="bSpeed" title="빠르기">×1</button>
@@ -277,6 +278,7 @@ function spawn(type,n,x,y,tx,ty,o={}){
   S.units.push(u); return u;
 }
 function riderEvent(t,n,pn){
+  S.riderTimes=(S.riderTimes||[]); S.riderTimes.push(t);
   const hasSo=liveOursHas('so');
   const warn=hasSo?8:4.5;
   S.events.push({t:t-warn,done:false,f:()=>{ S.riderWarn={until:t,since:S.t};
@@ -372,18 +374,21 @@ function step(dt){
     const tgts=(u.side==='us'?foes():U.filter(v=>v.side!=='them')).filter(v=>!v.routed&&v.n>0&&!v.gone&&Math.hypot(v.x-u.x,v.y-u.y)<R);
     if(!tgts.length) continue;
     tgts.sort((a,b)=>Math.hypot(a.x-u.x,a.y-u.y)-Math.hypot(b.x-u.x,b.y-u.y));
-    let tgt=null;
-    for(const t of tgts){ const fy=u.side==='us'?rect(u).y0:rect(u).y1;
-      const blockers=U.filter(v=>v!==u&&v.side===u.side&&!v.routed&&v.n>0&&segHitsRect(u.x,fy,t.x,t.y,rect(v)));
-      if(!blockers.length){ tgt=t; break; } }
-    if(!tgt){ u.blocked=true; continue; }
-    u.target=tgt;
+    if(u.focus && tgts.includes(u.focus)){ tgts.splice(tgts.indexOf(u.focus),1); tgts.unshift(u.focus); }
+    else if(u.focus && (u.focus.gone||u.focus.routed)) u.focus=null;
+    const clear=t=>{ const fy=u.side==='us'?rect(u).y0:rect(u).y1;
+      return !U.some(v=>v!==u&&v.side===u.side&&!v.routed&&v.n>0&&segHitsRect(u.x,fy,t.x,t.y,rect(v))); };
+    let tgt=tgts[0], arc=false;
+    if(!clear(tgt)){ // 앞에 아군이 있으면 넘겨 쏜다. 덜 맞는다
+      const other=u.focus?null:tgts.find(clear);
+      if(other) tgt=other; else { arc=true; u.blocked=true; } }
+    u.target=tgt; u.arc=arc;
     if(u.order==='move' && Math.hypot(u.tx-u.x,u.ty-u.y)>4) continue;
     u.fireT-=dt;
     if(u.fireT<=0){ u.fireT=2.8;
-      const kills=u.n*.032*(.6+.4*u.coh)*(u.side==='them'?1+S.boost:1)*T(tgt).adef;
+      const kills=u.n*.032*(.6+.4*u.coh)*(u.side==='them'?1+S.boost:1)*T(tgt).adef*(arc?.55:1);
       tgt.dmg+=kills; tgt.morale-=kills*1.2;
-      for(let i=0;i<Math.min(10,u.n/4);i++) S.fx.push({k:'arrow',x0:u.x+(Math.random()-.5)*rect(u).w,y0:u.y,x1:tgt.x+(Math.random()-.5)*rect(tgt).w,y1:tgt.y+(Math.random()-.5)*20,t:0,d:.7+Math.random()*.3,side:u.side});
+      for(let i=0;i<Math.min(10,u.n/4);i++) S.fx.push({k:'arrow',arc:arc?220:80,x0:u.x+(Math.random()-.5)*rect(u).w,y0:u.y,x1:tgt.x+(Math.random()-.5)*rect(tgt).w,y1:tgt.y+(Math.random()-.5)*20,t:0,d:.7+Math.random()*.3,side:u.side});
     }
   }
   // 사상
@@ -468,12 +473,18 @@ function step(dt){
   // 끝
   if(S.t>=S.breakT && !S.over) win();
   const live=liveOurs().reduce((a,u)=>a+u.n,0);
-  if(!S.over && S.t>8 && live<40) lose('부대가 흩어졌다','남은 사람이 너무 적었다. 길목은 원소군에게 넘어갔다.');
+  const start=S.units.filter(u=>u.side==='us').reduce((a,u)=>a+u.n0,0);
+  if(!S.over && S.t>8 && live<start*.3) lose('부대가 무너졌다','서 있는 사람이 열에 셋도 안 남았다. 길목은 원소군에게 넘어갔다.');
 }
 function nearestFoe2(u){ let best=null,bd=1e9; for(const v of S.units){ if(v.gone||v.routed||v.n<=0||v.side!=='us') continue; const d=Math.hypot(v.x-u.x,v.y-u.y); if(d<bd){bd=d;best=v;} } return best; }
 
 /* ───────── 끝 ───────── */
 function win(){
+  const start=S.units.filter(u=>u.side==='us').reduce((a,u)=>a+u.n0,0), live=liveOurs().reduce((a,u)=>a+u.n,0);
+  if(live<start*.45){ S.over=true; foes().forEach(f=>{ f.routed=true; }); S.bannerFall=S.t;
+    report(`${killer}가 안량을 베었습니다. 그러나 우리 길목에는 서 있는 사람이 거의 없습니다.`,'b');
+    S.loseT='안량은 베였지만, 길목은 무너졌다'; S.loseX=`버틴 사람이 ${live}명뿐이었다. 돌아오던 기병은 무너진 대열 사이로 흩어졌고, 장료는 우리 부대를 셈에 넣지 않았다.`;
+    setTimeout(()=>finish(false),3200); return; }
   S.over=true;
   foes().forEach(f=>{ f.routed=true; });
   report(killer==='여포' ? '여포가 안량의 군기 아래로 뛰어들었습니다. 안량의 목이 떨어졌습니다!' : '관우가 안량의 군기 아래로 말을 몰았습니다. 안량이 베였습니다!','', '전령');
@@ -486,7 +497,8 @@ function finish(won){
   const U=S.units.filter(u=>u.side==='us');
   const lost=U.reduce((a,u)=>a+(u.n0-u.n),0), total=U.reduce((a,u)=>a+u.n0,0);
   document.getElementById('rEb').textContent=`백마 · ${fmt(S.t)} 동안`;
-  document.getElementById('rT').textContent= won ? '길목을 지켰다' : S.loseT;
+  const keep=liveOurs().reduce((a,u)=>a+u.n,0)/Math.max(1,U.reduce((a,u)=>a+u.n0,0));
+  document.getElementById('rT').textContent= won ? (keep>=.7?'길목을 지켰다':'값비싸게 지켰다') : S.loseT;
   const zh = !won ? '' : (S.rescued>=S.ridersSent*.7 && lost<total*.3) ? '장료: "길을 열 때와 닫을 때를 알았구려. 적어 두겠소."'
     : (S.rescued<S.ridersSent*.4) ? '장료: "길목은 지켰소. 다만 돌아오던 기병을 길 위에서 많이 잃었소."'
     : '장료: "버텼소. 잃은 사람 이름은 오늘 밤 안에 적어 올리시오."';
@@ -567,7 +579,8 @@ function statusOf(u){
   if(u.pend) return {t:`명령 전달 중 ${Math.max(.1,u.delay).toFixed(1)}초`,k:'w'};
   if(u.disengage>0 && u.engaged.length) return {t:'적과 붙어 물러나지 못함',k:'b'};
   if(u.engaged.length) return {t:u.morale<35?'밀린다':'교전',k:u.morale<35?'b':'w'};
-  if(u.blocked) return {t:'사선 막힘',k:'w'};
+  if(u.target&&u.arc) return {t:'넘겨 쏘기 · 덜 맞는다',k:'w'};
+  if(u.focus&&u.target===u.focus) return {t:'집중 사격',k:''};
   if(u.coh<.6) return {t:'대열 벌어짐',k:'w'};
   if(u.target) return {t:'사격',k:''};
   if(u.tag==='예비'&&!u.committed) return {t:'예비',k:''};
@@ -586,6 +599,7 @@ function draw(){
   const rw = S && S.riderWarn;
   if(rw){ const a=.25+.2*Math.sin(performance.now()/180); cx.fillStyle=`rgba(157,184,220,${a})`; cx.fillRect(ROAD.x0,0,ROAD.x1-ROAD.x0,H);
     lbl('아군 기병 귀환 · 길을 연다',ROAD.x0+10,40); arrowDown(ROAD.c,70); }
+  if(S && !rw){ const nr=(S.riderTimes||[]).find(t=>t>S.t); if(nr!==undefined && nr-S.t<15){ lbl(`아군 기병 ${Math.ceil(nr-S.t)}초 뒤 이 길로`,ROAD.x0+10,40,'#9db8dc'); } }
   if(S && S.flankHint && S.t<S.flankHint.until){ lbl('먼지 · 깃발이 돈다',2020,260,'#e9c06d'); arrowDown(2190,300,'#e9c06d'); }
   // 안량 군기
   if(phase!=='setup'){ const by=S?S.bannerY:150; const fallen=S&&S.bannerFall;
@@ -598,7 +612,7 @@ function draw(){
   for(const u of list) drawUnit(u, phase==='setup' ? dragI===u.no-1 : !!S && S.sel===u);
   // 효과
   if(S) for(const f of S.fx){ const k=f.t/f.d;
-    if(f.k==='arrow'){ const x=f.x0+(f.x1-f.x0)*k, y=f.y0+(f.y1-f.y0)*k-Math.sin(k*Math.PI)*80; cx.strokeStyle=f.side==='us'?'rgba(30,40,60,.9)':'rgba(90,40,20,.9)'; cx.lineWidth=1.4; cx.beginPath(); cx.moveTo(x,y); cx.lineTo(x-(f.x1-f.x0)*.02,y-(f.y1-f.y0)*.02-6); cx.stroke(); }
+    if(f.k==='arrow'){ const x=f.x0+(f.x1-f.x0)*k, y=f.y0+(f.y1-f.y0)*k-Math.sin(k*Math.PI)*(f.arc||80); cx.strokeStyle=f.side==='us'?'rgba(30,40,60,.9)':'rgba(90,40,20,.9)'; cx.lineWidth=1.4; cx.beginPath(); cx.moveTo(x,y); cx.lineTo(x-(f.x1-f.x0)*.02,y-(f.y1-f.y0)*.02-6); cx.stroke(); }
     if(f.k==='hit'){ cx.fillStyle=`rgba(120,20,10,${.6*(1-k)})`; cx.beginPath(); cx.arc(f.x,f.y,3+k*5,0,7); cx.fill(); }
     if(f.k==='rally'){ cx.strokeStyle=`rgba(233,192,109,${1-k})`; cx.lineWidth=3; cx.beginPath(); cx.arc(f.x,f.y,30+k*90,0,7); cx.stroke(); }
   }
@@ -623,6 +637,8 @@ cv.addEventListener('pointerdown',e=>{
   const u=unitAt(w,mine);
   if(S.mode==='swap' && S.sel){ if(u && u!==S.sel){ issue(S.sel,{c:'swap',with:u}); S.mode=null; renderSel(); } return; }
   if(u){ select(u); return; }
+  const f=unitAt(w,S.units.filter(v=>v.side==='them'&&!v.gone&&!v.routed));
+  if(f && S.sel && T(S.sel).range){ S.sel.focus=f; report(`${S.sel.no}대가 ${T(f).nm} 쪽을 노린다.`,'','안내'); return; }
   if(S.sel){ issue(S.sel,{c:'move',x:w.x,y:w.y}); S.mode=null; renderSel(); }
 });
 cv.addEventListener('pointermove',e=>{ if(dragI<0) return; const w=toWorld(e.clientX,e.clientY); const s=slots[dragI];
@@ -652,6 +668,12 @@ document.getElementById('bLog').onclick=()=>{ const v=document.getElementById('l
 function drawLog(){ document.getElementById('logv').innerHTML = S&&S.log.length ? S.log.map(l=>`<div>${l}</div>`).join('') : '<div>아직 보고가 없다.</div>'; }
 
 /* ───────── 화면 판 ───────── */
+function renderNext(){
+  const el=document.getElementById('next'); if(!S){ el.textContent=''; return; }
+  const nr=(S.riderTimes||[]).find(t=>t>S.t);
+  const left=Math.max(0,S.breakT-S.t);
+  el.innerHTML=(nr!==undefined?`아군 기병 <b>${Math.ceil(nr-S.t)}초</b> 뒤 · `:'')+`안량 돌파까지 <span class="k">${fmt(left)}</span>`;
+}
 function renderSel(){
   const el=document.getElementById('sel'); const u=S&&S.sel;
   document.querySelectorAll('#cmds button').forEach(b=>{ b.disabled=!u||u.routed||u.gone||(b.dataset.c==='charge'&&u.type!=='spear'); b.classList.toggle('on',S&&S.mode===b.dataset.c); });
@@ -713,7 +735,7 @@ function loop(now){
   const dt=Math.min(.05,(now-last)/1000); last=now;
   if(phase==='battle' && S && !S.paused && !S.over){ const steps=S.speed; for(let i=0;i<steps;i++) step(dt); }
   else if(phase==='battle' && S && S.over){ step(dt*.5); }
-  uiT+=dt; if(uiT>.25 && S && phase==='battle'){ uiT=0; document.getElementById('clock').textContent=fmt(S.t); renderSel(); renderUnits(); }
+  uiT+=dt; if(uiT>.25 && S && phase==='battle'){ uiT=0; document.getElementById('clock').textContent=fmt(S.t); renderNext(); renderSel(); renderUnits(); }
   draw(); requestAnimationFrame(loop);
 }
 resize(); loadPreset('steady'); requestAnimationFrame(loop);
