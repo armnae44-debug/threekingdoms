@@ -2,111 +2,124 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Nanum+Myeongjo:wght@400;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
 <style>
-/* 레이아웃: 전장이 화면 전부. 위에 목표 한 줄과 적장 군기, 아래에 얇은 명령판. 장식 대신 군용 지도 표식 */
+/* 레이아웃: 전장이 화면 대부분. 위 띠에 붓글씨 장 이름과 목표, 아래 옻칠 판에 명령. 『관도지로』 본편의 옻칠·비단·청동·주사 */
 :root{
-  --ink:#14161b;            /* 판 바탕 */
-  --ink-a:rgba(20,22,27,.86);
-  --paper:#ece6d8;          /* 글 */
-  --dim:#a9a395;
-  --ours:#2e3f5c;           /* 조조군 깃발 */
-  --ours-hi:#9db8dc;        /* 우리 표식 강조 */
-  --theirs:#a5552e;         /* 원소군 */
-  --warn:#d9a441;
-  --bad:#d0644b;
-  --line:rgba(236,230,216,.18);
-  --f-head:"Noto Serif KR","Nanum Myeongjo",serif;
+  --lac:#0e0c0a;            /* 옻칠 바탕 */
+  --lac2:#17140f;
+  --lac-a:rgba(14,12,10,.9);
+  --silk:#ece3cd;           /* 비단 글 */
+  --silk-dim:#a99c82;
+  --bronze:#c9a35c;         /* 청동 */
+  --bronze-lo:#6b5526;
+  --cin:#b02a25;            /* 주사 */
+  --cin-t:#e0564b;
+  --jade:#7fa999;
+  --hair:rgba(201,163,92,.2);
+  --f-brush:"Ma Shan Zheng","Nanum Myeongjo",serif;
+  --f-serif:"Nanum Myeongjo","Noto Serif KR",serif;
   --f-ui:"IBM Plex Sans KR","Apple SD Gothic Neo",sans-serif;
   color-scheme:dark;
 }
 [hidden]{display:none!important}
 html,body{height:100%;margin:0;overflow:hidden}
-body{background:var(--ink);color:var(--paper);font-family:var(--f-ui);font-size:14px;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+body{background:var(--lac);color:var(--silk);font-family:var(--f-serif);font-size:14px;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #cv{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
-button{font-family:var(--f-ui);color:var(--paper);background:transparent;border:1px solid var(--line);border-radius:4px;padding:7px 11px;font-size:13px;cursor:pointer;line-height:1.2}
-button:hover,button:focus-visible{border-color:var(--ours-hi);outline:none}
-button.on{background:var(--ours);border-color:var(--ours-hi)}
-button:disabled{opacity:.35;cursor:default}
-kbd{font-family:var(--f-ui);font-size:10px;color:var(--dim);margin-left:4px}
+button{font-family:var(--f-serif);font-weight:700;color:var(--silk);background:transparent;border:0;border-bottom:1px solid transparent;border-radius:0;padding:6px 4px;font-size:14px;letter-spacing:.12em;cursor:pointer;line-height:1.2}
+button:hover,button:focus-visible{color:var(--bronze);border-bottom-color:var(--bronze);outline:none}
+button.on{color:var(--bronze);border-bottom-color:var(--bronze)}
+button:disabled{opacity:.3;cursor:default;border-bottom-color:transparent;color:var(--silk)}
+kbd{font-family:var(--f-ui);font-size:10px;color:var(--silk-dim);margin-left:5px;letter-spacing:0;font-weight:400}
 
 /* 위 띠 */
-#top{position:fixed;left:0;right:0;top:0;display:flex;align-items:center;gap:12px;background:var(--ink);border-bottom:1px solid var(--line);
-  padding:calc(8px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));
-  pointer-events:none}
-#top > *{pointer-events:auto}
-#goal{flex:1;min-width:0;font-size:13px;line-height:1.4}
-#goal b{font-family:var(--f-head);font-size:15px;font-weight:700;margin-right:8px}
-#foe{font-size:12px;color:var(--dim);white-space:nowrap}
-#foe b{color:var(--paper);font-weight:600}
-#next{font-size:12px;color:var(--dim);white-space:nowrap;font-variant-numeric:tabular-nums}#next b{color:var(--ours-hi);font-weight:600}#next .k{color:var(--warn)}
-#clock{font-variant-numeric:tabular-nums;font-size:13px;min-width:44px;text-align:right}
-#ctl{display:flex;gap:6px}
+#top{position:fixed;left:0;right:0;top:0;display:flex;align-items:center;gap:18px;background:var(--lac);border-bottom:1px solid var(--hair);
+  padding:calc(6px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 6px max(16px,env(safe-area-inset-left,0px))}
+#goal{flex:1;min-width:0;display:flex;align-items:baseline;gap:14px}
+#goal b{font-family:var(--f-brush);font-weight:400;font-size:30px;line-height:1;color:var(--silk)}
+#goal span{font-size:13px;color:var(--silk-dim);line-height:1.4;min-width:0}
+#foe{font-size:13px;color:var(--silk-dim);white-space:nowrap;display:flex;align-items:center;gap:8px}
+#foe .seal{width:22px;height:22px;background:var(--cin);color:var(--silk);font-family:var(--f-brush);display:grid;place-items:center;font-size:16px}
+#next{font-size:12px;color:var(--silk-dim);white-space:nowrap;font-family:var(--f-ui);font-variant-numeric:tabular-nums}
+#next b{color:var(--jade);font-weight:600}#next .k{color:var(--bronze)}
+#clock{font-family:var(--f-ui);font-variant-numeric:tabular-nums;font-size:14px;min-width:40px;text-align:right}
+#ctl{display:flex;gap:10px}
 
-/* 전령 보고 */
-#toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(56px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;width:min(92vw,560px)}
-.toast{background:var(--ink-a);border-left:3px solid var(--ours-hi);padding:7px 12px;font-size:13px;line-height:1.45;border-radius:2px;animation:tin .25s ease}
-.toast.w{border-left-color:var(--warn)}.toast.b{border-left-color:var(--bad)}
-.toast i{font-style:normal;color:var(--dim);margin-right:6px}
+/* 전령 보고 — 붙여 내린 죽간 띠 */
+#toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(64px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;width:min(92vw,560px)}
+.toast{background:var(--lac-a);border:1px solid var(--hair);border-left:3px solid var(--bronze);padding:8px 14px;font-size:14px;line-height:1.5;animation:tin .25s ease}
+.toast.w{border-left-color:var(--bronze)}.toast.b{border-left-color:var(--cin)}
+.toast.n{border-left-color:var(--jade)}
+.toast i{font-style:normal;font-weight:700;color:var(--bronze);margin-right:8px;letter-spacing:.08em}
+.toast.b i{color:var(--cin-t)}
 @keyframes tin{from{opacity:0;transform:translateY(-6px)}}
 
-/* 아래 판 */
-#bottom{position:fixed;left:0;right:0;bottom:0;background:var(--ink);border-top:1px solid var(--line);
+/* 아래 옻칠 판 */
+#bottom{position:fixed;left:0;right:0;bottom:0;background:var(--lac);border-top:1px solid var(--hair);
   padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-#sel{min-width:0;flex:1;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
-#sel .nm{font-family:var(--f-head);font-weight:700;font-size:16px}
-.chip{font-size:11px;padding:2px 7px;border-radius:10px;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
-.chip.w{color:var(--warn);border-color:var(--warn)}.chip.b{color:var(--bad);border-color:var(--bad)}.chip.g{color:var(--ours-hi);border-color:var(--ours-hi)}
-#units{display:flex;gap:6px;flex-wrap:wrap}
-.ub{display:flex;gap:6px;align-items:center;padding:5px 9px}
-.ub .gl{font-family:var(--f-head);font-weight:700;font-size:15px}
-.ub small{color:var(--dim);font-variant-numeric:tabular-nums}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+#sel{min-width:0;flex:1;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+#sel .nm{font-weight:800;font-size:17px;letter-spacing:.04em}
+.chip{font-family:var(--f-ui);font-size:12px;color:var(--silk-dim);white-space:nowrap}
+.chip.w{color:var(--bronze)}.chip.b{color:var(--cin-t)}.chip.g{color:var(--jade)}
+.chip+.chip::before{content:"·";margin-right:12px;color:var(--bronze-lo)}
+#units{display:flex;gap:14px;flex-wrap:wrap}
+.ub{display:flex;gap:6px;align-items:baseline;letter-spacing:.04em}
+.ub .gl{font-family:var(--f-brush);font-weight:400;font-size:20px;letter-spacing:0}
+.ub small{font-family:var(--f-ui);font-weight:400;color:var(--silk-dim);font-variant-numeric:tabular-nums;letter-spacing:0}
 
 /* 편성판 */
-#setup{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.slot{border:1px solid var(--line);border-radius:4px;padding:7px;display:flex;flex-direction:column;gap:5px;min-width:0;background:rgba(20,22,27,.55)}
-.slot.off{opacity:.5}
-.slot select{font-family:var(--f-ui);font-size:12px;background:var(--ink);color:var(--paper);border:1px solid var(--line);border-radius:4px;padding:4px;min-width:0;flex:1;width:100%}
-.slot h4{margin:0;font-family:var(--f-head);font-size:14px;display:flex;justify-content:space-between;gap:6px}
-.slot h4 small{font-family:var(--f-ui);font-weight:400;color:var(--dim);font-size:11px}
-.seg{display:flex;gap:4px;flex-wrap:wrap}
-.seg button{padding:4px 7px;font-size:12px}
-.cnt{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
-.cnt{font-size:12px;color:var(--dim)}
-.cnt b{color:var(--paper);min-width:30px;text-align:center;font-size:15px}
-.cnt button{padding:2px 9px;font-size:15px}
-#pool{font-size:12px;color:var(--dim)}
-#pool b{color:var(--paper)}
-@media (max-width:760px){#setup{grid-template-columns:repeat(2,minmax(0,1fr))}#foe{display:none}}
-@media (max-height:520px){#setup{grid-template-columns:repeat(4,minmax(150px,1fr));overflow-x:auto}.slot .seg button{padding:3px 5px}#goal span{display:none}}
+#setup{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--hair)}
+.slot{padding:8px 12px;display:flex;flex-direction:column;gap:5px;min-width:0;border-left:1px solid var(--hair)}
+.slot:first-child{border-left:0}
+.slot.off{opacity:.45}
+.slot select{font-family:var(--f-serif);font-size:13px;background:var(--lac2);color:var(--silk);border:1px solid var(--hair);border-radius:0;padding:4px;min-width:0;flex:1;width:100%}
+.slot h4{margin:0;font-size:15px;font-weight:800;display:flex;justify-content:space-between;gap:6px;align-items:baseline}
+.slot h4 small{font-family:var(--f-ui);font-weight:400;color:var(--silk-dim);font-size:12px}
+.seg{display:flex;gap:10px;flex-wrap:wrap}
+.seg button{padding:3px 0;font-size:13px;letter-spacing:.04em}
+.seg button .gl{font-family:var(--f-brush);font-weight:400;font-size:18px;margin-right:3px}
+.cnt{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--silk-dim)}
+.cnt b{font-family:var(--f-ui);color:var(--silk);min-width:28px;text-align:center;font-size:15px;font-variant-numeric:tabular-nums}
+.cnt button{border:1px solid var(--hair);padding:0 8px;font-size:15px;letter-spacing:0;line-height:22px}
+.cnt button:hover{border-color:var(--bronze)}
+#pool{font-size:13px;color:var(--silk-dim)}
+#pool b{color:var(--silk);font-family:var(--f-ui)}
+@media (max-width:760px){#setup{grid-template-columns:repeat(2,minmax(0,1fr))}#foe{display:none}.slot:nth-child(3){border-left:0}}
+@media (max-height:520px){#setup{grid-template-columns:repeat(4,minmax(160px,1fr));overflow-x:auto}#goal span{display:none}}
 
-/* 덮개 */
-.ov{position:fixed;inset:0;background:rgba(14,15,19,.88);display:flex;align-items:center;justify-content:center;
+/* 덮개 — 본편 각인 화면처럼 */
+.ov{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(14,12,10,.86),rgba(8,7,6,.97));display:flex;align-items:center;justify-content:center;
   padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.card{width:100%;max-width:560px;max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:14px;line-height:1.65}
-.card h1{font-family:var(--f-head);font-size:clamp(26px,6vw,34px);margin:0;font-weight:700;letter-spacing:.04em}
-.card h2{font-family:var(--f-head);font-size:20px;margin:0}
-.card .eb{font-size:11px;letter-spacing:.14em;color:var(--dim)}
+.card{width:100%;max-width:560px;max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:16px;line-height:1.75;font-size:15px}
+.card .brush{font-family:var(--f-brush);font-size:clamp(64px,14vw,96px);line-height:1;color:var(--silk)}
+.card h1{font-size:clamp(20px,4.6vw,24px);margin:0;font-weight:800;letter-spacing:.14em}
+.card h2{font-size:22px;margin:0;font-weight:800;letter-spacing:.08em}
+.card .eb{font-family:var(--f-ui);font-size:11px;letter-spacing:.2em;color:var(--silk-dim)}
 .card p{margin:0}
-.card blockquote{margin:0;padding-left:12px;border-left:2px solid var(--ours-hi);color:var(--paper)}
-.foe{border:1px solid var(--line);border-radius:4px;padding:10px 12px;display:flex;gap:12px;align-items:center}
-.foe .fl{width:40px;height:48px;background:var(--theirs);color:#f4e7d4;display:grid;place-items:center;font-family:var(--f-head);font-size:24px;font-weight:700;flex:none}
+.card blockquote{margin:0;padding-left:14px;border-left:1px solid var(--bronze);color:var(--silk)}
+.card .who{color:var(--silk-dim);font-size:13px}
+.foe{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:12px 0;display:flex;gap:14px;align-items:center}
+.foe .fl{width:44px;height:52px;background:var(--cin);color:var(--silk);display:grid;place-items:center;font-family:var(--f-brush);font-size:30px;flex:none}
 .foe div{min-width:0}
-.big{background:var(--ours);border-color:var(--ours-hi);font-size:15px;padding:11px 16px;font-weight:600}
-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
-td,th{padding:5px 4px;border-bottom:1px solid var(--line);text-align:left}
-th{color:var(--dim);font-weight:400}
-#logv{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(56px + env(safe-area-inset-top,0px));width:min(92vw,340px);max-height:50vh;overflow:auto;background:var(--ink-a);border:1px solid var(--line);border-radius:4px;padding:8px 12px;font-size:12px;line-height:1.6}
-#logv div{border-bottom:1px solid var(--line);padding:3px 0}
+.big{font-size:16px;padding:8px 2px;color:var(--bronze);border-bottom:1px solid var(--bronze);letter-spacing:.2em}
+.big:hover,.big:focus-visible{color:var(--silk);border-bottom-color:var(--silk)}
+.seal-big{width:76px;height:76px;background:var(--cin);color:var(--silk);font-family:var(--f-brush);font-size:54px;display:grid;place-items:center;transform:rotate(-4deg);box-shadow:inset 0 0 0 3px rgba(236,227,205,.18)}
+.seal-big.lose{background:#3a3530;color:var(--silk-dim)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:6px 4px;border-bottom:1px solid var(--hair);text-align:left}
+td{font-variant-numeric:tabular-nums}
+th{color:var(--silk-dim);font-weight:400;font-size:12px;font-family:var(--f-ui)}
+#logv{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(64px + env(safe-area-inset-top,0px));width:min(92vw,360px);max-height:50vh;overflow:auto;background:var(--lac-a);border:1px solid var(--hair);padding:8px 14px;font-size:13px;line-height:1.6}
+#logv div{border-bottom:1px solid var(--hair);padding:4px 0}
 @media (prefers-reduced-motion:reduce){.toast{animation:none}}
 </style>
 
 <canvas id="cv"></canvas>
 
 <div id="top">
-  <div id="goal"><b>백마 · 길목</b><span id="goalT">편성: 깃발을 끌어 시작 위치를 정한다</span></div>
-  <div id="foe">원소군 선봉 · <b>안량</b></div>
+  <div id="goal"><b>白馬</b><span id="goalT">편성: 깃발을 끌어 시작 위치를 정한다</span></div>
+  <div id="foe"><span class="seal">顔</span>원소군 선봉 안량</div>
   <div id="next"></div><div id="clock">0:00</div>
   <div id="ctl">
     <button id="bPause" title="멈춤 (Space)">멈춤</button>
@@ -120,17 +133,17 @@ th{color:var(--dim);font-weight:400}
 <div id="bottom">
   <div id="setupWrap">
     <div class="row" style="justify-content:space-between;margin-bottom:8px">
-      <div class="row"><span style="color:var(--dim);font-size:12px">편성 예시</span>
+      <div class="row"><span style="color:var(--silk-dim);font-size:13px">편성 예시</span>
         <button data-preset="steady">안정</button><button data-preset="shoot">사격</button><button data-preset="push">공격</button></div>
       <div id="pool"></div>
-      <button class="big" id="bGo">출전</button>
+      <button class="big" id="bGo">출전한다</button>
     </div>
     <div id="setup"></div>
   </div>
   <div id="battleWrap" hidden>
-    <div class="row" style="justify-content:space-between;gap:12px">
+    <div class="row" style="justify-content:space-between;gap:16px">
       <div id="sel"><span class="nm">부대를 고른다</span><span class="chip">깃발을 누르거나 1~4</span></div>
-      <div class="row" id="cmds">
+      <div class="row" id="cmds" style="gap:16px">
         <button data-c="move">이동<kbd>M</kbd></button>
         <button data-c="hold">버티기<kbd>H</kbd></button>
         <button data-c="back">물러나기<kbd>R</kbd></button>
@@ -138,33 +151,34 @@ th{color:var(--dim);font-weight:400}
         <button data-c="charge">돌격<kbd>C</kbd></button>
       </div>
     </div>
-    <div id="units" style="margin-top:8px"></div>
+    <div id="units" style="margin-top:6px"></div>
   </div>
 </div>
 
 <div class="ov" id="brief"><div class="card">
   <div class="eb">건안 5년 · 백마 · 장료의 보병</div>
+  <div class="brush">白馬</div>
   <h1>길목을 지켜라</h1>
-  <blockquote>"기병 뒤에 붙으시오. 말에서 떨어진 아군이 돌아오면 길을 열어 받아들이고, 뒤쫓는 적은 막으시오."<br><span style="color:var(--dim);font-size:13px">— 장료</span></blockquote>
+  <blockquote>"기병 뒤에 붙으시오. 말에서 떨어진 아군이 돌아오면 길을 열어 받아들이고, 뒤쫓는 적은 막으시오."<br><span class="who">장료</span></blockquote>
   <div class="foe"><div class="fl">顔</div><div>
-    <b>원소군 선봉 · 안량</b><br>
-    <span style="color:var(--dim);font-size:13px">앞줄을 보내 배치를 떠본다. 예비가 움직이면 그 자리를 노린다. 대열이 흔들리면 군기를 앞으로 내고 뒷군을 쏟는다.</span>
+    <b style="letter-spacing:.06em">원소군 선봉 · 안량</b><br>
+    <span style="color:var(--silk-dim);font-size:14px">앞줄을 보내 배치를 떠본다. 예비가 움직이면 그 자리를 노린다. 대열이 흔들리면 군기를 앞으로 내고 뒷군을 쏟는다.</span>
   </div></div>
-  <p style="font-size:14px">버티는 동안 기병이 안량에게 닿는다. 그때까지 길을 지키면 된다.</p>
-  <div class="row"><span style="color:var(--dim);font-size:12px">이 판에서 안량을 베는 사람</span>
+  <p>버티는 동안 기병이 안량에게 닿는다. 그때까지 길을 지킨다.</p>
+  <div class="row"><span style="color:var(--silk-dim);font-size:13px">이 판에서 안량을 베는 사람</span>
     <button id="pGuan" class="on">관우</button><button id="pLv">여포</button></div>
-  <div class="row" style="color:var(--dim);font-size:12px;line-height:1.6">
-    병력 200 (숙련 60 · 신병 140). 신병은 명령을 늦게 받고, 움직이면 대열이 벌어진다. 부대에서 멀리 있는 부대에는 명령이 더 늦게 닿는다.</div>
-  <button class="big" id="bBrief">편성하러 간다</button>
+  <p style="color:var(--silk-dim);font-size:13px;line-height:1.7">병력 이백. 숙련 육십, 신병 백사십. 신병은 명령을 늦게 받고, 움직이면 대열이 벌어진다. 내 부대에서 멀리 있는 부대에는 명령이 더 늦게 닿는다.</p>
+  <div><button class="big" id="bBrief">편성하러 간다</button></div>
 </div></div>
 
 <div class="ov" id="result" hidden><div class="card">
-  <div class="eb" id="rEb"></div>
-  <h2 id="rT"></h2>
+  <div class="row" style="gap:18px;align-items:center"><div class="seal-big" id="rSeal">守</div><div style="min-width:0">
+    <div class="eb" id="rEb"></div>
+    <h2 id="rT"></h2></div></div>
   <p id="rX"></p>
   <table id="rTab"></table>
-  <p id="rGrow" style="font-size:13px;color:var(--dim)"></p>
-  <div class="row"><button class="big" id="bAgain">다시 편성한다</button></div>
+  <p id="rGrow" style="font-size:13px;color:var(--silk-dim)"></p>
+  <div><button class="big" id="bAgain">다시 편성한다</button></div>
 </div></div>
 
 <script>
@@ -173,7 +187,7 @@ const W=2304,H=1296;
 const ROAD={x0:1035,x1:1275,c:1155};
 const RIVER_X=150;
 const DEPLOY={y0:860,y1:1250}, REAR_Y=1130;
-const SP=16;                       // 병사 간격
+const SP=24;                       // 병사 그림 간격 (그림 하나 = 두 사람)
 const bg=new Image(); bg.src='assets/bg/baima_field.webp';
 
 const TY={
@@ -220,7 +234,8 @@ function mkUnit(side,type,n,x,y,o={}){
     exitSaved:false,boostT:0},o);
 }
 const T=u=>TY[u.type];
-const cols=u=>Math.max(1,Math.ceil(u.n/T(u).ranks));
+const figs=u=>Math.ceil(u.n/2);
+const cols=u=>Math.max(1,Math.ceil(figs(u)/T(u).ranks));
 function rect(u){ const w=cols(u)*SP, h=T(u).ranks*SP; return {x0:u.x-w/2,y0:u.y-h/2,x1:u.x+w/2,y1:u.y+h/2,w,h}; }
 const tr=u=>u.n?u.vet/u.n:0;
 function ov(a,b,m=0){ return a.x0-m<b.x1 && a.x1+m>b.x0 && a.y0-m<b.y1 && a.y1+m>b.y0; }
@@ -251,7 +266,7 @@ const fmt=t=>{ t=Math.max(0,Math.floor(t)); return Math.floor(t/60)+':'+String(t
 /* ───────── 전투 시작 ───────── */
 function startBattle(){
   uid=0;
-  S={t:0,units:[],fx:[],log:[],sel:null,mode:null,speed:1,paused:false,
+  S={t:0,units:[],fx:[],dead:[],log:[],sel:null,mode:null,speed:1,paused:false,
      bannerY:150,boost:.12,waver:0,events:[],rescued:0,ridersSent:0,breakT:150,flankHit:false,
      reserveSeen:false,over:false,lastWeak:null};
   slots.forEach((s,i)=>{ if(s.n<=0) return;
@@ -359,7 +374,7 @@ function step(dt){
     for(const b of a.engaged){
       const front=Math.min(cols(a),cols(b))*(a.type==='spear'||a.type==='espear'?1.4:1);
       const eff=(.45+.55*a.coh)*(.55+.45*a.morale/100)*(1-a.fat/260)*(a.side==='them'?1+S.boost:1)*(a.charge>0?1.9:1);
-      let k=.02*front*T(a).atk[T(b).cav?'cav':'inf']*eff/T(b).def*share;
+      let k=.04*front*T(a).atk[T(b).cav?'cav':'inf']*eff/T(b).def*share;
       const behind = b.side==='them' ? a.y < b.y-6 : a.y > b.y+6;
       if(behind){ k*=1.7; b.morale-=dt*6; }
       if(b.disengage>0) k*=1.4;
@@ -395,6 +410,7 @@ function step(dt){
   for(const u of U){ while(u.dmg>=1 && u.n>0){ u.dmg-=1;
       if(u.vet>0 && Math.random()<u.vet/u.n) u.vet--; u.n--;
       u.morale-=(100/u.n0)*1.1*(1-.4*tr(u));
+      if(S.dead.length<900){ const rr=rect(u); S.dead.push({x:rr.x0+Math.random()*rr.w,y:rr.y0+Math.random()*rr.h,side:u.side,a:.9}); }
       if(Math.random()<.25) S.fx.push({k:'hit',x:u.x+(Math.random()-.5)*rect(u).w,y:u.y+(Math.random()-.5)*rect(u).h,t:0,d:.5}); }
     if(u.n<=0 && !u.gone){ u.gone=true; if(u.side==='us') report(`${u.no}대가 무너졌습니다. 남은 사람이 없습니다.`,'b'); } }
   // 사기·대열·지휘관
@@ -498,6 +514,7 @@ function finish(won){
   const lost=U.reduce((a,u)=>a+(u.n0-u.n),0), total=U.reduce((a,u)=>a+u.n0,0);
   document.getElementById('rEb').textContent=`백마 · ${fmt(S.t)} 동안`;
   const keep=liveOurs().reduce((a,u)=>a+u.n,0)/Math.max(1,U.reduce((a,u)=>a+u.n0,0));
+  const seal=document.getElementById('rSeal'); seal.textContent= won?'守':'潰'; seal.classList.toggle('lose',!won);
   document.getElementById('rT').textContent= won ? (keep>=.7?'길목을 지켰다':'값비싸게 지켰다') : S.loseT;
   const zh = !won ? '' : (S.rescued>=S.ridersSent*.7 && lost<total*.3) ? '장료: "길을 열 때와 닫을 때를 알았구려. 적어 두겠소."'
     : (S.rescued<S.ridersSent*.4) ? '장료: "길목은 지켰소. 다만 돌아오던 기병을 길 위에서 많이 잃었소."'
@@ -532,47 +549,131 @@ addEventListener('resize',resize);
 function toWorld(px,py){ const dpr=Math.min(2,window.devicePixelRatio||1); return {x:(px*dpr-view.ox)/view.s, y:(py*dpr-view.oy)/view.s}; }
 
 function hash(i){ const x=Math.sin(i*127.1)*43758.5453; return x-Math.floor(x); }
+
+/* ───────── 병사 그림 (위에서 내려다본 모습, 미리 그려 둔다) ───────── */
+const PAL={
+  us:  {tunic:'#2a2f3a',line:'#12141a',helm:'#1b1b1e',trim:'#d8cdb3',shield:'#6e4c2a',boss:'#141416',bossT:'#d8cdb3',horse:'#4a3220'},
+  them:{tunic:'#7a2e1c',line:'#3e150c',helm:'#8a6a3a',trim:'#d9b56a',shield:'#7d5a32',boss:'#8f2a1c',bossT:'#e3c27a',horse:'#5e3f24'},
+  ally:{tunic:'#36405a',line:'#12141a',helm:'#1b1b1e',trim:'#d8cdb3',shield:'#6e4c2a',boss:'#141416',bossT:'#d8cdb3',horse:'#6a4a2c'},
+};
+const SPR={}, K=4;   // 세계 1단위 = 4화소
+function mkCanvas(w,h){ const c=document.createElement('canvas'); c.width=w*K; c.height=h*K; const g=c.getContext('2d'); g.scale(K,K); return [c,g]; }
+function soldier(g,P,kind){
+  // 중심(12,14), 북쪽을 본다
+  g.save(); g.translate(12,14);
+  g.fillStyle='rgba(0,0,0,.28)'; g.beginPath(); g.ellipse(1.4,2.2,5.6,3.8,0,0,7); g.fill();
+  if(kind==='bow'){ // 화살통
+    g.fillStyle='#4b3420'; g.fillRect(2.2,0.5,2.2,4.6); g.fillStyle=P.trim; g.fillRect(2.4,0,0.6,1.2); g.fillRect(3.4,0,0.6,1.2); }
+  // 어깨와 갑옷
+  g.fillStyle=P.tunic; g.beginPath(); g.ellipse(0,0.6,5.2,3.4,0,0,7); g.fill();
+  g.strokeStyle=P.line; g.lineWidth=.45; for(let y=-1.2;y<=2.4;y+=1.2){ g.beginPath(); g.moveTo(-4.4,y); g.lineTo(4.4,y); g.stroke(); }
+  g.strokeStyle=P.trim; g.lineWidth=.5; g.beginPath(); g.ellipse(0,0.6,5.2,3.4,0,0,7); g.stroke();
+  // 팔
+  g.fillStyle=P.tunic; g.beginPath(); g.arc(-4.6,-1.4,1.5,0,7); g.arc(4.6,-1.4,1.5,0,7); g.fill();
+  // 머리와 투구
+  g.fillStyle='#b88a62'; g.beginPath(); g.arc(0,-0.6,2.5,0,7); g.fill();
+  g.fillStyle=P.helm; g.beginPath(); g.arc(0,-0.2,2.6,Math.PI*.9,Math.PI*2.1); g.fill();
+  if(P===PAL.them){ g.fillStyle='#c23b22'; g.beginPath(); g.arc(0,0.8,1,0,7); g.fill(); }
+  else { g.fillStyle=P.trim; g.beginPath(); g.arc(0,0.8,.7,0,7); g.fill(); }
+  if(kind==='shield'){ // 큰 나무 방패
+    g.fillStyle=P.shield; g.fillRect(-6.4,-7.6,12.8,2.8);
+    g.strokeStyle='#2c1e10'; g.lineWidth=.6; g.strokeRect(-6.4,-7.6,12.8,2.8);
+    g.fillStyle=P.boss; g.beginPath(); g.ellipse(0,-6.2,2.2,1.1,0,0,7); g.fill();
+    g.fillStyle=P.bossT; g.beginPath(); g.arc(0,-6.2,.5,0,7); g.fill(); }
+  if(kind==='spear'){ // 긴 창
+    g.strokeStyle='#24170b'; g.lineWidth=1.3; g.beginPath(); g.moveTo(3.4,1); g.lineTo(3.4,-16); g.stroke();
+    g.fillStyle='#e4e4e8'; g.strokeStyle='#24170b'; g.lineWidth=.4; g.beginPath(); g.moveTo(2.1,-16); g.lineTo(4.7,-16); g.lineTo(3.4,-22); g.closePath(); g.fill(); g.stroke();
+    if(P===PAL.them){ g.fillStyle='#c23b22'; g.fillRect(2.6,-17,1.6,1.4); } }
+  if(kind==='bow'){ // 활
+    g.strokeStyle='#2a1a0c'; g.lineWidth=1.3; g.beginPath(); g.moveTo(-7.2,-3); g.quadraticCurveTo(-4.2,-9.5,-1.2,-3); g.stroke();
+    g.strokeStyle='rgba(230,220,200,.7)'; g.lineWidth=.3; g.beginPath(); g.moveTo(-7.2,-3); g.lineTo(-1.2,-3); g.stroke(); }
+  g.restore();
+}
+function rider(g,P,lance){
+  g.save(); g.translate(12,18);
+  g.fillStyle='rgba(0,0,0,.28)'; g.beginPath(); g.ellipse(1.6,3,5,11,0,0,7); g.fill();
+  // 말
+  g.fillStyle=P.horse; g.beginPath(); g.ellipse(0,2,4,9,0,0,7); g.fill();
+  g.beginPath(); g.ellipse(0,-8,2.1,4.2,0,0,7); g.fill();
+  g.strokeStyle='#1c120a'; g.lineWidth=.9; g.beginPath(); g.moveTo(0,-5); g.lineTo(0,-11); g.stroke();
+  g.beginPath(); g.moveTo(0,10.5); g.lineTo(0,14); g.stroke();
+  // 사람
+  g.fillStyle=P.tunic; g.beginPath(); g.ellipse(0,1,4.6,3,0,0,7); g.fill();
+  g.strokeStyle=P.trim; g.lineWidth=.45; g.stroke();
+  g.fillStyle='#b88a62'; g.beginPath(); g.arc(0,0.6,2.2,0,7); g.fill();
+  g.fillStyle=P.helm; g.beginPath(); g.arc(0,0.9,2.3,Math.PI*.9,Math.PI*2.1); g.fill();
+  if(lance){ g.strokeStyle='#24170b'; g.lineWidth=1.2; g.beginPath(); g.moveTo(3.6,4); g.lineTo(3.6,-16); g.stroke();
+    g.fillStyle='#cfcfd2'; g.beginPath(); g.moveTo(2.8,-16); g.lineTo(4.4,-16); g.lineTo(3.6,-20); g.closePath(); g.fill(); }
+  g.restore();
+}
+function corpse(g,P){
+  g.save(); g.translate(12,12);
+  g.fillStyle='rgba(92,14,8,.55)'; g.beginPath(); g.ellipse(1,1,6,4,.4,0,7); g.fill();
+  g.rotate(1.1); g.fillStyle=P.tunic; g.globalAlpha=.85; g.beginPath(); g.ellipse(0,0,3,5.2,0,0,7); g.fill();
+  g.fillStyle='#8a6a52'; g.beginPath(); g.arc(0,-5.6,1.8,0,7); g.fill();
+  g.restore();
+}
+function buildSprites(){
+  for(const side of ['us','them','ally']){ const P=PAL[side];
+    for(const kind of ['shield','spear','bow']){
+      const [c,g]=mkCanvas(24,28); soldier(g,P,kind);
+      const [c2,g2]=mkCanvas(24,28); g2.translate(12,14); g2.rotate(Math.PI); g2.translate(-12,-14); soldier(g2,P,kind);
+      SPR[side+kind+'N']=c; SPR[side+kind+'S']=c2; }
+    const [h,gh]=mkCanvas(24,36); rider(gh,P,side==='them');
+    const [h2,gh2]=mkCanvas(24,36); gh2.translate(12,18); gh2.rotate(Math.PI); gh2.translate(-12,-18); rider(gh2,P,side==='them');
+    SPR[side+'cavN']=h; SPR[side+'cavS']=h2;
+    const [d,gd]=mkCanvas(24,24); corpse(gd,P); SPR[side+'dead']=d; }
+}
+buildSprites();
+const KIND={shield:'shield',spear:'spear',bow:'bow',espear:'spear',ebow:'bow',ecav:'cav',rider:'cav'};
+
 function drawUnit(u,sel){
   if(u.gone) return;
   const r=rect(u), t=T(u), n=u.n, c=cols(u);
-  const col = u.side==='them' ? '#7e3a1f' : u.side==='ally' ? '#4a6a96' : '#22324c';
-  const rim = u.side==='them' ? '#e3b48f' : '#d9e2ef';
-  const jit=(1-u.coh)*7 + (u.routed?10:0);
+  const jit=(1-u.coh)*7 + (u.routed?12:0);
+  const south = u.side==='them' || (u.routed && u.side==='us');
   const face = u.side==='them' ? 1 : -1;
-  for(let i=0;i<n;i++){
+  const kind=KIND[u.type], sideK = u.side;
+  const img = SPR[sideK+kind+(south?'S':'N')];
+  const now=performance.now()/1000;
+  const fighting=u.engaged&&u.engaged.length>0, moving=Math.hypot(u.tx-u.x,u.ty-u.y)>4;
+  const cav=kind==='cav', sw=34, sh=cav?51:40;
+  const nf=figs(u);
+  for(let i=0;i<nf;i++){
     const cc=i%c, rr=Math.floor(i/c);
-    const x=r.x0+(cc+.5)*SP+(hash(u.seed+i)-.5)*jit*2, y=(face<0?r.y0:r.y1)+(-face)*(rr+.5)*SP+(hash(u.seed+i+77)-.5)*jit*2;
-    if(t.cav){ cx.fillStyle=col; cx.beginPath(); cx.ellipse(x,y,5,7.5,0,0,7); cx.fill(); cx.strokeStyle=rim; cx.lineWidth=.8; cx.stroke(); continue; }
-    cx.fillStyle=col; cx.beginPath(); cx.arc(x,y,4.6,0,7); cx.fill();
-    cx.strokeStyle=rim; cx.lineWidth=.7; cx.stroke();
-    if((u.type==='shield') && rr===0){ cx.fillStyle='#8c6a3f'; cx.fillRect(x-5,y+face*5-1.5,10,3); }
-    if(u.type==='spear'||u.type==='espear'){ cx.strokeStyle='rgba(40,30,20,.75)'; cx.lineWidth=1; cx.beginPath(); cx.moveTo(x,y); cx.lineTo(x+1.5,y+face*11); cx.stroke(); }
-    if(u.type==='bow'||u.type==='ebow'){ cx.strokeStyle='rgba(40,30,20,.7)'; cx.lineWidth=1; cx.beginPath(); cx.arc(x,y+face*2,4.5,face<0?Math.PI*1.15:Math.PI*.15,face<0?Math.PI*1.85:Math.PI*.85); cx.stroke(); }
+    let x=r.x0+(cc+.5)*SP+(hash(u.seed+i)-.5)*jit*2, y=(face<0?r.y0:r.y1)+(-face)*(rr+.5)*SP+(hash(u.seed+i+77)-.5)*jit*2;
+    if(fighting && rr<2) y+=face*Math.max(0,Math.sin(now*8+i*1.7))*2.4;
+    else if(moving) y+=Math.sin(now*9+i)*.6;
+    cx.drawImage(img,x-sw/2,y-sh/2,sw,sh);
   }
   if(u.side==='ally') return;
   // 깃발
-  const fx=r.x0-2, fy=r.y0-10;
-  cx.strokeStyle='rgba(30,25,20,.9)'; cx.lineWidth=3; cx.beginPath(); cx.moveTo(fx,fy+10); cx.lineTo(fx,fy-44); cx.stroke();
-  cx.fillStyle = u.side==='them' ? '#a5552e' : '#2e3f5c';
-  cx.fillRect(fx,fy-44,38,30);
-  cx.fillStyle = u.side==='them' ? '#f4e7d4' : '#eef2f8';
-  cx.font='700 21px "Noto Serif KR",serif'; cx.textAlign='center'; cx.textBaseline='middle';
-  cx.fillText(t.g,fx+19,fy-29);
+  const fx=r.x0-4, fy=r.y0-6, ours=u.side==='us';
+  cx.strokeStyle='#2a1d12'; cx.lineWidth=3; cx.beginPath(); cx.moveTo(fx,fy+12); cx.lineTo(fx,fy-58); cx.stroke();
+  const wv=Math.sin(now*2.2+u.seed)*3;
+  cx.fillStyle = ours ? '#151517' : '#8f2a1c';
+  cx.beginPath(); cx.moveTo(fx,fy-58); cx.quadraticCurveTo(fx+22,fy-60+wv,fx+42,fy-57); cx.lineTo(fx+42+wv*.4,fy-22); cx.quadraticCurveTo(fx+22,fy-20+wv,fx,fy-24); cx.closePath(); cx.fill();
+  cx.strokeStyle = ours ? '#c9a35c' : '#e3c27a'; cx.lineWidth=1.4; cx.stroke();
+  cx.fillStyle='#ece3cd'; cx.font='34px "Ma Shan Zheng","Nanum Myeongjo",serif'; cx.textAlign='center'; cx.textBaseline='middle';
+  cx.fillText(t.g,fx+21,fy-39);
   // 인원
-  cx.font='600 19px "IBM Plex Sans KR",sans-serif'; cx.textAlign='left';
-  const label = u.side==='us' ? `${u.no} · ${n}` : `${n}`;
-  cx.lineWidth=3; cx.strokeStyle='rgba(20,22,27,.7)'; cx.strokeText(label,fx+44,fy-31); cx.fillStyle='#f3efe6'; cx.fillText(label,fx+44,fy-31);
-  if(u.side==='us'){
-    const st=statusOf(u); if(st){ cx.font='500 17px "IBM Plex Sans KR",sans-serif'; const tw=cx.measureText(st.t).width;
-      cx.fillStyle='rgba(20,22,27,.82)'; cx.fillRect(fx,fy-70,tw+14,23); cx.fillStyle=st.k==='b'?'#e88a73':st.k==='w'?'#e9c06d':'#c9d6e8'; cx.fillText(st.t,fx+7,fy-58); }
-    if(u.cmd!=='none'){ cx.font='500 16px "IBM Plex Sans KR",sans-serif'; cx.lineWidth=3; cx.strokeText(CMDR[u.cmd].nm,fx+44,fy-11); cx.fillStyle='#e7dcc4'; cx.fillText(CMDR[u.cmd].nm,fx+44,fy-11); }
+  cx.font='700 20px "Nanum Myeongjo",serif'; cx.textAlign='left';
+  const label = ours ? `${u.no}대 · ${n}` : `${n}`;
+  cx.lineWidth=4; cx.strokeStyle='rgba(14,12,10,.8)'; cx.strokeText(label,fx+50,fy-44); cx.fillStyle='#ece3cd'; cx.fillText(label,fx+50,fy-44);
+  if(ours){
+    if(u.cmd!=='none'){ cx.font='700 17px "Nanum Myeongjo",serif'; cx.lineWidth=4; cx.strokeText(CMDR[u.cmd].nm,fx+50,fy-22); cx.fillStyle='#c9a35c'; cx.fillText(CMDR[u.cmd].nm,fx+50,fy-22); }
+    const st=statusOf(u); if(st){ cx.font='700 17px "Nanum Myeongjo",serif'; const tw=cx.measureText(st.t).width;
+      cx.fillStyle='rgba(14,12,10,.86)'; cx.fillRect(fx,fy-88,tw+16,24); cx.fillStyle=st.k==='b'?'#e0564b':st.k==='w'?'#d9b56a':'#ece3cd'; cx.fillText(st.t,fx+8,fy-76); }
   }
-  if(sel){ cx.setLineDash([6,5]); cx.strokeStyle='#cfe0f7'; cx.lineWidth=2; cx.strokeRect(r.x0-8,r.y0-8,r.w+16,r.h+16); cx.setLineDash([]);
-    if(Math.hypot(u.tx-u.x,u.ty-u.y)>6 && !u.routed){ cx.strokeStyle='rgba(207,224,247,.8)'; cx.lineWidth=2; cx.beginPath(); cx.moveTo(u.x,u.y); cx.lineTo(u.tx,u.ty); cx.stroke();
-      cx.beginPath(); cx.arc(u.tx,u.ty,6,0,7); cx.stroke(); }
-    if(T(u).range){ cx.strokeStyle='rgba(207,224,247,.25)'; cx.setLineDash([3,6]); cx.beginPath(); cx.arc(u.x,u.y,T(u).range,Math.PI,2*Math.PI); cx.stroke(); cx.setLineDash([]); }
+  if(sel){ // 청동 꺾쇠
+    const x0=r.x0-10,y0=r.y0-10,x1=r.x1+10,y1=r.y1+10,L=16; cx.strokeStyle='#c9a35c'; cx.lineWidth=2.5;
+    cx.beginPath(); cx.moveTo(x0,y0+L); cx.lineTo(x0,y0); cx.lineTo(x0+L,y0); cx.moveTo(x1-L,y0); cx.lineTo(x1,y0); cx.lineTo(x1,y0+L);
+    cx.moveTo(x1,y1-L); cx.lineTo(x1,y1); cx.lineTo(x1-L,y1); cx.moveTo(x0+L,y1); cx.lineTo(x0,y1); cx.lineTo(x0,y1-L); cx.stroke();
+    if(Math.hypot(u.tx-u.x,u.ty-u.y)>6 && !u.routed){ cx.strokeStyle='rgba(201,163,92,.85)'; cx.lineWidth=2; cx.setLineDash([8,6]); cx.beginPath(); cx.moveTo(u.x,u.y); cx.lineTo(u.tx,u.ty); cx.stroke(); cx.setLineDash([]);
+      cx.beginPath(); cx.arc(u.tx,u.ty,7,0,7); cx.stroke(); }
+    if(T(u).range){ cx.strokeStyle='rgba(201,163,92,.28)'; cx.setLineDash([3,7]); cx.beginPath(); cx.arc(u.x,u.y,T(u).range,Math.PI,2*Math.PI); cx.stroke(); cx.setLineDash([]); }
   }
-  if(u.pend){ const p=u.pend; if(p.c==='move'){ cx.strokeStyle='rgba(233,192,109,.7)'; cx.setLineDash([4,4]); cx.beginPath(); cx.moveTo(u.x,u.y); cx.lineTo(p.x,p.y); cx.stroke(); cx.setLineDash([]); } }
+  if(u.pend){ const p=u.pend; if(p.c==='move'){ cx.strokeStyle='rgba(217,181,106,.6)'; cx.lineWidth=2; cx.setLineDash([4,6]); cx.beginPath(); cx.moveTo(u.x,u.y); cx.lineTo(p.x,p.y); cx.stroke(); cx.setLineDash([]); } }
 }
 function statusOf(u){
   if(u.routed) return {t:'흩어짐',k:'b'};
@@ -587,39 +688,54 @@ function statusOf(u){
   return null;
 }
 function draw(){
-  cx.setTransform(1,0,0,1,0,0); cx.fillStyle='#14161b'; cx.fillRect(0,0,cv.width,cv.height);
+  cx.setTransform(1,0,0,1,0,0); cx.fillStyle='#0e0c0a'; cx.fillRect(0,0,cv.width,cv.height);
   cx.setTransform(view.s,0,0,view.s,view.ox,view.oy);
-  if(bg.complete) cx.drawImage(bg,0,0,W,H); else { cx.fillStyle='#8a7a52'; cx.fillRect(0,0,W,H); }
+  if(bg.complete) cx.drawImage(bg,0,0,W,H); else { cx.fillStyle='#6f5f3c'; cx.fillRect(0,0,W,H); }
+  // 가장자리를 어둡게
+  const vg=cx.createRadialGradient(W/2,H*.55,H*.35,W/2,H*.55,H*.95); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(8,6,4,.45)'); cx.fillStyle=vg; cx.fillRect(0,0,W,H);
+  // 쓰러진 사람
+  if(S) for(const d of S.dead){ cx.globalAlpha=d.a; cx.drawImage(SPR[d.side+'dead'],d.x-12,d.y-12,24,24); }
+  cx.globalAlpha=1;
   // 배치 구역
-  if(phase==='setup'){ cx.fillStyle='rgba(157,184,220,.10)'; cx.fillRect(RIVER_X,DEPLOY.y0,W-RIVER_X,DEPLOY.y1-DEPLOY.y0);
-    cx.strokeStyle='rgba(157,184,220,.5)'; cx.setLineDash([10,8]); cx.lineWidth=2; cx.strokeRect(RIVER_X,DEPLOY.y0,W-RIVER_X,DEPLOY.y1-DEPLOY.y0);
+  if(phase==='setup'){ cx.fillStyle='rgba(201,163,92,.08)'; cx.fillRect(RIVER_X,DEPLOY.y0,W-RIVER_X,DEPLOY.y1-DEPLOY.y0);
+    cx.strokeStyle='rgba(201,163,92,.6)'; cx.setLineDash([12,9]); cx.lineWidth=2; cx.strokeRect(RIVER_X,DEPLOY.y0,W-RIVER_X,DEPLOY.y1-DEPLOY.y0);
     cx.beginPath(); cx.moveTo(RIVER_X,REAR_Y); cx.lineTo(W,REAR_Y); cx.stroke(); cx.setLineDash([]);
-    lbl('배치 구역',RIVER_X+20,DEPLOY.y0+24); lbl('이 선 아래는 예비',RIVER_X+20,REAR_Y+24); }
-  // 길 표시 (기병 귀환 경고)
+    lbl('배치 구역',RIVER_X+20,DEPLOY.y0+26,'#d9b56a'); lbl('이 선 아래는 예비',RIVER_X+20,REAR_Y+26,'#d9b56a'); }
+  // 길 표시 (기병 귀환)
   const rw = S && S.riderWarn;
-  if(rw){ const a=.25+.2*Math.sin(performance.now()/180); cx.fillStyle=`rgba(157,184,220,${a})`; cx.fillRect(ROAD.x0,0,ROAD.x1-ROAD.x0,H);
-    lbl('아군 기병 귀환 · 길을 연다',ROAD.x0+10,40); arrowDown(ROAD.c,70); }
-  if(S && !rw){ const nr=(S.riderTimes||[]).find(t=>t>S.t); if(nr!==undefined && nr-S.t<15){ lbl(`아군 기병 ${Math.ceil(nr-S.t)}초 뒤 이 길로`,ROAD.x0+10,40,'#9db8dc'); } }
-  if(S && S.flankHint && S.t<S.flankHint.until){ lbl('먼지 · 깃발이 돈다',2020,260,'#e9c06d'); arrowDown(2190,300,'#e9c06d'); }
+  if(rw){ const a=.16+.14*Math.sin(performance.now()/180); cx.fillStyle=`rgba(127,169,153,${a})`; cx.fillRect(ROAD.x0,0,ROAD.x1-ROAD.x0,H);
+    lbl('아군 기병 귀환 · 길을 연다',ROAD.x0+10,44,'#cfe3da'); arrowDown(ROAD.c,76,'#cfe3da'); }
+  if(S && !rw){ const nr=(S.riderTimes||[]).find(t=>t>S.t); if(nr!==undefined && nr-S.t<15){ lbl(`아군 기병 ${Math.ceil(nr-S.t)}초 뒤 이 길로`,ROAD.x0+10,44,'#a9c9bc'); } }
+  if(S && S.flankHint && S.t<S.flankHint.until){ lbl('먼지 · 깃발이 돈다',2010,262,'#d9b56a'); arrowDown(2190,300,'#d9b56a'); }
   // 안량 군기
-  if(phase!=='setup'){ const by=S?S.bannerY:150; const fallen=S&&S.bannerFall;
+  if(phase!=='setup'){ const by=S?S.bannerY:150; const fallen=S&&S.bannerFall; const now=performance.now()/1000;
     cx.save(); cx.translate(ROAD.c+260,by); if(fallen){ const k=Math.min(1,(S.t-S.bannerFall)/1.2); cx.rotate(k*1.3); }
-    cx.strokeStyle='#2a2018'; cx.lineWidth=4; cx.beginPath(); cx.moveTo(0,40); cx.lineTo(0,-90); cx.stroke();
-    cx.fillStyle='#a5552e'; cx.fillRect(0,-90,58,70); cx.fillStyle='#f4e7d4'; cx.font='700 38px "Noto Serif KR",serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('顔',29,-55);
-    cx.restore(); lbl('안량',ROAD.c+330,by-60,'#f4e7d4'); }
+    cx.strokeStyle='#22170e'; cx.lineWidth=5; cx.beginPath(); cx.moveTo(0,46); cx.lineTo(0,-110); cx.stroke();
+    const wv=Math.sin(now*1.8)*5;
+    cx.fillStyle='#8f2a1c'; cx.beginPath(); cx.moveTo(0,-110); cx.quadraticCurveTo(36,-114+wv,70,-108); cx.lineTo(70+wv*.5,-26); cx.quadraticCurveTo(36,-22+wv,0,-28); cx.closePath(); cx.fill();
+    cx.strokeStyle='#e3c27a'; cx.lineWidth=2; cx.stroke();
+    cx.fillStyle='#ece3cd'; cx.font='60px "Ma Shan Zheng",serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('顔',35,-66);
+    cx.restore(); lbl('안량',ROAD.c+345,by-70,'#ece3cd'); }
   // 부대
   const list = (phase==='setup'||!S) ? slots.map((s,i)=>s.n>0?Object.assign(mkUnitPreview(s,i)):null).filter(Boolean) : S.units;
   for(const u of list) drawUnit(u, phase==='setup' ? dragI===u.no-1 : !!S && S.sel===u);
   // 효과
   if(S) for(const f of S.fx){ const k=f.t/f.d;
-    if(f.k==='arrow'){ const x=f.x0+(f.x1-f.x0)*k, y=f.y0+(f.y1-f.y0)*k-Math.sin(k*Math.PI)*(f.arc||80); cx.strokeStyle=f.side==='us'?'rgba(30,40,60,.9)':'rgba(90,40,20,.9)'; cx.lineWidth=1.4; cx.beginPath(); cx.moveTo(x,y); cx.lineTo(x-(f.x1-f.x0)*.02,y-(f.y1-f.y0)*.02-6); cx.stroke(); }
-    if(f.k==='hit'){ cx.fillStyle=`rgba(120,20,10,${.6*(1-k)})`; cx.beginPath(); cx.arc(f.x,f.y,3+k*5,0,7); cx.fill(); }
-    if(f.k==='rally'){ cx.strokeStyle=`rgba(233,192,109,${1-k})`; cx.lineWidth=3; cx.beginPath(); cx.arc(f.x,f.y,30+k*90,0,7); cx.stroke(); }
+    if(f.k==='arrow'){ const x=f.x0+(f.x1-f.x0)*k, y=f.y0+(f.y1-f.y0)*k-Math.sin(k*Math.PI)*(f.arc||80);
+      const k2=Math.min(1,k+.04), x2=f.x0+(f.x1-f.x0)*k2, y2=f.y0+(f.y1-f.y0)*k2-Math.sin(k2*Math.PI)*(f.arc||80);
+      const ang=Math.atan2(y2-y,x2-x);
+      cx.save(); cx.translate(x,y); cx.rotate(ang); cx.strokeStyle='#2a1d12'; cx.lineWidth=1.3; cx.beginPath(); cx.moveTo(-9,0); cx.lineTo(4,0); cx.stroke();
+      cx.fillStyle='#bdbdc2'; cx.beginPath(); cx.moveTo(4,-1.6); cx.lineTo(8,0); cx.lineTo(4,1.6); cx.fill();
+      cx.strokeStyle='#d8cdb3'; cx.lineWidth=1; cx.beginPath(); cx.moveTo(-9,0); cx.lineTo(-11,-2); cx.moveTo(-9,0); cx.lineTo(-11,2); cx.stroke(); cx.restore(); }
+    if(f.k==='hit'){ cx.fillStyle=`rgba(150,30,18,${.55*(1-k)})`; cx.beginPath(); cx.arc(f.x,f.y,3+k*6,0,7); cx.fill(); }
+    if(f.k==='dust'){ cx.fillStyle=`rgba(190,165,120,${.35*(1-k)})`; cx.beginPath(); cx.arc(f.x,f.y,6+k*16,0,7); cx.fill(); }
+    if(f.k==='rally'){ cx.strokeStyle=`rgba(201,163,92,${1-k})`; cx.lineWidth=3; cx.beginPath(); cx.arc(f.x,f.y,30+k*90,0,7); cx.stroke(); }
   }
-  if(S && S.paused && phase==='battle'){ cx.setTransform(1,0,0,1,0,0); cx.fillStyle='rgba(20,22,27,.35)'; cx.fillRect(0,0,cv.width,cv.height); }
+  if(S && S.paused && phase==='battle'){ cx.setTransform(1,0,0,1,0,0); cx.fillStyle='rgba(14,12,10,.4)'; cx.fillRect(0,0,cv.width,cv.height);
+    cx.fillStyle='#ece3cd'; cx.font=`${Math.round(40*Math.min(2,devicePixelRatio||1))}px "Ma Shan Zheng",serif`; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('止',cv.width/2,cv.height/2); }
 }
-function lbl(t,x,y,c='#eef2f8'){ cx.font='600 24px "IBM Plex Sans KR",sans-serif'; cx.textAlign='left'; cx.textBaseline='middle'; cx.lineWidth=5; cx.strokeStyle='rgba(20,22,27,.75)'; cx.strokeText(t,x,y); cx.fillStyle=c; cx.fillText(t,x,y); }
-function arrowDown(x,y,c='#cfe0f7'){ cx.fillStyle=c; cx.beginPath(); cx.moveTo(x-16,y); cx.lineTo(x+16,y); cx.lineTo(x,y+24); cx.closePath(); cx.fill(); }
+function lbl(t,x,y,c='#ece3cd'){ cx.font='800 26px "Nanum Myeongjo",serif'; cx.textAlign='left'; cx.textBaseline='middle'; cx.lineWidth=5; cx.strokeStyle='rgba(14,12,10,.8)'; cx.strokeText(t,x,y); cx.fillStyle=c; cx.fillText(t,x,y); }
+function arrowDown(x,y,c='#ece3cd'){ cx.fillStyle=c; cx.beginPath(); cx.moveTo(x-16,y); cx.lineTo(x+16,y); cx.lineTo(x,y+24); cx.closePath(); cx.fill(); }
 function mkUnitPreview(s,i){ const u=mkUnit('us',s.type,s.n,s.x,s.y,{vet:s.vet,cmd:s.cmd,no:i+1,seed:i*91+7}); u.tag=s.y>=REAR_Y?'예비':''; return u; }
 
 /* ───────── 입력 ───────── */
@@ -638,7 +754,7 @@ cv.addEventListener('pointerdown',e=>{
   if(S.mode==='swap' && S.sel){ if(u && u!==S.sel){ issue(S.sel,{c:'swap',with:u}); S.mode=null; renderSel(); } return; }
   if(u){ select(u); return; }
   const f=unitAt(w,S.units.filter(v=>v.side==='them'&&!v.gone&&!v.routed));
-  if(f && S.sel && T(S.sel).range){ S.sel.focus=f; report(`${S.sel.no}대가 ${T(f).nm} 쪽을 노린다.`,'','안내'); return; }
+  if(f && S.sel && T(S.sel).range){ S.sel.focus=f; report(`${S.sel.no}대가 ${T(f).nm} 쪽을 노린다.`,'n','안내'); return; }
   if(S.sel){ issue(S.sel,{c:'move',x:w.x,y:w.y}); S.mode=null; renderSel(); }
 });
 cv.addEventListener('pointermove',e=>{ if(dragI<0) return; const w=toWorld(e.clientX,e.clientY); const s=slots[dragI];
@@ -649,8 +765,8 @@ function select(u){ if(!S) return; S.sel=u; S.mode=null; renderSel(); renderUnit
 document.getElementById('cmds').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||!S||!S.sel) return; cmd(b.dataset.c); });
 function cmd(c){
   const u=S.sel; if(!u) return;
-  if(c==='move'){ S.mode='move'; report('땅을 눌러 갈 곳을 정한다.','', '안내'); }
-  else if(c==='swap'){ S.mode='swap'; report('바꿔 설 부대의 깃발을 누른다.','', '안내'); }
+  if(c==='move'){ S.mode='move'; report('땅을 눌러 갈 곳을 정한다.','n', '안내'); }
+  else if(c==='swap'){ S.mode='swap'; report('바꿔 설 부대의 깃발을 누른다.','n', '안내'); }
   else if(c==='charge'){ if(u.type!=='spear') return; issue(u,{c:'charge'}); }
   else issue(u,{c});
   renderSel();
@@ -697,7 +813,7 @@ function renderSetup(){
   const box=document.getElementById('setup');
   box.innerHTML=slots.map((s,i)=>`<div class="slot ${s.n?'':'off'}">
     <h4>${i+1}대 <small>${s.n?`${s.n}명`:'비움'}${s.y>=REAR_Y&&s.n?' · 예비':''}</small></h4>
-    <div class="seg">${['shield','spear','bow'].map(t=>`<button data-i="${i}" data-t="${t}" class="${s.type===t?'on':''}">${TY[t].g} ${TY[t].nm}</button>`).join('')}</div>
+    <div class="seg">${['shield','spear','bow'].map(t=>`<button data-i="${i}" data-t="${t}" class="${s.type===t?'on':''}"><span class="gl">${TY[t].g}</span>${TY[t].nm}</button>`).join('')}</div>
     <div class="cnt">인원<button data-i="${i}" data-d="-10" aria-label="인원 줄이기">−</button><b>${s.n}</b><button data-i="${i}" data-d="10" aria-label="인원 늘리기">+</button>
       숙련<button data-i="${i}" data-v="-10" aria-label="숙련 줄이기">−</button><b>${s.vet}</b><button data-i="${i}" data-v="10" aria-label="숙련 늘리기">+</button></div>
     <label class="cnt">지휘 <select data-i="${i}" id="cmd${i}">${Object.keys(CMDR).map(k=>`<option value="${k}" ${s.cmd===k?'selected':''}>${CMDR[k].nm}${CMDR[k].tip?' — '+CMDR[k].tip:''}</option>`).join('')}</select></label>
