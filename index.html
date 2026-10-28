@@ -17298,5 +17298,125 @@ function formHTML120(){
   };
 })();
 </script>
+<script>
+/* ==========================================================
+   v121 · 새 그림·음악 반영
+   - 배경: 낮 포상 군막, 연진 전투 뒷부분, 결전 뒷부분, 관우 숙소 안, 새벽 군막
+   - 초상: 이름 없는 단역(군관·병사·전령·장인·노인·아전·원소군 장교·여포의 부장). 원소군 쪽 장면인지 보고 고른다
+   - 사건 그림: 큰 사건 줄에서만 잠깐 그림을 바꾸고, 사건이 끝나면 장소 그림으로 돌아온다
+   - 음악: 새 곡 9개. 곡이 끝나면 같은 묶음의 다음 곡으로 넘어간다. 메인 테마는 한 바퀴만 튼다
+   ========================================================== */
+(function(){
+  /* ---------- 배경 ---------- */
+  Object.assign(BGALIAS96,{ ch14_hall_day:'ch14_hall', ch7_battlefield2:'ch7_battlefield', ch14_battlefield2:'ch14_battlefield', ch6_night2:'ch6_night', ch9_tent2:'ch9_tent' });
+  Object.assign(BG,{ hall_day:BG.camp||BG.night, battlefield2:BG.battlefield||BG.field||BG.night, night2:BG.night, tent2:BG.night });
+  Object.assign(BGM85,{ ch14_hall_day:BGM85.ch14_hall, ch7_battlefield2:BGM85.ch7_battlefield, ch14_battlefield2:BGM85.ch14_battlefield,
+    ch6_night2:BGM85.ch6_night, ch9_tent2:BGM85.ch9_tent });
+  const fixS=(data,ch,test,bg)=>((data||{})[ch]||[]).forEach(e=>{ if(e.type==='scene'&&test(e)) e.bg=bg; });
+  fixS(AB_DATA,'14A',e=>e.bg==='hall'&&e.location==='조조의 군막'&&!e.title,'hall_day');      // 포상 자리(낮). "자네는 누군가"는 밤 그대로
+  fixS(AB_DATA,'14B',e=>e.bg==='hall'&&e.title==='공을 적다','hall_day');
+  fixS(C67_DATA,'7B',e=>e.bg==='battlefield'&&/^(누구의 군사인가|돌아온 장수들)$/.test(e.location||''),'battlefield2');
+  fixS(C67_DATA,'6A',e=>e.bg==='night'&&e.location==='관우의 숙소','night2');
+  { let n=0; (C67_DATA['6B']||[]).forEach(e=>{ if(e.type==='scene'&&e.bg==='night'&&e.location==='관우의 숙소'&&++n===2) e.bg='night2'; }); }
+  const addT=(ch,list)=>{ const L=TRIG96[ch]=TRIG96[ch]||[]; list.forEach(([h,k])=>{ const r=L.find(x=>x[0]===h); if(r) r[1]=k; else L.push([h,k]); }); };
+  addT(14,[['큰 군막 앞에 새로운 부대가 모이고 있었다','battlefield2']]);
+  addT(9,[['다음 날 아침 장부가 돌아왔다','tent2']]);
+
+  /* ---------- 단역 초상 ---------- */
+  const GEN={ '군관':'officer','문 안의 군관':'officer','강가에서 온 군관':'officer','공병 군관':'officer','방패병 십장':'officer','십장':'officer',
+    '병사':'soldier','병졸':'soldier','초병':'soldier','경비병':'soldier','보초':'soldier','호위':'soldier','순찰병':'soldier','고참':'soldier','노병':'soldier','공병':'soldier',
+    '전령':'messenger','척후':'messenger','신호수':'messenger',
+    '장인':'artisan','노인':'elder','마 노인':'elder',
+    '아전':'clerk','관리':'clerk','서기':'clerk','군리':'clerk','군수 관리':'clerk',
+    '포로':'yuan_officer','포로 군관':'yuan_officer','적 군관':'yuan_officer','원소군 장수':'yuan_officer','부관':'yuan_officer','부장':'aide' };
+  const YUANBG=/^(yuan|jushou|ford|retreat|wuchao)$/;
+  function yuanSide(){
+    const loc=(document.getElementById('a74Location')||{}).textContent||'';
+    if(/진영 입구/.test(loc)) return false;
+    return YUANBG.test(bgKey85||'') || /원소|저수|순우경|오소 외책|장합의 본대/.test(loc);
+  }
+  function genFor(label){
+    const n=String(label||'').replace(/\(.*$/,'').trim(); if(!n||NAME85[n]) return null;
+    let k=GEN[n]; if(!k) return null;
+    const Y=(state.chapter||0)>=6&&yuanSide();
+    if(k==='officer') return Y?'yuan_officer':'officer';
+    if(k==='soldier') return Y?null:'soldier';
+    if(k==='aide') return Y?'yuan_officer':((state.flags||{}).lubuSpared?'lvbu_aide':null);
+    return k;
+  }
+  const setActor121=setActor;
+  setActor=function(key,label){ let g=null; try{ g=genFor(label); }catch(e){} return g ? setActor121.call(this,g,label) : setActor121.apply(this,arguments); };   // 'general'로 없는 그림을 찾다가 늦게 초상을 내리지 않게, 단역 그림 이름을 바로 넘긴다
+  const say121a=say;
+  say=function(who){ const r=say121a.apply(this,arguments); try{ const g=genFor(who); if(g) portrait85(g); }catch(e){} return r; };   // 안쪽 say가 이름 없는 화자의 초상을 내리므로, 그 뒤에 세운다
+  Object.assign(SIZE90,{ officer:95, soldier:92, messenger:91, artisan:90, elder:88, clerk:91, yuan_officer:94, lvbu_aide:95, duseok_leg:93 });
+
+  /* ---------- 사건 그림 ---------- */
+  const EV=[
+    {ch:4,  on:'그가 나를 알아봤다', off:'몇이 쓰러졌는지는', img:'ev_dianwei_gate'},          // 쌍극을 찾아 준 판만
+    {ch:7,  on:'문추의 손에서 고삐가 풀렸다', off:'문추가 죽었다는 고함이 들판에', img:'ev_wenchou'},
+    {ch:9,  on:'그 틈에서 창날이 튀어나왔다', off:'구멍에서 나온 하나가', img:'ev_tunnel'},
+    {ch:9,  on:'굴이 도랑으로 뚫렸다', off:'굴이 도랑으로 뚫렸다', img:'ev_tunnel'},
+    {ch:12, on:'첫 충격에 흙이 튀었다', off:'발판이 무너지', img:'ev_wall_fall'},
+    {ch:12, on:'불을 놓은 자들은 밖으로 빠지지 않고', off:'불을 더 놓았다', img:'ev_wuchao_fire'},
+    {ch:14, on:'군막이 걷혔다', off:'바퀴 자국 위로', img:'ev_farewell'}
+  ];
+  const st=document.createElement('style');
+  st.textContent='#ev121{position:absolute;inset:0;background:center/cover no-repeat;opacity:0;transition:opacity .7s;pointer-events:none;z-index:1}'+
+    'body.ev121 #actor{opacity:0!important;transition:opacity .4s}';
+  document.head.appendChild(st);
+  const box=document.createElement('div'); box.id='ev121';
+  if(getComputedStyle(dom.bg).position==='static') dom.bg.style.position='relative';
+  dom.bg.appendChild(box);
+  let ev=null, evEnd=false, evGuard=false;
+  function evShow(e){ ev=e; evEnd=false; box.style.backgroundImage=`url("${ASSET85}bg/${e.img}.webp")`; box.style.opacity='1'; document.body.classList.add('ev121'); }
+  function evHide(){ if(!ev) return; ev=null; evEnd=false; box.style.opacity='0'; document.body.classList.remove('ev121'); }
+  window.evHide121=evHide;
+  const say121b=say;
+  say=function(who,text){
+    try{
+      const t=String(text||'').replace(/<[^>]*>/g,'');
+      if(ev&&evEnd) evHide();
+      if(!ev){ const ch=state.chapter||0; const e=EV.find(x=>x.ch===ch&&t.includes(x.on)); if(e){ evGuard=true; evShow(e); } }
+      if(ev&&[].concat(ev.off).some(o=>t.includes(o))) evEnd=true;
+    }catch(e){}
+    try{ return say121b.apply(this,arguments); } finally{ evGuard=false; }
+  };
+  const setBg121=setBg;
+  setBg=function(k){ if(ev&&!evGuard) evHide(); return setBg121.apply(this,arguments); };
+
+  /* ---------- 음악 ---------- */
+  POOL96.ch2_camp=['ch2_camp','camp2','camp3'];               // 엔딩곡은 평시 묶음에서 뺀다. 이제 엔딩에서만 나온다
+  POOL96.ch4_feast=['ch4_feast','camp2'];
+  POOL96.ch5_council=['council2','ch5_council','council3','council4'];
+  POOL96.ch5_siege=['ch5_siege','guandu_final2','battle2','battle3'];
+  POOL96.ch4_dawn=['ch4_dawn','lament2'];
+  POOL96.workshop=['workshop','workshop2','byeokryeok'];
+  POOL96.byeokryeok=['byeokryeok','workshop','workshop2'];
+  POOLLATE96.ch1_raid=['ch1_raid','battle2','battle3'];
+  Object.assign(BGM85,{ ch8_workshop:'workshop', ch8_workshop_old:'workshop' });
+  Object.assign(URGENT86,{ battle2:1, battle3:1 });
+  /* 곡이 끝나 가면: 묶음이 있으면 다음 곡으로 겹쳐 넘기고, 메인 테마면 그 장소의 곡으로 넘긴다. 둘 다 아니면 그대로 반복 */
+  function near121(a){
+    if(a!==bgmEl85||!a._want||!a.duration||!isFinite(a.duration)) return;
+    if(a.duration-a.currentTime>XF86/1000+1){ a._adv121=false; return; }
+    if(a._adv121) return; a._adv121=true;
+    const name=bgmNow85;
+    if(name==='title'){
+      if((state.chapter||0)>0&&theme96!==null){ theme96=null; bgmStart86=0; bgm85ForBg(bgKey85); }
+      return;
+    }
+    const key=lastPool96, pool=key&&(POOL96[key]||POOLLATE96[key]);
+    if(!pool||pool.length<2||pool.indexOf(name)<0) return;
+    rot96[key]=(pool.indexOf(name)+1)%pool.length;
+    switch86(pool[rot96[key]]);
+  }
+  const track121=track86;
+  track86=function(name){
+    const a=track121.apply(this,arguments);
+    if(a&&!a._t121){ a._t121=true; a.addEventListener('timeupdate',()=>{ try{ near121(a); }catch(e){} }); }
+    return a;
+  };
+})();
+</script>
 </body>
 </html>
