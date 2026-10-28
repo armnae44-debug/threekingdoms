@@ -17410,6 +17410,24 @@ function formHTML120(){
     rot96[key]=(pool.indexOf(name)+1)%pool.length;
     switch86(pool[rot96[key]]);
   }
+  /* 한 곡은 적어도 20초는 튼다. 장면이 빨리 바뀌거나, 곡이 끝나 다음 곡으로 넘어간 직후에 장소가 바뀌면 몇 초 만에 끊기던 곳.
+     그 사이에 들어온 요청은 마지막 것만 기억했다가 20초가 되면 넘긴다. 장 첫 장면의 메인 테마도 기다린다. 엔딩곡만 바로 튼다 */
+  const MIN121=20000; let pend121=null, tm121=null, at121=0;
+  const sw121=switch86;
+  switch86=function(){ at121=Date.now(); return sw121.apply(this,arguments); };   // 실제로 곡이 바뀐 때 (bgmStart86은 테마·엔딩이 0으로 지운다)
+  const bgm121=bgm85;
+  bgm85=function(name){
+    // 같은 분위기 묶음의 곡이 이미 나오고 있으면 장소가 바뀌어도 그 곡을 잇는다 (묶음 안의 다른 곡은 곡이 끝날 때 넘어간다)
+    try{ const ch=state.chapter||0, pool=POOL96[name]||(ch>=6&&POOLLATE96[name]); if(pool&&pool.indexOf(bgmNow85)>=0){ lastPool96=name; pend121=null; clearTimeout(tm121); return; } }catch(e){}
+    const since=Date.now()-at121;
+    if(name!==bgmNow85 && name!=='epilogue' && bgmEl85 && !bgmEl85.paused && since<MIN121){
+      pend121=name; clearTimeout(tm121);
+      tm121=setTimeout(()=>{ const n=pend121; pend121=null; if(n) bgm121(n); }, MIN121-since);
+      return;
+    }
+    pend121=null; clearTimeout(tm121);
+    return bgm121.apply(this,arguments);
+  };
   const track121=track86;
   track86=function(name){
     const a=track121.apply(this,arguments);
