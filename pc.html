@@ -13397,7 +13397,7 @@ new MutationObserver(()=>{ dom.body.classList.remove('in76'); void dom.body.offs
   let last=0;
   function frame(t){
     requestAnimationFrame(frame);
-    if(t-last<33) return; last=t;
+    if(t-last<(HOT[bgKey76]?33:120)) return; last=t;   // 불이 없는 장면의 먼지는 느리게 떠서 자주 그릴 필요가 없다
     cv.forEach(c=>{
       const host=c.parentNode; const shown = host.id==='titleCard' ? host.classList.contains('show') : !document.querySelector('.ov.show');
       if(!shown||!host.offsetWidth){ return; }
@@ -17434,6 +17434,31 @@ function formHTML120(){
     const a=track121.apply(this,arguments);
     if(a&&!a._t121){ a._t121=true; a.addEventListener('timeupdate',()=>{ try{ near121(a); }catch(e){} }); }
     return a;
+  };
+})();
+</script>
+<script>
+/* ==========================================================
+   v122 · 화면 끊김 줄이기
+   - 인물이 서면 배경을 어둡게·흐리게 하던 필터를, 어두운 막 한 장으로 바꾼다.
+     배경이 천천히 확대되는 동안 흐림 필터를 매 순간 다시 계산하느라 화면이 끊겼다.
+   - 초상 그림자는 실행 중에 계산하지 않고, 미리 그려 둔 그림(assets/portrait_s)을 쓴다. 새 초상은 tools/portrait_shadow.py로 만든다.
+   ========================================================== */
+(function(){
+  const st=document.createElement('style');
+  st.textContent='#visual:has(#actor.show.p86) #bg{filter:none!important}'+
+    '#dim122{position:absolute;inset:0;z-index:1;pointer-events:none;background:rgba(6,5,4,.34);opacity:0;transition:opacity .8s ease}'+
+    '#visual:has(#actor.show.p86) #dim122{opacity:1}'+
+    '#actor.p86 .sil.s122{filter:none!important}';
+  document.head.appendChild(st);
+  const d=document.createElement('div'); d.id='dim122'; dom.bg.insertAdjacentElement('afterend',d);
+  // 초상을 찾을 때는 그림자를 구운 그림부터 찾는다 (없으면 원래 그림 + CSS 그림자)
+  const img122=img85;
+  img85=function(paths,cb){
+    let por=false;
+    try{ por=Array.isArray(paths)&&paths.length>0&&paths.every(x=>String(x).indexOf('/portrait/')>=0); if(por) paths=paths.map(x=>x.replace('/portrait/','/portrait_s/')).concat(paths); }catch(e){}
+    if(!por) return img122.apply(this,arguments);
+    return img122.call(this,paths,p=>{ cb(p); try{ const sil=dom.actor&&dom.actor.querySelector('.sil'); if(sil) sil.classList.toggle('s122',!!p&&p.indexOf('/portrait_s/')>=0); }catch(e){} });
   };
 })();
 </script>
