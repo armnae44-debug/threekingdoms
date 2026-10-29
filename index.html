@@ -17462,5 +17462,316 @@ function formHTML120(){
   };
 })();
 </script>
+<script>
+/* ==========================================================
+   v123 · 화면 고급화
+   - 위쪽 인장 줄: 장 낙관 + 지명, 조공의 시선, 아이콘 버튼(명부·휘하·아는 것·사서·메뉴)
+   - 글 칸 아래 빠른 버튼 줄: 지나간 본문·뒤로 읽기·자동·빨리·기록·설정·장 이동
+   - 자동(A): 글을 읽는 시간만큼 기다렸다 넘긴다 · 빨리(F): 전에 본 글만 건너뛰고 처음 보는 글이나 선택지에서 멈춘다
+   - 창: 화면 전체를 한 번만 어둡게, 위쪽 탭으로 창끼리 오간다, 빈 창에는 먹 그림
+   - 명부: 얼굴 액자, 옥구슬, 傷·歿 도장, 대쪽을 누르면 휘하 창
+   - 휴대폰 알림은 위쪽 줄 아래로
+   - 그림이 오면 저절로 쓴다: assets/ui/menu_bg · ink_empty · brush_stroke · seal_shang · card_frame (.webp)
+   ========================================================== */
+(function(){
+  if(/[?&]ui=[0-5]\b/.test(location.search)) return;
+  const $i=id=>document.getElementById(id);
+  const svg=(d,f)=>`<svg viewBox="0 0 24 24" width="20" height="20" fill="${f?'currentColor':'none'}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const IC={
+    roster:'<rect x="4.5" y="3" width="3.6" height="18" rx="1"/><rect x="10.2" y="3" width="3.6" height="18" rx="1"/><rect x="15.9" y="3" width="3.6" height="18" rx="1"/><path d="M2.5 8h19M2.5 16h19"/>',
+    squad:'<path d="M6 21V3"/><path d="M6 4h12l-3 4 3 4H6"/>',
+    know:'<path d="M7 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7"/><path d="M7 4a2.5 2.5 0 0 0-2.5 2.5v11A2.5 2.5 0 0 0 7 20a2.5 2.5 0 0 0 2.5-2.5v-11A2.5 2.5 0 0 0 7 4z"/><path d="M12.5 9h4.5M12.5 12.5h4.5"/>',
+    chron:'<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 7.5h6"/>',
+    menu:'<path d="M4 7h16M4 12h16M4 17h10"/>',
+    log:'<path d="M5 6h14M5 10h14M5 14h10M5 18h7"/>',
+    back:'<path d="M9.5 7 5 11.5 9.5 16"/><path d="M5 11.5h9a5 5 0 0 1 5 5V18"/>',
+    auto:'<path d="M8 5.5v13l10-6.5z"/>',
+    skip:'<path d="M4.5 6v12l7.5-6z"/><path d="M12 6v12l7.5-6z"/>',
+    save:'<rect x="5" y="4" width="14" height="16" rx="1.5"/><path d="M9 4v5h6V4"/><path d="M9 14h6M9 17h4"/>',
+    set:'<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+    jump:'<path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5L3.5 20z"/><path d="M9 4v13.5M15 6.5V20"/>'
+  };
+  const EYE="data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>');
+  const css=`
+  :root{--line123:rgba(199,164,110,.28);--gold123:#d9bf8a;--zhu123:#a8322a}
+  /* ---------- 위쪽 인장 줄 ---------- */
+  body.ui110 #stage #topBar #menuBtn75,body.ui110 #stage #topBar #pplBtn110{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important;overflow:hidden!important}
+  body.ui110 #hud75{display:grid!important;grid-template-columns:auto 1fr;grid-template-areas:"seal place" "seal ch" "eye eye" "tip tip";column-gap:12px;row-gap:0;align-items:center;padding:0!important;flex:1 1 auto;min-width:0}
+  body.ui110 #hud75::after{display:none!important}
+  #seal123{grid-area:seal;width:40px;height:40px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+    background:var(--zhu123);color:#f6e7cf;font-family:'Yuji Boku','Ma Shan Zheng',serif;font-size:21px;line-height:1;border-radius:3px;
+    box-shadow:inset 0 0 0 2px rgba(246,231,207,.85),inset 0 0 0 4px var(--zhu123),0 2px 8px rgba(0,0,0,.5);transform:rotate(-3deg)}
+  #seal123.two{writing-mode:vertical-rl;font-size:15px;letter-spacing:-.1em}
+  #seal123:empty{display:none}
+  #place123{grid-area:place;font-family:'Ma Shan Zheng',var(--font120),serif;font-size:22px;line-height:1.1;color:var(--ivory);letter-spacing:.12em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  body.ui110 #hudCh75{grid-area:ch;font-family:var(--font120),serif!important;font-size:11.5px!important;letter-spacing:.34em!important;font-weight:600!important;
+    background:none!important;-webkit-text-fill-color:var(--gold123)!important;color:var(--gold123)!important;margin:2px 0 0!important}
+  body.ui110 #hudLoc75{display:none!important}
+  body.ui110 #eye110{grid-area:eye;margin-top:12px!important;display:flex;align-items:center;gap:5px!important;font-size:12px!important;letter-spacing:.16em!important;color:#cdbf9f!important}
+  body.ui110 #eye110::before{content:'';width:17px;height:17px;margin-right:4px;background:currentColor;-webkit-mask:url("${EYE}") center/contain no-repeat;mask:url("${EYE}") center/contain no-repeat;color:#d98a76;flex:none}
+  body.ui110 #eye110 i{width:9px!important;height:9px!important;box-sizing:border-box;border:1.5px solid rgba(199,164,110,.55)!important;border-radius:50%;background:rgba(0,0,0,.25)}
+  body.ui110 #eye110 i:first-of-type{margin-left:6px}
+  body.ui110 #eye110 i.on{border-color:#e07a62!important;background:radial-gradient(circle at 40% 35%,#ff9d82,#b5332a 70%)!important;box-shadow:0 0 6px rgba(224,90,70,.55)}
+  body.ui110 #eye110 i.mk{margin-left:6px!important}
+  body.ui110 #eyeTip117{grid-area:tip}
+  #nav123{position:absolute;right:14px;top:10px;display:flex;gap:2px;z-index:22}
+  body.pc75 #nav123{right:34px;top:28px}
+  .b123{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:40px;height:44px;padding:0 4px;
+    background:none;border:0;border-radius:4px;color:#bfb08f;cursor:pointer;opacity:.78;transition:opacity .2s,color .2s,background .2s;font-family:var(--font120),serif}
+  .b123:hover,.b123:focus-visible{opacity:1;color:#fff1d6;background:rgba(199,164,110,.1)}
+  body.has-brush123 .b123:hover{background:url(assets/ui/brush_stroke.webp) center/100% 70% no-repeat}
+  .b123 svg{width:21px;height:21px}
+  .b123 .l{font-size:10.5px;letter-spacing:.06em;line-height:1;white-space:nowrap}
+  .b123 .dot{position:absolute;top:5px;right:7px;width:6px;height:6px;border-radius:50%;background:#d0493a;box-shadow:0 0 5px rgba(208,73,58,.8);opacity:0;transition:opacity .3s}
+  .b123.new .dot{opacity:1}
+  .b123 .k{display:none}
+  body.pc75 .b123 .k{display:block;position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);padding:3px 7px;font-size:11px;letter-spacing:.04em;white-space:nowrap;
+    background:rgba(10,9,8,.92);color:#d9cdb2;border:1px solid var(--line123);opacity:0;pointer-events:none;transition:opacity .15s}
+  body.pc75 .b123:hover .k{opacity:1}
+  body.pc75 #qb123 .b123 .k{top:auto;bottom:calc(100% + 4px)}
+  .b123[hidden]{display:none}
+  .b123.on{color:#fff1d6;opacity:1}
+  .b123.on svg{color:#e7a35e;filter:drop-shadow(0 0 4px rgba(231,163,94,.7))}
+  /* ---------- 글 칸 아래 빠른 버튼 줄 ---------- */
+  body.ui110 #ctl75>button,body.ui110 #ctl75 .hint75,body.ui110 #jumpBtn88{display:none!important}
+  #qb123{display:flex;align-items:center;justify-content:space-between;width:100%;gap:0}
+  #qb123 .b123{flex:1 1 0;min-width:0;height:40px;opacity:.86}
+  #qb123 .sep{width:1px;height:20px;background:var(--line123);flex:none}
+  body.ui110.pc75 #ctl75{padding:8px 0 0!important;margin-top:6px!important;border-top:1px solid var(--line123)!important}
+  body.ui110:not(.pc75) #ctl75{margin:auto 0 0!important;padding:4px 0 calc(4px + env(safe-area-inset-bottom))!important;border-top:1px solid rgba(199,164,110,.18)}
+  body.auto123 #cont,body.skip123 #cont{position:relative}
+  #mode123{position:fixed;z-index:60;right:18px;bottom:18px;padding:5px 12px;font-family:var(--font120),serif;font-size:12px;letter-spacing:.2em;color:#f3dcb4;
+    background:rgba(20,12,8,.85);border:1px solid rgba(231,163,94,.5);opacity:0;transition:opacity .3s;pointer-events:none}
+  body.auto123 #mode123,body.skip123 #mode123,#mode123.msg{opacity:1}
+  body.pc75 #mode123{right:calc(var(--w110) + 60px)}
+  /* ---------- 창 ---------- */
+  #dim123{position:fixed;inset:0;z-index:180;background:rgba(5,4,7,.84);opacity:0;pointer-events:none;transition:opacity .25s}
+  body.has-menubg123 #dim123{background:linear-gradient(rgba(5,4,7,.55),rgba(5,4,7,.7)),url(assets/ui/menu_bg.webp) center/cover}
+  body.tab123 #dim123{opacity:1;pointer-events:auto}
+  body.ui110 .ov,body.ui110 #logWrap{box-shadow:none!important}
+  body.ui110 .ov.show,body.ui110 #logWrap.show{z-index:181!important}
+  body.tab123 .ov.show,body.tab123 #logWrap.show{top:calc(4vh + 46px)!important}
+  #roster110.on,#set110.on{z-index:181!important}
+  body.ui110 #set110 .p{border-style:solid;border-width:32px 42px 38px 42px;border-image:url(assets/ui/silk.webp) 140 190 170 190 fill / 32px 42px 38px 42px stretch;background:transparent!important;box-shadow:none!important;padding:16px 22px 14px!important}
+  body.ui110 #set110 h3{text-align:center;padding-bottom:12px;border-bottom:1px solid rgba(199,164,110,.25)}
+  body.tab123 #roster110.on,body.tab123 #set110.on,body.dim123only #set110.on{background:transparent!important}
+  body.tab123 #roster110.on{padding-top:40px;box-sizing:border-box;background:radial-gradient(ellipse at 50% 45%,rgba(10,8,6,.55),rgba(4,3,2,.75))!important}
+  #roster110 .x{padding:0 16px;text-align:center;line-height:1.7}
+  #tabs123{position:fixed;z-index:190;top:4vh;left:50%;transform:translateX(-50%);width:min(840px,92vw);display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;
+    border-bottom:1px solid var(--line123);opacity:0;pointer-events:none;transition:opacity .25s}
+  #tabs123::-webkit-scrollbar{display:none}
+  body.tab123 #tabs123{opacity:1;pointer-events:auto}
+  #tabs123 button{flex:1 0 auto;display:flex;align-items:center;justify-content:center;gap:7px;height:40px;padding:0 12px;background:none;border:0;border-bottom:2px solid transparent;
+    color:#9d927c;font-family:var(--font120),serif;font-size:14px;letter-spacing:.12em;cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+  #tabs123 button svg{width:17px;height:17px}
+  #tabs123 button:hover{color:#eadfc7}
+  #tabs123 button.on{color:#fff1d6;border-bottom-color:#c9a35c}
+  #tabs123 button.on svg{color:#e7a35e}
+  body:not(.pc75) #tabs123{top:6px;width:96vw}
+  body:not(.pc75) #tabs123 button{font-size:12.5px;padding:0 9px;letter-spacing:.04em}
+  body:not(.pc75).tab123 .ov.show,body:not(.pc75).tab123 #logWrap.show{top:54px!important}
+  /* 빈 창 */
+  body.ui110 .emptyNote,body.ui110 .empty123{position:relative;text-align:center;padding:130px 10px 40px!important;color:#a99c82!important;font-size:15px!important;letter-spacing:.1em;line-height:1.8}
+  body.ui110 .emptyNote::before,body.ui110 .empty123::before{content:'無';position:absolute;left:50%;top:0;transform:translateX(-50%);font-family:'Yuji Boku','Ma Shan Zheng',serif;font-size:110px;line-height:1;color:rgba(234,223,199,.07)}
+  body.has-ink123.ui110 .emptyNote::before,body.has-ink123.ui110 .empty123::before{content:'';width:280px;height:120px;background:url(assets/ui/ink_empty.webp) center/contain no-repeat;opacity:.35;filter:invert(1);mix-blend-mode:screen}
+  /* ---------- 명부 ---------- */
+  #roster110 .slip{cursor:pointer;transition:transform .2s;overflow:visible!important}
+  #roster110 .slip>span{flex:none}
+  #roster110 .slip .hz{writing-mode:horizontal-tb!important;width:1em;word-break:break-all;text-align:center;line-height:1.08!important;font-size:36px!important;filter:none!important}
+  body.ui110.pc75:not(:has(#choices.show)) #stage #bottom{padding-bottom:100px!important}
+  #roster110 .slip:hover{transform:translateY(-6px)}
+  #roster110 .md123{position:absolute;left:50%;top:-30px;width:58px;height:58px;transform:translateX(-50%);border-radius:50%;z-index:4;overflow:hidden;
+    background:#1a1712;box-shadow:0 0 0 2px #a8844c,0 0 0 4px #2b2117,0 0 0 5px rgba(199,164,110,.55),0 6px 14px rgba(0,0,0,.7)}
+  #roster110 .md123 img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+  body.has-frame123 #roster110 .md123{box-shadow:0 6px 14px rgba(0,0,0,.7)}
+  body.has-frame123 #roster110 .md123::after{content:'';position:absolute;inset:-9px;background:url(assets/ui/card_frame.webp) center/contain no-repeat;mix-blend-mode:screen}
+  body.has-frame123 #roster110 .md123{overflow:visible} body.has-frame123 #roster110 .md123 img{border-radius:50%}
+  #roster110 .slip.dead .md123 img{filter:grayscale(1) brightness(.6)}
+  #roster110 .bund{margin-top:34px}
+  #roster110 .jd123{position:absolute;left:50%;bottom:6%;transform:translateX(-50%);display:flex;flex-direction:column;gap:5px;z-index:4}
+  #roster110 .jd123 i{width:10px;height:10px;border-radius:50%;background:rgba(40,30,20,.35);box-shadow:inset 0 1px 2px rgba(0,0,0,.5)}
+  #roster110 .jd123 i.on{background:radial-gradient(circle at 35% 30%,#d9f2df,#5f9d78 55%,#2f5e45);box-shadow:0 1px 2px rgba(0,0,0,.5)}
+  #roster110 .jd123.bad i.on{background:radial-gradient(circle at 35% 30%,#f2c7bd,#a8463c 60%,#5e2420)}
+  #roster110 .stp123{position:absolute;left:50%;bottom:23%;width:44px;height:44px;margin-left:-22px;z-index:5;transform:rotate(-8deg);pointer-events:none}
+  #roster110 .stp123.css{display:flex;align-items:center;justify-content:center;background:rgba(168,40,30,.88);color:#f6e2cf;font-family:'Yuji Boku','Ma Shan Zheng',serif;font-size:27px;border-radius:3px;
+    box-shadow:inset 0 0 0 2px rgba(246,226,207,.8),inset 0 0 0 4px rgba(168,40,30,.9);mix-blend-mode:multiply}
+  /* ---------- 휴대폰 위쪽 ---------- */
+  body:not(.pc75) #place123{font-size:19px}
+  body:not(.pc75) #seal123{width:34px;height:34px;font-size:18px}
+  body:not(.pc75) .b123{min-width:38px}
+  body:not(.pc75) #place123{max-width:calc(100vw - 300px)}
+  body.ui110 #eye110{white-space:nowrap}
+  `;
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+  /* 그림이 있으면 쓴다 */
+  [['menu_bg','has-menubg123'],['ink_empty','has-ink123'],['brush_stroke','has-brush123'],['card_frame','has-frame123'],['seal_shang','has-shang123']].forEach(([f,c])=>{
+    const im=new Image(); im.onload=()=>document.body.classList.add(c); im.src=`assets/ui/${f}.webp`; });
+
+  const mk=(id,l,k,ic,fn)=>{ const b=document.createElement('button'); b.type='button'; b.className='b123'; if(id) b.id=id;
+    const [ls,lf]=(l+'|').split('|'), full=lf||ls;
+    b.innerHTML=svg(IC[ic],ic==='auto'||ic==='skip')+`<span class="l">${ls}</span>`+`<span class="k">${full}${k?' · '+k+' 키':''}</span>`+'<i class="dot"></i>';
+    b.setAttribute('aria-label',full); b.onclick=e=>{ e.stopPropagation(); fn(); }; return b; };
+
+  /* ---------- 위쪽 인장 줄 ---------- */
+  const hud=$i('hud75'), tb=$i('topBar');
+  const seal=document.createElement('div'); seal.id='seal123'; const place=document.createElement('div'); place.id='place123';
+  if(hud){ hud.insertBefore(place,hud.firstChild); hud.insertBefore(seal,hud.firstChild); }
+  const HZ={'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10,'十一':11,'十二':12};
+  const PL={1:'연주',2:'허도',3:'완성',4:'하비',5:'백마',6:'연진',7:'관도',8:'관도',9:'관도',10:'관도',11:'관도',12:'관도'};
+  const nav=document.createElement('div'); nav.id='nav123';
+  const bR=mk('nR123','명부','C','roster',()=>tabGo('roster'));
+  const bS=mk('nS123','휘하','','squad',()=>tabGo('squad'));
+  const bK=mk('nK123','아는 것','','know',()=>tabGo('know'));
+  const bC=mk('nC123','사서','','chron',()=>tabGo('chron'));
+  const bM=mk('nM123','메뉴','','menu',()=>tabGo('me'));
+  [bR,bS,bK,bC,bM].forEach(b=>nav.appendChild(b)); if(tb) tb.appendChild(nav);
+  let kN=null, cN=null;
+  setInterval(()=>{ try{
+    const ch=$i('hudCh75'), t=(ch&&ch.textContent||'').trim(); const m=t.match(/^第(.+)章$/); const hz=m?m[1]:'';
+    if(seal.textContent!==hz){ seal.textContent=hz; seal.classList.toggle('two',hz.length>1); }
+    const n=HZ[hz]||0, loc=(($i('hudLoc75')||{}).textContent||'').trim();
+    const pt=(loc.split(' · ').pop()||'').trim()||PL[n]||'';
+    if(place.textContent!==pt) place.textContent=pt;
+    const pb=$i('pplBtn110'); if(pb){ bR.hidden=pb.style.display==='none'; bR.classList.toggle('new',pb.classList.contains('new')); }
+    const sqn=(state.squad||[]).length; bS.hidden=!sqn && !(state.flags&&(state.flags.memories75||[]).length);
+    const kv=+(($i('cKnow')||{}).textContent||0); if(kN===null) kN=kv; if(kv>kN) bK.classList.add('new'); kN=kv;
+    const cv=(state.chronicle||[]).length; if(cN===null) cN=cv; if(cv>cN) bC.classList.add('new'); cN=cv;
+    /* 휴대폰: 알림은 위쪽 줄 아래 */
+    if(!document.body.classList.contains('pc75') && tb){ const mk75=$i('mark75'); if(mk75){ const r=tb.getBoundingClientRect(); const top=Math.round((r.height?r.bottom:0)+6)+'px'; if(mk75.style.top!==top){ mk75.style.setProperty('top',top,'important'); } } }
+  }catch(e){} },300);
+
+  /* ---------- 빠른 버튼 줄 ---------- */
+  const ctl=$i('ctl75'); const qb=document.createElement('div'); qb.id='qb123';
+  const openSet=()=>{ const b=document.querySelector('#start110 [data-a=set]'); if(b) b.click(); };
+  const qLog=mk('','본문|지나간 본문','','log',()=>tabGo('log'));
+  const qBack=mk('','뒤로|뒤로 읽기','','back',()=>{ try{ read74Open(); }catch(e){} });
+  const qAuto=mk('qA123','자동|자동 넘기기','A','auto',()=>setMode(mode==='auto'?'':'auto'));
+  const qSkip=mk('qF123','빨리|본 글 빨리 넘기기','F','skip',()=>setMode(mode==='skip'?'':'skip'));
+  const qSave=mk('','기록|저장 · 불러오기','','save',()=>tabGo('save'));
+  const qSet=mk('','설정','','set',()=>tabGo('set'));
+  const qJump=mk('','장 이동','J','jump',()=>{ const j=$i('jumpBtn88'); if(j) j.click(); });
+  const sep=()=>{ const s=document.createElement('i'); s.className='sep'; return s; };
+  [qLog,qBack,sep(),qAuto,qSkip,sep(),qSave,qSet,qJump].forEach(x=>qb.appendChild(x));
+  if(ctl) ctl.appendChild(qb);
+  setInterval(()=>{ const j=$i('jumpBtn88'); qJump.hidden=!j||getComputedStyle(j).visibility==='hidden'&&false; },1000);
+
+  /* ---------- 자동 · 빨리 ---------- */
+  const tag=document.createElement('div'); tag.id='mode123'; document.body.appendChild(tag);
+  let mode='', seen=new Set(), dirty=false, curKey='', curSeen=false, since=0, msgT=0;
+  try{ (JSON.parse(localStorage.getItem('seen123')||'[]')||[]).forEach(h=>seen.add(h)); }catch(e){}
+  setInterval(()=>{ if(!dirty) return; dirty=false; try{ localStorage.setItem('seen123',JSON.stringify([...seen].slice(-20000))); }catch(e){} },3000);
+  const hash=s=>{ let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h+s.charCodeAt(i))|0; return (h>>>0).toString(36); };
+  function setMode(m){ mode=m; document.body.classList.toggle('auto123',m==='auto'); document.body.classList.toggle('skip123',m==='skip');
+    qAuto.classList.toggle('on',m==='auto'); qSkip.classList.toggle('on',m==='skip');
+    tag.classList.remove('msg'); tag.textContent=m==='auto'?'자동 ▸':m==='skip'?'빨리 ▸▸':''; since=Date.now(); }
+  function say123(t){ tag.textContent=t; tag.classList.add('msg'); clearTimeout(msgT); msgT=setTimeout(()=>tag.classList.remove('msg'),2200); }
+  window.mode123=()=>mode; window.seen123=()=>({n:seen.size,cur:curKey,curSeen,w:(()=>{ const w=waiting(); return w&&[w.k.slice(0,80),hash(w.k),seen.has(hash(w.k))]; })()});
+  function waiting(){
+    const e=$i('end113'); if(e && e.classList.contains('on')) return {k:'e:'+e.innerText.slice(0,200), go:()=>e.click(), len:120};
+    if(document.querySelector('.ov.show,#logWrap.show')) return null;
+    if(document.querySelector(OPEN86)) return null;
+    if(typeof R74!=='undefined' && R74.open) return null;
+    if(document.body.classList.contains('hide110')) return null;
+    const t=$i('title110'); if(t && t.classList.contains('on')) return {k:'t:'+t.innerText.slice(0,80), go:()=>t.click(), len:20};
+    const ov=overlayShown75();
+    if(ov){ const nx=ov.querySelector('.egNext,.ilNext,.owNext,.dNext'); if(!nx||!nx.offsetParent) return null;
+      const tx=ov.innerText.slice(-220); return {k:'o:'+ov.id+':'+tx, go:()=>{ ov.classList.add('instant75'); advance75(); }, len:Math.min(tx.length,120)}; }
+    if(dom.choices.classList.contains('show')) return null;
+    if(dom.cont.classList.contains('show')){ const w=($i('who')||{}).textContent||''; let b=(($i('body')||{}).textContent||'').trim(), n=b.length; if(!b){ b=(dom.center.innerText||'').slice(-200); n=(b.trim().split('\n').pop()||'').length; } return {k:'c:'+w+'|'+b, go:()=>advance75(), len:n}; }
+    return null;
+  }
+  setInterval(()=>{ try{
+    const w=waiting();
+    if(dom.choices.classList.contains('show') && mode==='skip'){ setMode(''); say123('선택지에서 멈췄다'); }
+    if(!w){ return; }
+    const h=hash(w.k);
+    if(h!==curKey){ curKey=h; curSeen=seen.has(h); seen.add(h); dirty=true; since=Date.now(); }
+    if(!mode) return;
+    if(/^c:\|제\s?\d+장/.test(w.k)) return;   /* 장 제목이 글 칸에 잠깐 걸린 때: 저절로 넘어간다 */
+    if(mode==='skip' && Date.now()-since<160) return;   /* 장면이 바뀌는 사이의 잠깐은 보지 않는다 */
+    if(mode==='skip' && !curSeen && w.k[0]!=='t'){ setMode(''); say123('처음 보는 글에서 멈췄다'); return; }
+    const need=mode==='skip'?160:Math.min(9000,1200+w.len*50);
+    if(Date.now()-since>=need){ since=Date.now(); curKey=''; w.go(); }
+  }catch(e){} },80);
+  document.addEventListener('keydown',e=>{
+    if(/INPUT|TEXTAREA/.test((e.target||{}).tagName||'')||e.ctrlKey||e.metaKey||e.altKey) return;
+    if(e.key==='Escape'){ if(has('set110','on')) $i('set110').classList.remove('on'); if(document.body.classList.contains('tab123')) closeAll(); sync(); return; }
+    if($i('start110') && !$i('start110').classList.contains('off')) return;
+    if(document.body.classList.contains('tab123')) return;
+    if(e.key==='a'||e.key==='A'||e.key==='ㅁ'){ setMode(mode==='auto'?'':'auto'); }
+    if(e.key==='f'||e.key==='F'||e.key==='ㄹ'){ setMode(mode==='skip'?'':'skip'); }
+  });
+  /* 직접 넘기면 빨리는 멈춘다 */
+  document.getElementById('stage').addEventListener('click',e=>{ if(e.isTrusted && mode==='skip' && !e.target.closest('#ctl75,#topBar')) setMode(''); },true);
+
+  /* ---------- 창: 탭 ---------- */
+  const has=(id,c)=>{ const x=$i(id); return !!(x && x.classList.contains(c)); };
+  const T=[
+    ['me','나','menu',()=>menu75Open(),()=>has('menu75','show'),()=>menu75Close()],
+    ['roster','명부','roster',()=>{ const p=$i('pplBtn110'); if(p && !has('roster110','on')) p.click(); },()=>has('roster110','on'),()=>{ if(has('roster110','on')) $i('roster110').click(); }],
+    ['squad','휘하','squad',()=>{ renderSquad(); $i('ovSquad').classList.add('show'); },()=>has('ovSquad','show'),()=>$i('ovSquad').classList.remove('show')],
+    ['know','아는 것','know',()=>{ $i('bKnow').click(); },()=>has('ovKnow','show'),()=>$i('ovKnow').classList.remove('show')],
+    ['chron','사서','chron',()=>{ renderChron(); $i('ovChron').classList.add('show'); },()=>has('ovChron','show'),()=>$i('ovChron').classList.remove('show')],
+    ['log','지나간 본문','log',()=>logOpen(),()=>has('logWrap','show'),()=>logClose()],
+    ['save','기록','save',()=>save82Open('both'),()=>has('save82','show'),()=>save82Close()],
+    ['set','설정','set',()=>openSet(),()=>has('set110','on'),()=>$i('set110').classList.remove('on')]
+  ];
+  const dim=document.createElement('div'); dim.id='dim123'; document.body.appendChild(dim);
+  const tabs=document.createElement('div'); tabs.id='tabs123'; tabs.setAttribute('role','tablist');
+  T.forEach(([k,l,ic])=>{ const b=document.createElement('button'); b.type='button'; b.dataset.k=k; b.setAttribute('role','tab'); b.innerHTML=svg(IC[ic])+l;
+    b.onclick=e=>{ e.stopPropagation(); tabGo(k); }; tabs.appendChild(b); });
+  document.body.appendChild(tabs);
+  function closeAll(){ T.forEach(t=>{ try{ if(t[4]()) t[5](); }catch(e){} }); }
+  function tabGo(k){
+    const t=T.find(x=>x[0]===k); if(!t) return;
+    if(t[4]() && !document.body.classList.contains('tab123')){ t[5](); return; }
+    closeAll(); try{ t[3](); }catch(e){}
+    if(k==='roster') bR.classList.remove('new'); if(k==='know') bK.classList.remove('new'); if(k==='chron') bC.classList.remove('new');
+    sync();
+  }
+  window.tabGo123=tabGo;
+  dim.onclick=e=>{ e.stopPropagation(); closeAll(); sync(); };
+  function sync(){
+    const startOn=$i('start110') && !$i('start110').classList.contains('off');
+    const cur=T.find(t=>{ try{ return t[4](); }catch(e){ return false; } });
+    const any=!!cur || has('logWrap','show');
+    document.body.classList.toggle('tab123', any && !startOn);
+    document.body.classList.toggle('dim123only', any && startOn);
+    tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',!!cur && b.dataset.k===cur[0]));
+    if(any && !startOn) setMode(mode==='skip'?'':mode);
+  }
+  setInterval(sync,150);
+  /* 시작 화면에서 연 설정·불러오기도 뒤를 한 번만 어둡게 */
+  const st2=document.createElement('style'); st2.textContent='body.dim123only #dim123{opacity:1;pointer-events:auto}'; document.head.appendChild(st2);
+
+  /* ---------- 빈 창 ---------- */
+  const rs0=window.renderSquad;
+  if(typeof rs0==='function'){ renderSquad=function(){ const r=rs0.apply(this,arguments); try{ const el=$i('squadList'); if(el && !(state.squad||[]).length && !el.querySelector('.empty123')){
+      const d=document.createElement('div'); d.className='empty123'; d.textContent='아직 내 휘하에 선 사람이 없다.'; el.appendChild(d); } }catch(e){} return r; }; }
+  const rc0=window.renderChron;
+  if(typeof rc0==='function'){ renderChron=function(){ const r=rc0.apply(this,arguments); try{ const el=$i('chronList'); if(el && !el.textContent.trim()){
+      const d=document.createElement('div'); d.className='empty123'; d.textContent='아직 사서에 적을 만한 일이 없었다.'; el.appendChild(d); } }catch(e){} return r; }; }
+
+  /* ---------- 명부 ---------- */
+  const R=$i('roster110');
+  const lvN=b=> b>=12?4:b>=6?3:b>=1?2:b<=-3?0:1;
+  function deco(){
+    if(!R) return; const sl=R.querySelectorAll('.slip:not(.d123)'); if(!sl.length) return;
+    const sqd=state.squad||[];
+    R.querySelectorAll('.slip').forEach((s,i)=>{ if(s.classList.contains('d123')) return; s.classList.add('d123'); const q=sqd[i]; if(!q) return;
+      const md=document.createElement('div'); md.className='md123'; md.innerHTML=`<img src="assets/portrait/${q.id}.webp" alt="" onerror="this.style.display='none'">`; s.appendChild(md);
+      if(q.alive){ const n=lvN(q.bond); const jd=document.createElement('div'); jd.className='jd123'+(q.bond<=-3?' bad':''); jd.innerHTML=[3,2,1,0].map(k=>`<i class="${k<n?'on':''}"></i>`).join(''); jd.title=bondLv120(q.id,q.bond); s.appendChild(jd); }
+      if(!q.alive){ const im=document.createElement('img'); im.className='stp123'; im.src='assets/ui/seal_mo.webp'; im.alt='歿'; s.appendChild(im); }
+      else if(s.querySelector('.hu')){
+        if(document.body.classList.contains('has-shang123')){ const im=document.createElement('img'); im.className='stp123'; im.src='assets/ui/seal_shang.webp'; im.alt='傷'; s.appendChild(im); }
+        else { const d=document.createElement('div'); d.className='stp123 css'; d.textContent='傷'; s.appendChild(d); } }
+      s.title=String(q.name||'').replace(/\(.*$/,'')+' · 누르면 함께한 일';
+      s.addEventListener('click',e=>{ e.stopPropagation(); tabGo('squad'); setTimeout(()=>{ const c=$i('squadList'); const t=c&&c.querySelectorAll('.sq')[i]; if(t) t.scrollIntoView({block:'center',behavior:'smooth'}); },60); });
+    });
+    const x=R.querySelector('.x'); if(x && !x.dataset.d123){ x.dataset.d123=1; x.textContent=document.body.classList.contains('pc75')?'대쪽을 누르면 함께한 일이 보인다 · 다른 데를 누르거나 C 키를 누르면 닫힌다':'대쪽을 누르면 함께한 일 · 다른 데를 누르면 닫힌다'; }
+  }
+  if(R) new MutationObserver(deco).observe(R,{childList:true});
+})();
+</script>
 </body>
 </html>
