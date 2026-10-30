@@ -12905,11 +12905,11 @@ function renderChron(){
   const el=$('chronList'); el.innerHTML='';
   const notes=(state.flags.chronNotes75||{});
   const STATE={
-    known:['',''], held:['史','사서대로 흘러갔다'], drift:['搖','사서대로, 다만 내 손을 탔다'],
-    rumor:['考','소문이 틀렸다'], rewritten:['變','바뀌었다']
+    known:['',''], held:['史','책대로 됐다'], drift:['搖','책대로 됐다. 내가 끼어들었다'],
+    rumor:['考','소문과 달랐다'], rewritten:['變','내가 바꿨다']
   };
   const intro=document.createElement('p'); intro.className='chIntro75';
-  intro.textContent='책에서 읽은 대로라면 이렇게 흘러간다. 지나간 일에는 표시가 남는다.';
+  intro.textContent='책에 적힌 순서다. 지나간 일에는 어떻게 됐는지 표시된다.';
   el.appendChild(intro);
   const byId=Object.fromEntries(CHRONICLE.map(c=>[c.id,c]));
   const ids=CHRON_ORDER75.filter(id=>byId[id]).concat(CHRONICLE.map(c=>c.id).filter(id=>!CHRON_ORDER75.includes(id)));
@@ -13019,7 +13019,7 @@ function mark75For(chapter, e, cond){
   return MARKS75.find(m=>m.ch===chapter && t.startsWith(m.match) && (m.when||[]).every(c=>{ try{ return ok(c); }catch(_){ return false; } })) || null;
 }
 function mark75Fresh(m){ return !((state.flags.marks75||[]).includes(m.id)); }
-const MARK_LABEL75={ held:['史','사서대로 흘러갔다'], drift:['搖','사서대로, 다만 내 손을 탔다'], rumor:['考','소문이 틀렸다'], note:['史','사서 옆에 한 줄을 적는다'] };
+const MARK_LABEL75={ held:['史','책대로 됐다'], drift:['搖','책대로 됐다. 내가 끼어들었다'], rumor:['考','소문과 달랐다'], note:['史','사서에 덧붙임'] };
 let markQ75=[], markBusy75=false;
 function mark75Show(m, cb){
   state.flags.marks75=(state.flags.marks75||[]); state.flags.marks75.push(m.id);
@@ -17877,6 +17877,89 @@ function formHTML120(){
     const ppl=[...list.querySelectorAll('button')].find(b=>/^인물/.test(b.textContent.trim()));
     if(ppl) ppl.insertAdjacentElement('afterend',j); else list.prepend(j);
   })();
+})();
+</script>
+<script>
+/* ==========================================================
+   v124 · 화면 손보기
+   - PC 족자: 글이 위에서부터 차고, 넘치면 오래된 줄이 위로 밀려난다 (빈 위쪽 없앰)
+   - 장 끝 카드: 제목 한 줄, 도장 자리, 장 제목 붓글씨와 겹치지 않게
+   - PC 선택지: 바탕 판, 설명 줄 보이기
+   - 장 이동: 개발 설명 빼고, 가 본 장만 고르기, 족자 모양
+   - 시작 화면 메뉴 크게 · 밝게, 인물 창 크게
+   ========================================================== */
+(function(){
+  if(/[?&]ui=[0-5]\b/.test(location.search)) return;
+  const $i=id=>document.getElementById(id);
+  const SILK="border-style:solid;border-width:32px 42px 38px 42px;border-image:url(assets/ui/silk.webp) 140 190 170 190 fill / 32px 42px 38px 42px stretch;background:transparent!important;";
+  const css=`
+  /* ---- PC 족자: 위에서부터 ---- */
+  body.ui110.pc75 #trail75{justify-content:flex-start!important;flex:0 1 auto!important;-webkit-mask-image:none!important;mask-image:none!important}
+  body.ui110.pc75 #trail75.ovf124{-webkit-mask-image:linear-gradient(180deg,transparent,#000 14%)!important;mask-image:linear-gradient(180deg,transparent,#000 14%)!important}
+  body.ui110.pc75 #stage #bottom{justify-content:flex-start!important}
+  body.ui110.pc75 #narr{margin-top:18px}
+  /* ---- 장 끝 카드 ---- */
+  #end113 .hz{white-space:nowrap;font-size:clamp(28px,8.5vw,40px)!important;letter-spacing:.18em!important}
+  #end113 .seal{right:12px!important;top:-18px!important;width:52px!important}
+  body:has(#end113.on) #title110{opacity:0!important}
+  /* ---- PC 선택지 ---- */
+  body.ui110.pc75 #stage #bottom #choices.show{display:flex!important;flex-direction:column;align-items:center;gap:8px;padding-bottom:40px}
+  body.ui110.pc75 #stage #bottom #choices .ch{width:min(720px,86%);box-sizing:border-box;text-align:left!important;
+    background:rgba(12,10,8,.84)!important;border:1px solid rgba(199,164,110,.32)!important;border-left:3px solid #b08d4f!important;border-radius:2px!important;
+    padding:12px 18px 12px 44px!important;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+  body.ui110.pc75 #stage #bottom #choices .ch:hover,body.ui110.pc75 #stage #bottom #choices .ch:focus-visible{background:rgba(30,23,15,.92)!important;border-color:rgba(232,200,140,.7)!important;border-left-color:#e6b866!important}
+  body.ui110.pc75 #stage #bottom #choices.show .ch{width:min(720px,86%)!important;max-width:none!important;font-size:19px!important;text-align:left!important;padding:12px 20px 12px 22px!important}
+  body.ui110.pc75 #stage #bottom #choices.show .ch:hover,body.ui110.pc75 #stage #bottom #choices.show .ch:focus-visible{background:rgba(30,23,15,.94)!important;border:1px solid rgba(232,200,140,.7)!important;border-left:3px solid #e6b866!important}
+  body.ui110.pc75 #stage #bottom #choices.show .ch::after{display:none!important}
+  body.ui110.pc75 #stage #bottom #choices.show .ch .sub{max-height:none!important;opacity:1!important;overflow:visible!important;font-size:14.5px!important;color:#cdbf9f!important;margin-top:3px!important;text-shadow:none!important}
+  /* ---- 장 이동 ---- */
+  #jump88 .p{${SILK}max-width:820px!important;border-radius:0!important;padding:16px 24px!important;font-family:var(--font120),serif}
+  #jump88 h2{font-size:20px!important;letter-spacing:.3em!important;text-align:center;color:#eadfc7!important;margin:4px 0 6px!important}
+  #jump88 .note{text-align:center;font-size:13.5px!important;color:#bfb294!important}
+  #jump88 h3{font-size:14.5px!important;color:#d9bf8a!important;letter-spacing:.1em}
+  #jump88 .g{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))!important;gap:8px!important}
+  #jump88 .g button{font-size:15px!important;padding:10px 10px!important;background:rgba(0,0,0,.28)!important;border:1px solid rgba(199,164,110,.28)!important;color:#eadfc7!important;font-family:var(--font120),serif!important}
+  #jump88 .g button b{font-size:12.5px!important;color:#d9bf8a!important}
+  #jump88 .g button:hover:not(:disabled){border-color:#d9bf8a!important;background:rgba(40,30,18,.6)!important}
+  #jump88 .g button:disabled{opacity:.35;cursor:default}
+  #jump88 .g button:disabled::after{content:'아직 가지 않은 장';display:block;font-size:11.5px;color:#a99c82;margin-top:2px}
+  #jump88 .x{background:none!important;border:0!important;color:#bfb294!important;font-size:13px!important}
+  #jump88 h3[hidden],#jump88 .g[hidden]{display:none!important}
+  /* ---- 시작 화면 ---- */
+  #start110 .menu button{font-size:24px!important;color:#ece2cb!important;text-shadow:0 2px 10px rgba(0,0,0,.95),0 0 2px rgba(0,0,0,.9);letter-spacing:.24em!important;padding:11px 0 11px 24px!important}
+  #start110 .menu button:hover{color:#fff6e0!important}
+  #start110 .menu button small{font-size:13px!important;color:#cbbf9f!important}
+  #start110 .menu{background:radial-gradient(ellipse at 30% 50%,rgba(0,0,0,.55),rgba(0,0,0,0) 70%);padding:24px 60px 24px 10px}
+  @media (orientation:portrait){ #start110 .menu button{font-size:21px!important;padding:9px 0!important} #start110 .menu{padding:12px 30px} }
+  /* ---- 인물 창 ---- */
+  body.ui110.pc75 #pp101 .card{max-width:820px!important;width:80vw!important;min-height:min(70vh,640px);font-size:16px}
+  body.ui110 #pp101 .card .nm{font-size:22px!important}
+  body.ui110 #pp101 .card button{font-size:15px!important}
+  `;
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+
+  /* PC 족자: 넘치면 맨 아래(새 글)가 보이게 */
+  const tr=$i('trail75');
+  if(tr){ const fit=()=>{ try{ tr.scrollTop=tr.scrollHeight; tr.classList.toggle('ovf124',tr.scrollHeight>tr.clientHeight+2); }catch(e){} };
+    new MutationObserver(fit).observe(tr,{childList:true,subtree:true,characterData:true}); window.addEventListener('resize',fit); setInterval(fit,700); }
+
+  /* 장 이동: 가 본 장 */
+  const KEY='reach124';
+  const get=()=>{ try{ return JSON.parse(localStorage.getItem(KEY))||{A:0,B:0}; }catch(e){ return {A:0,B:0}; } };
+  setInterval(()=>{ try{
+    const n0=Number(state.chapter)||0; if(!n0) return; const n=(typeof disp83==='function')?disp83(n0):n0;
+    const r=(state.flags&&state.flags.lubuSpared)?'B':'A'; const g=get();
+    if(n>(g[r]||0)){ g[r]=n; localStorage.setItem(KEY,JSON.stringify(g)); }
+  }catch(e){} },1000);
+  const box=$i('jump88');
+  if(box){
+    const note=box.querySelector('.note'); if(note) note.textContent='가 본 장만 고를 수 있다.';
+    const hs=box.querySelectorAll('h3'); if(hs[0]) hs[0].textContent='여포를 살리지 않은 길'; if(hs[1]) hs[1].textContent='여포를 살린 길';
+    const lock=()=>{ const g=get(), dev=document.body.classList.contains('dev'), shared=Math.max(g.A||0,g.B||0);
+      box.querySelectorAll('.g button').forEach(b=>{ const c=+b.dataset.c, r=b.dataset.r; const ok=dev || (c<=5?c<=Math.max(shared,1):c<=(g[r]||0)); b.disabled=!ok; });
+      const showB=dev || (g.B||0)>=6; if(hs[1]) hs[1].hidden=!showB; const gs=box.querySelectorAll('.g'); if(gs[1]) gs[1].hidden=!showB; };
+    new MutationObserver(()=>{ if(!box.hidden) lock(); }).observe(box,{attributes:true,attributeFilter:['hidden']}); lock();
+  }
 })();
 </script>
 </body>
