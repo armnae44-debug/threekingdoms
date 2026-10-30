@@ -3193,7 +3193,7 @@ function ch3_report(){
       });
       return;
     }
-    if(rep){ mark83({id:'m3-baekbu',kind:'memory',who:'백부장',text:'목책이 흔들리지 않던 날 적어 간 내 이름을 기억한다.'});
+    if(rep){ mark83({id:'m3-baekbu',kind:'memory',who:'백부장',text:'백부장이 목책을 지킨 날 내 이름을 적어 갔다.'});
       say('백부장', '"자네 이름은 적어 둔 적이 있지. 목책이 꿈쩍도 안 하더군."\n\n"좋아. 잠깐은 들어 보지."', ()=>ch3_persuade(+8));
       return;
     }
@@ -3318,7 +3318,7 @@ function ch3_deal(){
     ], ()=>{ addWound('arm'); adjMorale(-10); ch3_wrap(); });
     return;
   }
-  state.flags.ch3='deal'; state.flags.accomplice=true; mark83({id:'m3-weilin',kind:'memory',who:'위림',text:'나를 공범으로 기억한다.'});
+  state.flags.ch3='deal'; state.flags.accomplice=true; mark83({id:'m3-weilin',kind:'memory',who:'위림',text:'위림과 한패가 되었다.'});
   engrave([
     ['','위림의 방으로 찾아가, 가져온 것을 그의 앞에 내려놓았다.'],
     [nm('weilin'),'"……"'],
@@ -6025,7 +6025,7 @@ function ch5_spared(){
   markRewritten('xiapi');
   const after = ()=>overwrite('건안 3년 하비. 여포, 백문루에서 목이 매달리다.',
       '여포는 죽지 않았다. 목줄을 찬 채로, 아직 창을 들고 있다.', ()=>{
-      mark83({id:'m5-lvbu',kind:'memory',who:'여포',text: state.flags.lvbuLeash?'나를 살린 자이자, 목줄을 짠 자로 기억한다.':'하비에서 나를 살린 자로 기억한다.'});
+      mark83({id:'m5-lvbu',kind:'memory',who:'여포',text: state.flags.lvbuLeash?'하비에서 여포를 살렸다. 대신 목줄을 채웠다.':'하비에서 여포를 살렸다.'});
       say('나(독백)', '살렸다.\n\n감당은 이제 내 몫이었다.', ()=>ch5_chengong());
     });
   const line = state.flags.lvbuLeash
@@ -6276,7 +6276,7 @@ function ch5_slips(){
   roster82Set('lvbu','여포(呂布)','천하무쌍', sp?'생존 · 목줄을 찬 채로':'백문루에서 죽음',
     sp ? (state.flags.lvbuLeash?'군사는 주지 않고 창만 쥐여 준다는 조건으로 살았다. 그 조건을 짠 것은 나였다.'
           : state.flags.lvbuRespect?'전위가 곁에서 지킨다는 조건으로 살았다.'
-          : '원소의 기병을 막으라는 내 말 한마디로 살았다. 조공은 그 말을 한 내 얼굴을 기억한다.')
+          : '원소의 기병을 막으라는 내 말 한마디로 살았다. 조공은 그 말을 한 내 얼굴을 알아봤다.')
        : (state.flags.ch5_water?'죽기 전날 밤, 내게 물을 청했다. 말부터 먹이라고 했다.':'끌려가며 유비를 향해 "너는 뭐냐"고 외쳤다.'));
   roster82Set('chengong','진궁(陳宮)','여포의 모사','죽음', state.flags.ch5_toldChengong?'"군후 따위가 주공 속을 어찌 아느냐고 물을 거요"라고 했다.':'끝까지 제 발로 걸어갔다.');
   if(state.flags.defect==='three') roster82Set('housheng','후성·송헌·위속','여포의 부장들','항복','각자 자기만 사면장을 받은 줄 알았다.');
@@ -12978,19 +12978,19 @@ const MARKS75=[
   {id:'m10a-xuyou', ch:'10A', match:'자원, 자네가 왔으니', kind:'held', chron:'xuyou'},
   {id:'m11b-xuyou', ch:'11B', match:'자원, 자네가 왔으니', kind:'held', chron:'xuyou'},
   {id:'m7b-wenchou', ch:'7B', match:'책에서 문추를 벤 건 관우다', kind:'drift', chron:'wenchou'},
-  {id:'m7a-parting', ch:'7A', match:'기억할 것이오', kind:'memory', who:'관우', text:'관우가 연진에서 받은 물음을 기억한다.'},
+  {id:'m7a-parting', ch:'7A', match:'기억할 것이오', kind:'memory', who:'관우', text:'연진에서 관우에게 물음을 남겼다.'},
   /* 8장 */
   {id:'m8-tusan', ch:'ch8', match:'그 위에 올라가 우리를 내려다보던 자리들은 부서졌다', kind:'drift', chron:'tusan'},
   /* 12A */
   {id:'m12a-fire', ch:'12A', match:'오소는 태웠다.', kind:'held', chron:'wuchao_fire'},
   /* 13A */
-  {id:'m13a-flag', ch:'13A', match:'그때는 못 들어가게 막더니', kind:'memory', who:'장합', text:'장합이 무너진 목책 위의 깃발을 기억한다.'},
-  {id:'m13a-gate', ch:'13A', match:'창고 앞에 있던 군관이군', kind:'memory', who:'장합', text:'장합이 창고 앞을 막은 방패를 기억한다.'},
-  {id:'m13a-stake', ch:'13A', match:'어젯밤 함께 말뚝을 들었던 병사가', kind:'memory', who:'말뚝 아래의 병사', text:'말뚝 아래에서 꺼낸 병사가 그날 밤을 기억한다.'},
+  {id:'m13a-flag', ch:'13A', match:'그때는 못 들어가게 막더니', kind:'memory', who:'장합', text:'장합이 무너진 목책 위의 깃발을 봤다.'},
+  {id:'m13a-gate', ch:'13A', match:'창고 앞에 있던 군관이군', kind:'memory', who:'장합', text:'장합이 창고 앞을 막은 방패를 봤다.'},
+  {id:'m13a-stake', ch:'13A', match:'어젯밤 함께 말뚝을 들었던 병사가', kind:'memory', who:'말뚝 아래의 병사', text:'말뚝 아래에서 병사 하나를 꺼내 살렸다.'},
   {id:'m13a-zhanghe', ch:'13A', match:'장합이 조홍 앞에 검을 내려놓았다', kind:'drift', chron:'zhanghe'},
   /* 14A */
-  {id:'m14a-mat', ch:'14A', match:'어젯밤 보내준 거적은 잘 썼소', kind:'memory', who:'장합', text:'장합이 치료소 앞에서 함께 나눈 이야기를 기억한다.'},
-  {id:'m14a-later', ch:'14A', match:'어젯밤 이야기한 것은 군관들에게 전했소', kind:'memory', who:'장합', text:'장합이 따로 찾아와 전해 들은 말을 기억한다.'},
+  {id:'m14a-mat', ch:'14A', match:'어젯밤 보내준 거적은 잘 썼소', kind:'memory', who:'장합', text:'장합과 치료소 앞에서 이야기를 나눴다.'},
+  {id:'m14a-later', ch:'14A', match:'어젯밤 이야기한 것은 군관들에게 전했소', kind:'memory', who:'장합', text:'장합이 내 말을 군관들에게 전했다.'},
   {id:'m14a-guandu', ch:'14A', match:'소칠이 돌아오는 전령에게서 소식을 듣고', kind:'held', chron:'guandu'},
   {id:'m14a-jushou', ch:'14A', match:'점호를 마친 뒤, 강가에 갔던 군관이 포로들을 데려왔다', kind:'held', chron:'jushou'},
   /* 12B */
@@ -13007,11 +13007,11 @@ const MARKS75=[
   /* 14B */
   {id:'m14b-jushou', ch:'14B', match:'저수라는 대답을 듣고', kind:'drift', chron:'jushou'},
   {id:'m14b-guandu', ch:'14B', match:'원소는 강을 건넜다고 했다', kind:'held', chron:'guandu'},
-  {id:'m14b-lvbu', ch:'14B', match:'아침에 네 말은 들었다', kind:'memory', who:'여포', text:'여포가 그날 아침 군막에서 나선 일을 기억한다.'},
-  {id:'m14b-lvbu', ch:'14B', match:'아침에는 하비에서처럼 또 나서더군', kind:'memory', who:'여포', text:'여포가 그날 아침 군막에서 나선 일을 기억한다.'},
-  {id:'m14b-sochil', ch:'14B', match:'다시 잡혀가는 일은 못 하겠습니다', kind:'memory', sq:'sochil', who:'소칠', text:'언덕 뒤로 보내진 밤을 기억한다.'},
-  {id:'m14b-care', ch:'14B', match:'장합의 부하들이 지나가다가 우리 수레를 알아봤다', kind:'memory', who:'장합의 병사들', text:'장합의 병사들이 부상자에게 내어준 군막을 기억한다.'},
-  {id:'m14b-officer', ch:'14B', match:'포로였던 군관이 장합의 병력을 이끌고 지나갔다', kind:'memory', who:'장합의 군관', text:'결박을 풀어준 포로 군관이 그날 아침을 기억한다.'},
+  {id:'m14b-lvbu', ch:'14B', match:'아침에 네 말은 들었다', kind:'memory', who:'여포', text:'그날 아침 군막에서 내가 나선 것을 여포가 봤다.'},
+  {id:'m14b-lvbu', ch:'14B', match:'아침에는 하비에서처럼 또 나서더군', kind:'memory', who:'여포', text:'그날 아침 군막에서 내가 나선 것을 여포가 봤다.'},
+  {id:'m14b-sochil', ch:'14B', match:'다시 잡혀가는 일은 못 하겠습니다', kind:'memory', sq:'sochil', who:'소칠', text:'언덕 뒤로 보내졌던 밤 일을 꺼냈다.'},
+  {id:'m14b-care', ch:'14B', match:'장합의 부하들이 지나가다가 우리 수레를 알아봤다', kind:'memory', who:'장합의 병사들', text:'장합의 병사들이 우리 부상자에게 군막을 내줬다.'},
+  {id:'m14b-officer', ch:'14B', match:'포로였던 군관이 장합의 병력을 이끌고 지나갔다', kind:'memory', who:'장합의 군관', text:'결박을 풀어준 포로 군관이 그날 아침 장합의 병력을 이끌고 지나갔다.'},
   {id:'m14b-xiapi', ch:'14B', match:'내가 읽은 기록에서 여포가 죽은 해로부터', kind:'note', chron:'xiapi', text:'건안 5년 관도. 여포, 제 기병을 이끌고 관도를 떠나다.'}
 ];
 function mark75For(chapter, e, cond){
@@ -13029,7 +13029,7 @@ function mark75Show(m, cb){
     const list=state.flags.memories75=(state.flags.memories75||[]);
     list.push({who:m.who, text:m.text, sq:m.sq||null});
     if(m.sq && sq(m.sq)) sq(m.sq).mem.push(m.text);
-    toast75('memory','憶','기억',(m.sq?J(m.who,'이','가')+' ':'')+m.text);
+    toast75('memory','緣','관계',(m.sq?J(m.who,'이','가')+' ':'')+m.text);
   } else if(m.kind==='note'){
     const n=state.flags.chronNotes75=(state.flags.chronNotes75||{});
     (n[m.chron]=n[m.chron]||[]).push(m.text);
@@ -13863,7 +13863,7 @@ function ch2_askChoice(){
   });
 }
 const ch2_wangsamJoin83=ch2_wangsamJoin;
-ch2_wangsamJoin=function(){ mark83({id:'m2-debt',kind:'memory',who:'왕삼',sq:'wangsam',text:'밥 한 그릇을 빚으로 기억한다.'}); return ch2_wangsamJoin83(); };
+ch2_wangsamJoin=function(){ mark83({id:'m2-debt',kind:'memory',who:'왕삼',sq:'wangsam',text:'밥 한 그릇을 빚으로 여긴다.'}); return ch2_wangsamJoin83(); };
 
 /* ==========================================================
    v83c · 2장 후반(옛 3장) 검수 반영
@@ -14001,7 +14001,7 @@ c67End=function(ch){
                 : '내가 모른다고 하자, "알았다"고만 했다.';
       if(F.dq==='dianman') roster82Set('dianman','전만(典滿)','전위의 아들, 조공의 사마', v.dq_go==='go'?'근신 중':'조공 곁', txt);
       else roster82Set('dianwei','전위(典韋)','조공의 호위', v.dq_go==='go'?'근신 중':'생존', txt);
-      mark83({id:'m6-dq',kind:'memory',who, text: v.dq_ans==='tell' ? (v.dq_go==='go'?'내가 알려준 이름을 들고 장수의 군영으로 갔다.':'내가 막아선 밤을 기억한다.') : v.dq_ans==='wait' ? '더 묻지 않기로 했다.' : '내 대답을 믿지 않았다.'});
+      mark83({id:'m6-dq',kind:'memory',who, text: v.dq_ans==='tell' ? (v.dq_go==='go'?'내가 알려준 이름을 들고 장수의 군영으로 갔다.':'내가 막아서자 가지 않았다.') : v.dq_ans==='wait' ? '더 묻지 않기로 했다.' : '내 대답을 믿지 않았다.'});
       if(v.dq_ans==='tell') roster82Set('hujuer','호거아(胡車兒)','장수의 부장', v.dq_go==='go'?(F.dq==='dianwei'?'전위에게 반쯤 죽도록 맞음':'전만에게 어깨를 베임'):'적 · 지금은 같은 진영','완성의 밤, 전위의 극을 대장간 뒤에 숨겼다.');
     }
     roster82Set('zhangxiu','장수(張繡)와 가후(賈詡)','지난겨울 다시 항복한 자들', F.zhangxiuAngry?'진영 동쪽 · 우리에게 날이 서 있음':'진영 동쪽',
@@ -14147,9 +14147,9 @@ renderSquad=function(){
   try{
     const el=$('squadList'); const s=state.suspicion||0;
     if((state.chapter||1)<5 && !s) return;
-    const tx= s>=10?'내 내력을 알아본다':s>=8?'내 말을 시험한다':s>=4?'내 이름을 기억한다':s>=1?'가끔 눈이 머문다':'아직 나를 눈여겨보지 않는다';
+    const tx= s>=10?'내 뒤를 캔다':s>=8?'나를 시험한다':s>=4?'내 이름을 안다':s>=1?'나를 조금 안다':'아직 나를 모른다';
     const d=document.createElement('div'); d.className='sq';
-    d.innerHTML=`<div class="sqTop"><span class="sqName">주공의 시선</span><span class="sqTrait">조조</span><span class="sqBond">${tx}</span></div>`;
+    d.innerHTML=`<div class="sqTop"><span class="sqName">조공의 시선</span><span class="sqTrait">조조</span><span class="sqBond">${tx}</span></div>`;
     el.insertBefore(d, el.firstChild);
   }catch(e){}
 };
@@ -14159,9 +14159,9 @@ setInterval(()=>{
     if(F.suspSeen===undefined){ F.suspSeen=s; return; }
     if(s>F.suspSeen){
       const prev=F.suspSeen; F.suspSeen=s;
-      const body= F.recToast || (s>=10?'허도로 가는 전령이 부쩍 잦아졌다고 했다.':s>=8?'순유가 무언가를 적었다. 내 이름 옆이었다.':'조조의 눈이 내 얼굴에 조금 오래 머물렀다.'); F.recToast=null;
-      toast75('seal','目','주공의 시선',body);
-      [4,8,10,12].forEach(k=>{ if(prev<k && s>=k) toast75('seal','目','주공의 시선',SUSP_STEP[k]); });
+      const body= (F.recToast?F.recToast+' ':'')+'('+(s-prev>1?(s-prev)+'칸 올라 ':'한 칸 올라 ')+'지금 '+s+'칸)'; F.recToast=null;
+      toast75('seal','目','조공의 시선',body);
+      [4,8,10,12].forEach(k=>{ if(prev<k && s>=k) toast75('seal','目','조공의 시선',SUSP_STEP[k]); });
     }
   }catch(e){}
 },700);
@@ -14982,15 +14982,15 @@ Object.assign(HERO86,{
    ========================================================== */
 /* 주공의 시선 안내: 칸마다 얻는 것을 먼저 말한다 */
 function suspHint(s){
-  if(s>=12) return '내가 누구인지 직접 묻고 싶어 한다.';
-  if(s>=11) return '나를 곁에 둘지 재고 있다.';
-  if(s>=10) return '허도에서 내 내력을 알아보고 있다.';
-  if(s>=8) return '내 말을 시험해 보려 한다. 열째 칸이 차면 허도에서 내 내력을 알아본다.';
-  if(s>=4) return '내 이름을 기억한다. 내 청이 통한다.';
-  if(s>=1) return '가끔 눈이 머문다. 넷째 칸이 차면 내 이름을 기억한다.';
-  return '아직 나를 눈여겨보지 않는다.';
+  if(s>=12) return '조공이 내 정체를 직접 캐물으려 한다.';
+  if(s>=11) return '조공이 나를 곁에 둘지 고민한다.';
+  if(s>=10) return '조공이 허도에 사람을 보내 내 뒤를 캔다.';
+  if(s>=8) return '조공이 나를 시험한다. 10칸이 되면 내 뒤를 캔다.';
+  if(s>=4) return '조공이 내 이름을 안다. 내 부탁이 통한다. 8칸이 되면 나를 시험한다.';
+  if(s>=1) return '조공이 나를 조금 안다. 4칸이 되면 내 이름을 안다.';
+  return '조공이 아직 나를 모른다.';
 }
-const SUSP_STEP={4:'넷째 칸 · 조공이 내 이름을 기억한다. 이제 내 청이 통한다.',8:'여덟째 칸 · 조공이 내 말을 시험해 보려 한다.',10:'열째 칸 · 허도에서 내 내력을 알아본다. 언젠가 조공이 직접 물을 것이다.',12:'열두째 칸 · 조공이 내가 누구인지 직접 묻고 싶어 한다.'};
+const SUSP_STEP={4:'4칸 · 조공이 내 이름을 안다. 이제 내 부탁이 통한다.',8:'8칸 · 조공이 나를 시험한다.',10:'10칸 · 조공이 허도에 사람을 보내 내 뒤를 캔다.',12:'12칸 · 조공이 내 정체를 직접 캐물으려 한다.'};
 const SUSP_ORD={4:'넷째',7:'일곱째',8:'여덟째',10:'열째'};
 const REC_DEF={
   zlSeat:{n:1,w:'장료',t:'장료가 조공께 내 이름을 따로 올리겠다고 했다.'},
@@ -15076,7 +15076,7 @@ function mcVerdictCalc(){
 }
 function recLine(e){
   if(e && e.seal){ const F=state.flags; F.sealDone=F.sealDone||{}; const [n,t]=String(e.seal).split('|');
-    if(!F.sealDone[t+n]){ F.sealDone[t+n]=true; const k=Number(n); toast75('seal','目',(state.suspicion||0)>=k&&SUSP_ORD[k]?'주공의 시선 · '+SUSP_ORD[k]+' 칸':'주공의 시선',t); } }
+    if(!F.sealDone[t+n]){ F.sealDone[t+n]=true; const k=Number(n); toast75('seal','目',(state.suspicion||0)>=k&&SUSP_ORD[k]?'조공의 시선 · '+k+'칸':'조공의 시선',t); } }
   if(e && e.rec){ const [id,n]=String(e.rec).split(':'); rec(id, n===undefined?undefined:Number(n));
     if(id==='gjLedger'){ const F=state.flags; F.numMarks=F.numMarks||[]; if(!F.numMarks.includes('ledger8')) F.numMarks.push('ledger8'); } }
   if(e && e.gate){ const F=state.flags, [g,n]=String(e.gate).split(':'); if(F[g]===undefined) F[g]=(state.suspicion||0)>=Number(n); }
@@ -15537,7 +15537,7 @@ bond=function(id,n,memory){
         const q=bondQ102; bondQ102=[];
         const byName={}; q.forEach(x=>{ byName[x.nm]=(byName[x.nm]||0)+x.n; });
         const label=Object.entries(byName).map(([k,v])=>k+(v>0?' ▲':v<0?' ▼':'')).join(' · ');
-        const body = q.length===1 && q[0].memory ? q[0].memory : '이 일을 기억한다';
+        const tot=q.reduce((a,x)=>a+x.n,0); const body = q.length===1 && q[0].memory ? q[0].memory : (tot>0?'신뢰가 올랐다':tot<0?'신뢰가 떨어졌다':'신뢰가 바뀌었다');
         toast75('memory','情',label,body);
       },250);
     }
@@ -17044,10 +17044,10 @@ const BOND120={
   sochil: ['나를 따라다닌다','나를 큰형처럼 따른다','내 말이면 무엇이든 한다','나를 위해 목숨을 건다','나를 피한다']
 };
 function bondLv120(id,b){
-  const t=BOND120[id]||['나를 지켜본다','나를 믿는다','나를 믿고 따른다','나를 위해 목숨을 건다','나에게 등을 돌렸다'];
+  const t=['신뢰 조금','신뢰 보통','신뢰 높음','신뢰 매우 높음','등을 돌림'];
   b=+b||0;
   if(b<=-3) return t[4];
-  return b>=18?t[3]:b>=12?t[2]:b>=6?t[1]:b>=1?t[0]:'아직 서먹하다';
+  return b>=18?t[3]:b>=12?t[2]:b>=6?t[1]:b>=1?t[0]:'신뢰 없음';
 }
 
 /* ---------- 글꼴 ---------- */
@@ -17534,8 +17534,8 @@ function formHTML120(){
   .b123.on svg{color:#e7a35e;filter:drop-shadow(0 0 4px rgba(231,163,94,.7))}
   /* ---------- 글 칸 아래 빠른 버튼 줄 ---------- */
   body.ui110 #ctl75>button,body.ui110 #ctl75 .hint75,body.ui110 #jumpBtn88{display:none!important}
-  #qb123{display:flex;align-items:center;justify-content:space-between;width:100%;gap:0}
-  #qb123 .b123{flex:1 1 0;min-width:0;height:40px;opacity:.86}
+  #qb123{display:flex;align-items:center;justify-content:center;width:100%;gap:18px}
+  #qb123 .b123{flex:0 0 auto;min-width:76px;height:40px;opacity:.86}
   #qb123 .sep{width:1px;height:20px;background:var(--line123);flex:none}
   body.ui110.pc75 #ctl75{padding:8px 0 0!important;margin-top:6px!important;border-top:1px solid var(--line123)!important}
   body.ui110:not(.pc75) #ctl75{margin:auto 0 0!important;padding:4px 0 calc(4px + env(safe-area-inset-bottom))!important;border-top:1px solid rgba(199,164,110,.18)}
@@ -17550,6 +17550,9 @@ function formHTML120(){
   body.tab123 #dim123{opacity:1;pointer-events:auto}
   body.ui110 .ov,body.ui110 #logWrap{box-shadow:none!important}
   body.ui110 .ov.show,body.ui110 #logWrap.show{z-index:181!important}
+  body.ui110 .ov .close,body.ui110 #logWrap .lgTop span{z-index:6!important;cursor:pointer;padding:8px 10px!important}
+  body.ui110 .ov .close:not([style*=position]){position:absolute}
+  body.ui110 .ov h3{pointer-events:none}
   body.tab123 .ov.show,body.tab123 #logWrap.show{top:calc(4vh + 46px)!important}
   #roster110.on,#set110.on{z-index:181!important}
   body.ui110 #set110 .p{border-style:solid;border-width:32px 42px 38px 42px;border-image:url(assets/ui/silk.webp) 140 190 170 190 fill / 32px 42px 38px 42px stretch;background:transparent!important;box-shadow:none!important;padding:16px 22px 14px!important}
@@ -17624,7 +17627,7 @@ function formHTML120(){
   const bK=mk('nK123','아는 것','','know',()=>tabGo('know'));
   const bC=mk('nC123','사서','','chron',()=>tabGo('chron'));
   const bM=mk('nM123','메뉴','','menu',()=>tabGo('me'));
-  [bR,bS,bK,bC,bM].forEach(b=>nav.appendChild(b)); if(tb) tb.appendChild(nav);
+  [bR,bK,bC,bM].forEach(b=>nav.appendChild(b)); if(tb) tb.appendChild(nav);
   let kN=null, cN=null;
   setInterval(()=>{ try{
     const ch=$i('hudCh75'), t=(ch&&ch.textContent||'').trim(); const m=t.match(/^第(.+)章$/); const hz=m?m[1]:'';
@@ -17643,7 +17646,7 @@ function formHTML120(){
   /* ---------- 빠른 버튼 줄 ---------- */
   const ctl=$i('ctl75'); const qb=document.createElement('div'); qb.id='qb123';
   const openSet=()=>{ const b=document.querySelector('#start110 [data-a=set]'); if(b) b.click(); };
-  const qLog=mk('','본문|지나간 본문','','log',()=>tabGo('log'));
+  const qLog=mk('','지나간 본문','','log',()=>tabGo('log'));
   const qBack=mk('','뒤로|뒤로 읽기','','back',()=>{ try{ read74Open(); }catch(e){} });
   const qAuto=mk('qA123','자동|자동 넘기기','A','auto',()=>setMode(mode==='auto'?'':'auto'));
   const qSkip=mk('qF123','빨리|본 글 빨리 넘기기','F','skip',()=>setMode(mode==='skip'?'':'skip'));
@@ -17651,7 +17654,7 @@ function formHTML120(){
   const qSet=mk('','설정','','set',()=>tabGo('set'));
   const qJump=mk('','장 이동','J','jump',()=>{ const j=$i('jumpBtn88'); if(j) j.click(); });
   const sep=()=>{ const s=document.createElement('i'); s.className='sep'; return s; };
-  [qLog,qBack,sep(),qAuto,qSkip,sep(),qSave,qSet,qJump].forEach(x=>qb.appendChild(x));
+  [qLog,qAuto,qSkip].forEach(x=>qb.appendChild(x));
   if(ctl) ctl.appendChild(qb);
   setInterval(()=>{ const j=$i('jumpBtn88'); qJump.hidden=!j||getComputedStyle(j).visibility==='hidden'&&false; },1000);
 
@@ -17721,6 +17724,8 @@ function formHTML120(){
   T.forEach(([k,l,ic])=>{ const b=document.createElement('button'); b.type='button'; b.dataset.k=k; b.setAttribute('role','tab'); b.innerHTML=svg(IC[ic])+l;
     b.onclick=e=>{ e.stopPropagation(); tabGo(k); }; tabs.appendChild(b); });
   document.body.appendChild(tabs);
+  const NOTAB=['squad','log'];
+  tabs.querySelectorAll('button').forEach(b=>{ if(NOTAB.includes(b.dataset.k)) b.hidden=true; });
   function closeAll(){ T.forEach(t=>{ try{ if(t[4]()) t[5](); }catch(e){} }); }
   function tabGo(k){
     const t=T.find(x=>x[0]===k); if(!t) return;
@@ -17735,9 +17740,9 @@ function formHTML120(){
     const startOn=$i('start110') && !$i('start110').classList.contains('off');
     const cur=T.find(t=>{ try{ return t[4](); }catch(e){ return false; } });
     const any=!!cur || has('logWrap','show');
-    document.body.classList.toggle('tab123', any && !startOn);
-    document.body.classList.toggle('dim123only', any && startOn);
+    const tabbed=!!cur && !NOTAB.includes(cur[0]);
     tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',!!cur && b.dataset.k===cur[0]));
+    document.body.classList.toggle('tab123', tabbed && !startOn); document.body.classList.toggle('dim123only', any && (startOn || !tabbed));
     if(any && !startOn) setMode(mode==='skip'?'':mode);
   }
   setInterval(sync,150);
@@ -17766,11 +17771,112 @@ function formHTML120(){
         if(document.body.classList.contains('has-shang123')){ const im=document.createElement('img'); im.className='stp123'; im.src='assets/ui/seal_shang.webp'; im.alt='傷'; s.appendChild(im); }
         else { const d=document.createElement('div'); d.className='stp123 css'; d.textContent='傷'; s.appendChild(d); } }
       s.title=String(q.name||'').replace(/\(.*$/,'')+' · 누르면 함께한 일';
-      s.addEventListener('click',e=>{ e.stopPropagation(); tabGo('squad'); setTimeout(()=>{ const c=$i('squadList'); const t=c&&c.querySelectorAll('.sq')[i]; if(t) t.scrollIntoView({block:'center',behavior:'smooth'}); },60); });
+      s.addEventListener('click',e=>{ e.stopPropagation(); memShow(i); });
     });
+    if(!R.querySelector('#mem123')){ const mb=document.createElement('div'); mb.id='mem123'; mb.addEventListener('click',e=>e.stopPropagation());
+      const eye=R.querySelector('.eye'); if(eye) eye.insertAdjacentElement('beforebegin',mb); else R.appendChild(mb); memShow(-1); }
     const x=R.querySelector('.x'); if(x && !x.dataset.d123){ x.dataset.d123=1; x.textContent=document.body.classList.contains('pc75')?'대쪽을 누르면 함께한 일이 보인다 · 다른 데를 누르거나 C 키를 누르면 닫힌다':'대쪽을 누르면 함께한 일 · 다른 데를 누르면 닫힌다'; }
   }
+  /* 명부 아래: 고른 사람과 함께한 일 · 그 밖의 사람들 */
+  let memSel=-1;
+  function memShow(i){
+    const mb=$i('mem123'); if(!mb) return; memSel=i;
+    const sqd=state.squad||[], others=((state.flags&&state.flags.memories75)||[]).filter(m=>!m.sq);
+    R.querySelectorAll('.slip').forEach((s,k)=>s.classList.toggle('sel123',k===i));
+    let html='';
+    if(i>=0 && sqd[i]){ const q=sqd[i], nm=String(q.name||'').replace(/\(.*$/,'');
+      html=`<div class="hd"><b>${nm}</b><span>${q.alive?bondLv120(q.id,q.bond):'전사'}${q.trait?' · '+q.trait:''}</span></div>`
+        +((q.mem||[]).length?`<ul>${q.mem.map(t=>`<li>${t}</li>`).join('')}</ul>`:'<div class="no">아직 함께한 일이 없다.</div>');
+    } else if(i===-2){
+      const by={}; others.forEach(m=>{ (by[m.who]=by[m.who]||[]).push(m.text); });
+      html='<div class="hd"><b>그 밖의 사람들</b></div>'+(Object.keys(by).length?Object.entries(by).map(([w,l])=>`<div class="ot"><b>${w}</b><ul>${l.map(t=>`<li>${t}</li>`).join('')}</ul></div>`).join(''):'<div class="no">아직 없다.</div>');
+    } else {
+      html='<div class="no">대쪽을 누르면 그 사람과 함께한 일이 보인다.</div>';
+    }
+    if(others.length) html+=`<button type="button" class="oth">${i===-2?'명부로':'그 밖의 사람들 ('+others.length+')'}</button>`;
+    mb.innerHTML=html;
+    const ob=mb.querySelector('.oth'); if(ob) ob.onclick=e=>{ e.stopPropagation(); memShow(i===-2?-1:-2); };
+  }
+  const st3=document.createElement('style'); st3.textContent=`
+  #mem123{width:min(520px,90vw);max-height:22vh;overflow:auto;font-family:var(--font120),serif;color:#e6dbc3;font-size:14.5px;line-height:1.7;text-align:left}
+  #mem123 .hd{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  #mem123 .hd b{font-size:17px;color:#fff1d6} #mem123 .hd span{font-size:13px;color:#d9bf8a}
+  #mem123 ul{margin:0;padding:0 0 0 2px;list-style:none} #mem123 li{padding-left:14px;position:relative} #mem123 li::before{content:'·';position:absolute;left:2px;color:#c9a35c}
+  #mem123 .no{color:#a99c82;text-align:center}
+  #mem123 .ot{margin:6px 0} #mem123 .ot b{color:#eadfc7}
+  #mem123 .oth{display:block;margin:8px auto 0;background:none;border:1px solid rgba(199,164,110,.45);color:#e6dbc3;font-family:inherit;font-size:13px;padding:5px 14px;cursor:pointer}
+  #roster110 .slip.sel123{transform:translateY(-8px)} #roster110 .slip.sel123 .md123{box-shadow:0 0 0 2px #f0cf8a,0 0 14px rgba(240,207,138,.7)}
+  #roster110{gap:14px!important}
+  #tabs123 button[hidden]{display:none!important}
+  #roster110 .slip{height:min(48vh,420px)!important;padding-top:calc(min(48vh,420px) * .15 + 22px)!important}
+  #roster110 h2{font-size:28px!important}
+  `; document.head.appendChild(st3);
   if(R) new MutationObserver(deco).observe(R,{childList:true});
+
+  /* ---------- 아는 것: 맨 위에 책에 적힌 결말 ---------- */
+  const k0=$i('bKnow'); const k0f=k0&&k0.onclick;
+  if(k0) k0.onclick=function(){ const r=k0f&&k0f.apply(this,arguments); try{ fateInto(); }catch(e){} return r; };
+  function fateInto(){
+    const ov=$i('ovKnow'), list=$i('knowList'); if(!ov||!list||typeof FATE101==='undefined') return;
+    let f=$i('fate123'); if(!f){ f=document.createElement('div'); f.id='fate123'; list.insertAdjacentElement('beforebegin',f); }
+    f.innerHTML='<div class="t">책에 적힌 결말</div>'+FATE101.map(x=>{ const d=x.done(), ok=d&&x.ok();
+      return `<div class="r${d?(ok?' ch':' kp'):''}"><b>${x.who}</b><span class="w">${x.w}</span><div class="tx">${x.t}</div>${d?`<div class="st">${ok?'바뀌었다. 살았다.':'책대로 되었다.'}</div>`:''}</div>`; }).join('')
+      +'<div class="r"><b>조노 · 왕삼 · 소칠</b><div class="tx">책에 이름이 없다. 어떻게 될지 책도 모른다.</div></div><div class="t" style="margin-top:18px">그 밖에 아는 것</div>';
+    const em=list.querySelector('.emptyNote'); if(em) em.textContent='아직 더 떠오른 것이 없다.';
+  }
+  const st4=document.createElement('style'); st4.textContent=`
+  #fate123{font-family:var(--font120),serif;margin:0 0 6px}
+  #fate123 .t{font-size:13px;letter-spacing:.24em;color:#d9bf8a;margin:0 0 8px;padding-bottom:6px;border-bottom:1px solid rgba(199,164,110,.25)}
+  #fate123 .r{padding:8px 0;border-bottom:1px solid rgba(199,164,110,.12)}
+  #fate123 .r b{font-size:16px;color:#fff1d6;margin-right:10px} #fate123 .r .w{font-size:12.5px;color:#a99c82}
+  #fate123 .r .tx{font-size:14.5px;color:#e6dbc3;line-height:1.65;margin-top:2px}
+  #fate123 .r.ch .tx{text-decoration:line-through;color:#9d927c} #fate123 .r .st{font-size:13px;margin-top:2px}
+  #fate123 .r.ch .st{color:#8fc3a0} #fate123 .r.kp .st{color:#d98a7e}
+  body.ui110 #ovKnow .emptyNote{padding:20px 10px!important} body.ui110 #ovKnow .emptyNote::before{display:none}
+  `; document.head.appendChild(st4);
+
+  /* ---------- 기록 칸: 장면 그림 · 몇 장 어디 · 마지막 줄 ---------- */
+  const snap0=save82Snap;
+  save82Snap=function(){ const s=snap0.apply(this,arguments); if(s){ try{ const m=(getComputedStyle($i('bg')).backgroundImage||'').match(/url\("?([^")]+)"?\)/); if(m) s.bg=m[1]; }catch(e){} } return s; };
+  const card0=save82Card;
+  save82Card=function(s,label,idx){
+    const el=card0.apply(this,arguments); if(!s) return el;
+    try{
+      const ch=el.querySelector('.sv82Ch'); const place=PL[s.ch]||'';
+      if(ch) ch.innerHTML=`${s.ch}장${place?' · '+place:''}`+(s.loc?`<span>${s.loc}</span>`:'');
+      let line=s.line||''; if(!line && s.log){ const l=[...s.log].reverse().find(x=>x&&x.text&&x.who!=='선택'); if(l) line=String(l.text).replace(/\*\*/g,'').replace(/\s+/g,' ').slice(0,70); }
+      const ln=el.querySelector('.sv82Line'); if(ln) ln.textContent=line?'「'+line+(line.length>=70?'…':'')+'」':'';
+      const th=document.createElement('div'); th.className='th123'; if(s.bg) th.style.backgroundImage=`url("${s.bg}")`; el.insertBefore(th,el.firstChild); el.classList.add('has-th');
+    }catch(e){}
+    return el;
+  };
+  const st5=document.createElement('style'); st5.textContent=`
+  body.ui110 .sv82.has-th{position:relative;padding-left:132px!important;min-height:112px}
+  .sv82 .th123{position:absolute;left:10px;top:10px;bottom:10px;width:112px;background:#1a1712 center/cover no-repeat;box-shadow:inset 0 0 0 1px rgba(199,164,110,.35)}
+  body.ui110 .sv82Ch{font-size:17px!important;color:#fff1d6!important;font-family:var(--font120),serif!important}
+  body.ui110 .sv82Ch span{display:block;font-size:13px!important;color:#d9bf8a!important;margin:2px 0 0!important}
+  body.ui110 .sv82Line{color:#d6cab0!important;font-size:13.5px!important;line-height:1.6!important;margin:6px 0!important}
+  body.ui110 #save82 .sub82{color:#bfb294!important}
+  /* 사서: 글자를 또렷하게 */
+  body.ui110 #chronList,body.ui110 #chronList *{color:#eadfc7}
+  body.ui110 #chronList{font-size:15px!important;line-height:1.75}
+  body.ui110 #chronList .ch75{opacity:1!important} body.ui110 #chronList .tx{font-size:15px!important;color:#eadfc7!important} body.ui110 #chronList .chIntro75{color:#bfb294!important}
+  body.ui110 #chronList .mine{color:#8fc3a0!important} body.ui110 #chronList .st b{color:#e07a62!important}
+  body.ui110 #ovChron .ch74y,body.ui110 #chronList [class*=yr],body.ui110 #chronList [class*=Year],body.ui110 #chronList [class*=date]{color:#d9bf8a!important}
+  `; document.head.appendChild(st5);
+
+  /* ---------- 메뉴(나): 다른 곳에 있는 것은 뺀다 ---------- */
+  (function(){
+    const list=document.querySelector('#menu75 .list75'); if(!list) return;
+    const DROP=/^(책에 적힌 결말|기록|휘하|내가 읽은 사서|뒤로 읽기|지나간 본문|설정)/;
+    list.querySelectorAll('button').forEach(b=>{ const t=b.textContent.trim();
+      if(DROP.test(t)) b.remove();
+      else if(/^(장 선택 \(개발\)|개발 도구)/.test(t) && !document.body.classList.contains('dev')) b.style.display='none'; });
+    const j=document.createElement('button'); j.innerHTML='장 이동<small>다른 장으로 건너뛴다</small>';
+    j.onclick=()=>{ menu75Close(); const x=$i('jumpBtn88'); if(x) x.click(); };
+    const ppl=[...list.querySelectorAll('button')].find(b=>/^인물/.test(b.textContent.trim()));
+    if(ppl) ppl.insertAdjacentElement('afterend',j); else list.prepend(j);
+  })();
 })();
 </script>
 </body>
