@@ -13183,6 +13183,10 @@ function c67Text(t){
   t=String(t||'');
   const roles={'왕삼':isAlive('wangsam')?'왕삼':'방패병 고참','조노':isAlive('jono')?'조노':'노병','소칠':isAlive('sochil')?'소칠':'어린 병사'};
   for(const [name,other] of Object.entries(roles)) if(name!==other){
+    t=t.replace(new RegExp('^'+name+'!'),'어이!');
+    /* '소칠이었다'처럼 이름 뒤의 '이'가 조사가 아니라 '이다'인 경우를 먼저 바꾼다 */
+    const J2=hasJong(other);
+    for(const [x,y] of [['이었','였'],['이에요','예요'],['이라','라'],['이다','다'],['이고','고'],['이야','야']]) t=t.replaceAll(name+(hasJong(name)?x:y),other+(J2?x:y));
     for(const [a,b] of [['은','는'],['이','가'],['을','를'],['과','와']]) t=t.replaceAll(name+(hasJong(name)?a:b),other+(hasJong(other)?a:b));
     t=t.replaceAll(name,other);
   }
