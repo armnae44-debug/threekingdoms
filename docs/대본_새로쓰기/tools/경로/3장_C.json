@@ -1,0 +1,33 @@
+{
+ "이름": "3장 C · 반쯤 건지는 판",
+ "값": {
+  "1장 thirst": "drink",
+  "1장 escape": "alone",
+  "2장 use": "bribe",
+  "2장 teach": "ignore",
+  "tail": "jono",
+  "미행": "실패",
+  "prep": [
+   "men",
+   "dianwei"
+  ],
+  "men": "armed",
+  "dw": "water",
+  "물": "성공",
+  "buy": "stop",
+  "first": "men",
+  "vow": "luck",
+  "둘째 준비": "dianwei"
+ },
+ "표지": [
+  "전위 맑음",
+  "조원 다 삶",
+  "소칠 생존",
+  "조노 생존",
+  "왕삼 생존",
+  "하나 이상 함",
+  "prep 첫 번째",
+  "prep 두 번째",
+  "prep 두 번을 다 쓴 뒤, 은 두 덩이 이상, 아직 안 한 준비가 있을 때"
+ ]
+}
