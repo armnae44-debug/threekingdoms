@@ -91,6 +91,7 @@ def render(lines, route):
     last_cond = None
     choice_key = None
     choice_ok = False
+    choice_open = False
     in_body = False
     for raw in lines:
         line = raw.rstrip("\n")
@@ -130,16 +131,29 @@ def render(lines, route):
         if s.startswith("**[선택]**"):
             km = re.search(r"값 이름:\s*([^)]+)\)", s)
             choice_key = km.group(1).strip() if km else None
-            choice_ok = route.expr(cond) if cond else True
+            # 선택지 줄의 〔시간 제한〕〔두 번 되풀이…〕 같은 표시는 조건이 아니다
+            is_cond = cond and ("=" in cond or "≠" in cond or "!" in cond)
+            choice_ok = route.expr(cond) if is_cond else True
+            choice_open = False
             continue
         if s.startswith("- ▸"):
             if not (choice_key and choice_ok):
                 continue
             vm = re.search(r"\(`([^`]+)`\)", body)
             lm = re.search(r"\*\*(.+?)\*\*", body)
-            if vm and route.has(choice_key, vm.group(1)) and (cond is None or route.expr(cond)):
+            dm = re.search(r"\*\*\s*—\s*(.+?)\s*\(`", body)
+            label = lm.group(1) if lm else body
+            if dm:
+                label += " — " + dm.group(1)
+            shown = cond is None or route.expr(cond) or cond.startswith("필요:")
+            if not shown:
+                continue
+            picked = vm and route.has(choice_key, vm.group(1)) and (cond is None or route.expr(cond) or cond.startswith("필요:"))
+            if not choice_open:
                 out.append("")
-                out.append("> ▸ " + (lm.group(1) if lm else body))
+                out.append("> **[선택]**")
+                choice_open = True
+            out.append("> " + ("● " if picked else "○ ") + label)
             continue
         choice_key = None
         if cond is not None:
