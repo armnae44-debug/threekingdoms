@@ -1,0 +1,5 @@
+{"이름": "4장 A · 물길을 맞히고 셋에게 사면장, 여포를 살린 판",
+ "값": {"1장 thirst": "dig", "1장 origin": "lie", "1장 sound": "tell", "2장 count": "num", "2장 learn": "well", "2장 fence": "push", "3장 vow": "promise",
+        "ladder": "jump", "tent": "offer", "dig": ["survey", "old"], "old": "성공", "count": "num", "why": "right", "pin": "w", "물길": "ok",
+        "defect": "three", "사면": "성공", "guard": "water", "lvbu": "spare", "spare": "future", "cg": "tell", "how": "puyang", "gj": "oldlie"},
+ "표지": ["3장 군후 됨", "3장 바꿈", "3장 조원 다 삶", "3장 전위 생존", "3장 조앙 생존", "왕삼 생존", "조노 생존", "소칠 생존", "옛 조원 생존", "조노 유대 높음", "가진 것 둘", "가진 것 있음", "살림"]}
