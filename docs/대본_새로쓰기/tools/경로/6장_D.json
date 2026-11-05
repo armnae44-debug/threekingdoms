@@ -1,0 +1,20 @@
+{
+ "이름": "6장 D · 여포를 살리고 뒤에 붙은 판",
+ "값": {
+  "battle": "guard",
+  "b6_gy": "send",
+  "b6_debt": "free",
+  "well": "jono",
+  "early6": "go",
+  "fall": "carry",
+  "b7_battle": "pin",
+  "b7_wc": "follow",
+  "b7_reply": "together"
+ },
+ "표지": [
+  "4장 살림",
+  "4장 spare=dianwei",
+  "3장 전위 생존",
+  "2장 소칠 가르침"
+ ]
+}
