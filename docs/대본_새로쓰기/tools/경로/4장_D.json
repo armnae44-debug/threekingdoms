@@ -1,0 +1,39 @@
+{
+ "이름": "4장 D · 산가지로 셈하고, 못 짚겠다고 한 판",
+ "값": {
+  "1장 thirst": "dig",
+  "1장 origin": "lie",
+  "1장 sound": "tell",
+  "2장 count": "num",
+  "2장 learn": "well",
+  "2장 fence": "push",
+  "3장 vow": "promise",
+  "ladder": "jump",
+  "tent": "offer",
+  "dig": [
+   "old",
+   "survey"
+  ],
+  "old": "성공",
+  "count": "rod",
+  "why": "right",
+  "pin": "none",
+  "물길": "late",
+  "guard": "water",
+  "lvbu": "quiet",
+  "spare": "future",
+  "cg": "tell",
+  "1장 escape": "crowd"
+ },
+ "표지": [
+  "3장 군후 됨",
+  "3장 바꿈",
+  "3장 전위 생존",
+  "3장 조앙 생존",
+  "조노 유대 높음",
+  "가진 것 둘",
+  "가진 것 있음",
+  "석두 생존",
+  "못 살림"
+ ]
+}
