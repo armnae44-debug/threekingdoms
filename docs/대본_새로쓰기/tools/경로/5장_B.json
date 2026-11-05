@@ -1,0 +1,22 @@
+{
+ "이름": "5장 B · 여포를 살리고 전위가 죽은 판",
+ "값": {
+  "2장 use": "report",
+  "2장 설득": "성공",
+  "5장 성과": "부분",
+  "well": "defend",
+  "밤손님": "전만",
+  "dq_ans": "tell",
+  "dq_go": "go",
+  "battle": "guard",
+  "b6_help": "hold",
+  "b6_debt": "voice",
+  "b6_gy": "send"
+ },
+ "표지": [
+  "4장 살림",
+  "4장 spare=leash",
+  "4장 guard=water",
+  "호거아를 앎"
+ ]
+}

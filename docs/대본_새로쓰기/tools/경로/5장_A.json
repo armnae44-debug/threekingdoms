@@ -1,0 +1,27 @@
+{
+ "이름": "5장 A · 여포가 죽고 다 살린 판",
+ "값": {
+  "2장 use": "hold",
+  "3장 ca": "horse",
+  "5장 성과": "인정",
+  "zlSeat": "front",
+  "well": "punish",
+  "밤손님": "전위",
+  "dq_ans": "tell",
+  "dq_go": "block",
+  "battle": "press",
+  "question": "lives",
+  "a6_granary": "store",
+  "account": "meeting"
+ },
+ "표지": [
+  "3장 조앙 생존",
+  "3장 말을 얻음",
+  "3장 전위 생존",
+  "3장 dw=tell",
+  "호거아를 앎",
+  "4장 guard=water",
+  "장료가 불러 세움",
+  "석두 생존"
+ ]
+}
