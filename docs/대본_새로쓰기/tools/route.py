@@ -132,7 +132,7 @@ def render(lines, route):
             km = re.search(r"값 이름:\s*([^)]+)\)", s)
             choice_key = km.group(1).strip() if km else None
             # 선택지 줄의 〔시간 제한〕〔두 번 되풀이…〕 같은 표시는 조건이 아니다
-            is_cond = cond and ("=" in cond or "≠" in cond or "!" in cond)
+            is_cond = cond and not any(k in cond for k in ("시간", "되풀이"))
             choice_ok = route.expr(cond) if is_cond else True
             choice_open = False
             continue
