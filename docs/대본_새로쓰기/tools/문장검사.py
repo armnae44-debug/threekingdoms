@@ -35,6 +35,24 @@ PATTERNS = [
     (r"^숨 한 번", "시간 끊기 상투", "숨 한 번. 그 사이에 정해야 했다"),
 ]
 
+# 2-2. 한 장 안에서 되풀이되면 걸리는 몸짓·장치 (패턴, 이름, 허용 횟수)
+REPEAT = [
+    (r"코(로|웃음)", "코로 웃음", 2),
+    (r"등을 뗐", "벽에서 등 떼기", 1),
+    (r"입술을 깨물|입 안쪽을 깨물", "입술 깨물기", 1),
+    (r"고개를 숙였", "고개 숙이기", 3),
+    (r"(아무도|누구도) .{0,8}보지 않았", "아무도 보지 않음", 1),
+    (r"얼굴들이 .{0,10}(향했|돌아왔)", "얼굴들이 나를 향함", 1),
+    (r"어깨를 으쓱", "어깨 으쓱", 0),
+    (r"목소리는 크지 않았", "낮은 목소리 표시", 0),
+    (r"오래 생각했", "생각했다고만 알림", 0),
+    (r"누가 .{0,12}소리가 났다", "익명의 소리 긴장", 0),
+]
+# 2-3. 선택지 설명에 인물 반응·결과를 미리 알리는 말
+CHOICE_HINT = r"(듣기에는|궁금해할|답답하다|의심을 산다|싫어할|좋아할)"
+# 2-4. 현대 대입 비유 낱말 (일부러 쓴 건 남긴다)
+MODERN = r"(컵라면|사발면|회사|회의실|편의점|지하철|엘리베이터|스마트폰|택배)"
+
 # 3. 짧은 조각 문단: 대사가 아닌데 한 줄이 아주 짧은 것 ("왔다." "오소." "서른." "등자.")
 SHORT = 8
 COND = re.compile(r"\s*〔[^〕]*〕\s*$")
@@ -63,6 +81,19 @@ def check(path):
             for pat, name, ex in PATTERNS:
                 if re.search(pat, sent):
                     hits.append((i, name, ex, s))
+    body_all = [(i, COND.sub("", l).strip()) for i, l in enumerate(lines, 1)]
+    start = next((i for i, l in body_all if l == "---"), 0)
+    body_all = [(i, l) for i, l in body_all if i > start]
+    for pat, name, limit in REPEAT:
+        found = [(i, l) for i, l in body_all if re.search(pat, l) and not l.startswith("- ▸")]
+        if len(found) > limit:
+            for i, l in found:
+                hits.append((i, f"반복 몸짓: {name} {len(found)}회(허용 {limit})", "", l))
+    for i, l in body_all:
+        if l.startswith("- ▸") and re.search(CHOICE_HINT, l):
+            hits.append((i, "선택지 설명이 반응을 예고", "", l))
+        if not l.startswith("- ▸") and re.search(MODERN, l):
+            hits.append((i, "현대 대입 비유(일부러 쓴 건지 확인)", "", l))
     return hits
 
 if __name__ == "__main__":
