@@ -69,6 +69,11 @@ MODERN = r"(컵라면|사발면|회사|회의실|편의점|지하철|엘리베�
 
 # 3. 짧은 조각 문단: 대사가 아닌데 한 줄이 아주 짧은 것 ("왔다." "오소." "서른." "등자.")
 SHORT = 8
+# 4. 단문 나열: 한 문단 안에서 RUN_LEN자 이하 '~다.' 문장이 RUN_MAX개 이어지면 잡는다.
+RUN_LEN = 22
+RUN_MAX = 3
+# 5. 감정을 형용사로 통보하고 끝내는 문장
+FEEL = r"(싫었|무서웠|두려웠|반가웠|기뻤|슬펐|서운했|불안했|막막했|억울했|미안했|고마웠|겁이 났|화가 났|안도했|뿌듯했|창피했|부끄러웠)다\.$"
 COND = re.compile(r"\s*〔[^〕]*〕\s*$")
 
 def check(path):
@@ -93,6 +98,19 @@ def check(path):
             hits.append((i, "짧은 조각 문단", "왔다. / 오소. / 서른. / 등자.", s))
         if len(re.findall(r"[다라]고 했다", body)) >= 2:
             hits.append((i, "간접화법 요약(~다고 했다 연달아)", "", s))
+        if not is_dia:
+            run = 0
+            for sent in re.findall(r"[^.!?]+[.!?]", body):
+                sent = sent.strip()
+                if len(sent) <= RUN_LEN and sent.endswith("다."):
+                    run += 1
+                    if run == RUN_MAX:
+                        hits.append((i, "단문 나열(짧은 '~다.' 3개 연속)", "", s))
+                else:
+                    run = 0
+            for sent in re.findall(r"[^.!?]+[.!?]", body):
+                if re.search(FEEL, sent.strip()):
+                    hits.append((i, "감정 통보(형용사로 끝냄)", "", s))
         for sent in re.split(r"(?<=[.?!])\s+", body):
             for pat, name, ex in PATTERNS:
                 if re.search(pat, sent):
