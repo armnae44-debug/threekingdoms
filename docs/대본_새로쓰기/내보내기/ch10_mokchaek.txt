@@ -95,8 +95,8 @@
     -   안쪽 목책은 세 토막이다. 가운데에 피난문, 양 끝 틈이 북쪽·남쪽
         통로. 남문은 내 진지 남쪽 목책에 난 바깥문이다. 순유가 통로를
         닫을 때 남문에도 빗장을 건다.
--   그림 (A선): 본문 일러 두 장. prep 선택 앞 img/10A_ill_prep.png(금 간
-    받침과 좁은 층계), position 선택 앞 img/10A_ill_position.png(창고 앞
+-   그림 (A선): 본문 일러 두 장. prep 선택 앞 img/10A_ill_prep.jpg(금 간
+    받침과 좁은 층계), position 선택 앞 img/10A_ill_position.jpg(창고 앞
     조홍, 목책 안 장합 깃발, 무너진 목책과 밖의 후속대).
 -   그림 (B선): 지도는 게임에서 장 첫머리 지도 버튼으로 연다.
     img/10B_map_all.jpg(교전 전, 두 지원로) · img/10B_map_east.jpg(말뚝
