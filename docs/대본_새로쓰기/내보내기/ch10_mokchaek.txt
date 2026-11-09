@@ -98,6 +98,10 @@
 -   그림 (A선): 본문 일러 두 장. prep 선택 앞 img/10A_ill_prep.jpg(금 간
     받침과 좁은 층계), position 선택 앞 img/10A_ill_position.jpg(창고 앞
     조홍, 목책 안 장합 깃발, 무너진 목책과 밖의 후속대).
+-   그림 (A선, 게임 선택 미리 보기, 원고 본문에는 넣지 않음):
+    img/10A_pre_prep.jpg(prep 선택) · img/10A_pre_position.jpg(position
+    선택 화면 지도) · img/10A_pre_front.jpg(front에 손을 댔을 때) ·
+    img/10A_pre_breach.jpg(breach에 손을 댔을 때).
 -   그림 (B선): 지도는 게임에서 장 첫머리 지도 버튼으로 연다.
     img/10B_map_all.jpg(교전 전, 두 지원로) · img/10B_map_east.jpg(말뚝
     줄, 통로, 피난문, 남문) · img/10B_map_dike.jpg(매복 전 둑길). 본문
