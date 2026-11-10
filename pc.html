@@ -3645,11 +3645,14 @@ function ch4_prep(){
     if(prep.done.includes(k)) return;
     list.push({ text:PREP4[k].text, sub:PREP4[k].sub, act:k });
   });
-  list.push({ text:'아무것도 하지 않는다. 역사가 흘러가는 대로 둔다', kind:'fate', act:'stop' });
+  // 원고 조건: 한 번도 손쓰지 않고 멈춤 = 〔아무것도 안 함〕, 하나라도 하고 멈춤 = 〔하나 이상 함〕
+  list.push(prep.done.length
+    ? { text:'더는 움직이지 않는다', sub:'남은 시간은 우리 막사에서 보낸다', kind:'fate', act:'stop' }
+    : { text:'아무것도 하지 않는다. 역사가 흘러가는 대로 둔다', kind:'fate', act:'stop' });
   const clock = prep.left>=2 ? '연회가 파하고, 해가 서쪽 담에 걸려 있었다.' : '성문 쪽 횃불이 하나둘 켜지기 시작했다.';
   say('', clock + `\n\n밤이 오기 전에 손댈 수 있는 것은 **${['','한','두','세'][prep.left]||prep.left} 가지.**`, ()=>{
     choose(permitted(list), c=>{
-      if(c.act==='stop'){ say('나(독백)', prep.done.length ? '더는 손을 쓰지 않았다.\n\n나머지는 밤에 맡기기로 했다.' : '아무것도 하지 않았다.\n\n내가 읽은 대로 흘러가는지, 이번에는 그저 지켜보기로 했다.', ()=>ch4_night()); return; }
+      if(c.act==='stop'){ state.flags.prepNone = !prep.done.length; say('나(독백)', prep.done.length ? '더는 손을 쓰지 않았다.\n\n나머지는 밤에 맡기기로 했다.' : '아무것도 하지 않았다.\n\n내가 읽은 대로 흘러가는지, 이번에는 그저 지켜보기로 했다.', ()=>ch4_night()); return; }
       prep.left--; prep.done.push(c.act);
       PREP4[c.act].run(()=>ch4_prep());
     });
