@@ -5293,8 +5293,8 @@ function ch5_assign(){
 /* ── 조사 이틀 ── */
 const DIG5 = {
   survey:{ text:'마을 우물 다섯의 물 높이를 잰다', sub:()=>isAlive('wangsam')?'왕삼에게 측량 줄을 잡게 한다':'병사 둘에게 측량 줄을 잡게 한다', run:cb=>ch5_survey(cb) },
-  old:{ text:'옛 물길을 기억하는 노인을 찾는다', sub:()=>isAlive('jono')?'조노를 데려간다':'혼자 마을을 돈다', run:cb=>ch5_old(cb) },
-  folk:{ text:'성에서 빠져나온 자들에게 묻는다', sub:()=>isAlive('sochil')?'소칠을 데려간다':'포로 막사로 간다', run:cb=>ch5_folk(cb) }
+  old:{ text:'옛 물길을 기억하는 노인을 직접 찾아 확인한다', sub:()=>isAlive('jono')?'조노를 데려간다':'혼자 마을을 돈다', run:cb=>ch5_old(cb) },
+  folk:{ text:'성에서 빠져나온 자들의 말을 직접 대조한다', sub:()=>isAlive('sochil')?'소칠을 데려간다':'포로 막사로 간다', run:cb=>ch5_folk(cb) }
 };
 
 function ch5_dig(){
