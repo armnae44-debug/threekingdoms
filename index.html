@@ -2783,7 +2783,7 @@ function ch2_first(){
     say(nm('jono'), '"아홉이서 사흘에 이 길이를 어떻게 세우오?"\n\n그가 말뚝 박을 자리를 눈으로 재며 말했다.\n\n"위에서 모를 리 없소. 알면서 시키는 거요."', ()=>{
       choose(permitted([
         { text:'밤을 새워서라도 기한을 맞춘다', sub:'조원들을 잠 못 자게 해야 한다', act:'push' },
-        { text:'옆 십인대에 술을 사고 일손을 빌린다', sub:'내 급료 한 달 치가 든다', act:'buy' },
+        { text:'옆 십인대에 술을 사고 일손을 빌린다', sub:'급료 한 달 치를 쓰고, 다음 비번에 저쪽 일을 갚는다', act:'buy' },
         { text:'말뚝 간격을 조금씩 넓혀 길이를 맞춘다', sub:'말뚝 수를 줄인다', act:'cheat' }
       ]), c=>ch2_firstResolve(c.act));
     });
@@ -3405,8 +3405,8 @@ function ch3_silver(next){
             });
           });
         } else if(c.act==='meat'){
-          state.silver-=1; render(); bond('sochil',2,'앓아누웠을 때 고기를 사다 먹였다');
-          say('', '저잣거리에서 돼지고기 반 근을 사다 삶아 먹였다.\n\n소칠은 닷새를 앓고 일어났다. 그동안 다른 조원들은 그 고기 냄새를 맡으며 멀건 죽을 먹었다.', ()=>next());
+          state.silver-=1; state.flags.sochilWeak=true; render(); bond('sochil',2,'앓아누웠을 때 고기를 사다 먹였다');
+          say('', '저잣거리에서 돼지고기 반 근을 사다 삶아 먹였다.\n\n소칠은 닷새를 앓고 일어났다. 한 번 꺼진 볼은 다시 차오르지 않았다.', ()=>next());
         } else {
           state.flags.sochilWeak=true; bond('sochil',-2,'앓아누웠을 때 아무것도 해 주지 않았다');
           say('', '쓰지 않았다.\n\n소칠은 이레를 앓고서야 겨우 일어났다. 그 뒤로 살이 다시 붙지 않았다.', ()=>{
