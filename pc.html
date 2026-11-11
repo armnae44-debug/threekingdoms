@@ -5234,7 +5234,7 @@ function ch5_tent(){
       choose(permitted([
         { text:'서쪽 논에서 발이 빠졌다고 본 것만 말한다', sub:'', act:'obs' },
         { text:'물이 새는 자리를 내가 찾아오겠다고 나선다', sub:'본 것은 말하지 않고, 찾는 일을 맡겠다고 나선다', act:'offer' },
-        { text:'성벽 이야기를 하고 물러난다', sub:'군후가 나설 자리가 아니다', act:'same' }
+        { text:'성벽에서 겪은 일만 말한다', sub:'물길은 아직 짐작뿐이다. 찾아오라는 명까지 받고 싶지는 않다', act:'same' }
       ]), c=>ch5_tentResolve(c.act));
     });
   });
