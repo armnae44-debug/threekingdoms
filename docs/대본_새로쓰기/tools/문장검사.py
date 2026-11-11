@@ -108,6 +108,15 @@ def check(path):
                         hits.append((i, "단문 나열(짧은 '~다.' 3개 연속)", "", s))
                 else:
                     run = 0
+            # 6. 다다다: 길이와 상관없이 '~다.'로 끝나는 문장이 3개 연달아 나오면 잡는다.
+            run = 0
+            for sent in re.findall(r"[^.!?]+[.!?]", body):
+                if sent.strip().endswith("다."):
+                    run += 1
+                    if run == 3:
+                        hits.append((i, "다다다('~다.' 3개 연속, 길이 무관)", "", s))
+                else:
+                    run = 0
             for sent in re.findall(r"[^.!?]+[.!?]", body):
                 if re.search(FEEL, sent.strip()):
                     hits.append((i, "감정 통보(형용사로 끝냄)", "", s))
