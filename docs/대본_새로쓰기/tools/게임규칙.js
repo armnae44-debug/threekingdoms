@@ -28,7 +28,7 @@ L[2]['왕삼과 가까움']=R=>R.has('wang','give')||R.has('askNext','give');
 L[2]['조노 유대 낮음']=R=>R.b('jono')<3;
 L[2]['단서 있음']=R=>['ledger','store','people'].some(x=>R.has('probe',x));
 L[2]['단서 없음']=R=>!R.L('단서 있음',2);
-L[2]['찾음']=R=>(R.has('spot','desk')&&(R.has('probe','ledger')||R.has('probe','store')))||(R.has('spot','keeper')&&R.has('probe','people'))||(R.has('spot','sacks')&&R.has('probe','store'));
+L[2]['찾음']=R=>(R.has('spot','desk')&&(R.has('probe','ledger')||R.has('probe','store')))||(R.has('spot','keeper')&&R.has('probe','store'))||(R.has('spot','sacks')&&R.has('probe','people'));
 L[2]['빈손']=R=>R.v('spot')!==undefined&&!R.L('찾음',2);
 L[2]['석두 죽음']=R=>R.L('빈손',2)&&R.chance('2-seokdu',0.5);
 L[2]['석두 생존']=R=>!R.L('석두 죽음',2);
