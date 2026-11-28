@@ -2339,10 +2339,10 @@ learn≠merchant〕
 〔dig=survey, count≠num〕
 **곽가**: "그럼 물어볼 생각은 그대가 한 거군."
 〔dig≠survey〕
-**나**: "오래 산 사람한테 물어보자고 한 건 조노입니다."
-〔dig≠survey, old=성공〕
+**나**: "오래 산 사람한테 물어보자고 한 건 제 휘하
+조노입니다." 〔dig≠survey, old=성공〕
 **나**: "포로 가운데 강 일을 하던 사람이 있을 거라고 한 건
-소칠입니다." 〔dig≠survey, old≠성공〕
+제 부대 막내 소칠입니다." 〔dig≠survey, old≠성공〕
 
 #### 〔gj=vague〕
 
