@@ -47,8 +47,8 @@ V[3]['경고']=R=>{ if(!R.has('ca','warn')) return undefined; if(R.V('미행',3)
 V[3]['둘째 준비']=R=>{ const p=R.v('prep'); return Array.isArray(p)&&p[1]&&p[1]!=='stop'?p[1]:undefined; };
 L[3]['말을 얻음']=R=>R.has('ca','horse')&&(R.c('2장 use=hold',3)||R.c('2장 담판=성공',3)||R.V('말',3)==='성공');
 L[3]['말을 몰래 끌어냄']=R=>R.V('말',3)==='성공';
-L[3]['극 되찾음']=R=>R.has('dw','tell')||(R.V('경고',3)==='성공'&&R.V('미행',3)==='성공')||(R.has('ca','horse')&&R.V('미행',3)==='성공'&&R.L('말을 얻음',3))||R.has('gate','fetch');
-L[3]['전위 맑음']=R=>R.V('물',3)==='성공'||R.V('경고',3)==='성공'||(R.L('말을 얻음',3)&&R.V('미행',3)==='성공')||(R.has('dw','tell')&&R.V('미행',3)!=='성공');
+L[3]['극 되찾음']=R=>(R.has('dw','tell')&&R.V('미행',3)==='성공')||(R.V('경고',3)==='성공'&&R.V('미행',3)==='성공')||(R.has('ca','horse')&&R.V('미행',3)==='성공'&&R.L('말을 얻음',3))||R.has('gate','fetch');
+L[3]['전위 맑음']=R=>R.V('물',3)==='성공'||R.V('경고',3)==='성공'||R.L('말을 얻음',3)||(R.has('dw','tell')&&R.V('미행',3)!=='성공');
 L[3]['아무것도 안 함']=R=>{ const p=R.v('prep'); return !p||(Array.isArray(p)&&p.filter(x=>x!=='stop').length===0); };
 L[3]['하나 이상 함']=R=>!R.L('아무것도 안 함',3);
 L[3]['prep 두 번을 다 쓴 뒤']=R=>{ const p=R.v('prep'); return Array.isArray(p)&&p.filter(x=>x!=='stop').length>=2; };
